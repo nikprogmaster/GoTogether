@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <layer-list>
+            <item android:drawable="@drawable/shadow"/>
+            <item
+                android:drawable="@drawable/full_heart"
+                android:height="20dp"
+                android:width="23dp"
+                android:gravity="center"/>
+        </layer-list>
+    </item>
+
+    <item android:state_checked="false">
+        <layer-list>
+            <item android:drawable="@drawable/shadow"/>
+            <item
+                android:drawable="@drawable/empty_heart"
+                android:height="20dp"
+                android:width="23dp"
+                android:gravity="center"/>
+        </layer-list>
+    </item>
+</selector>

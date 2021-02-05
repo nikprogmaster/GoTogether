@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">GoTogether</string>
+    <string name="enter">Войти</string>
+    <string name="registration">Регистрация</string>
+    <string name="email">Электронная почта</string>
+    <string name="password">Пароль</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="create_account">Создать аккаунт</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="password_demand">Длина пароля не менее 8 символов</string>
+    <string name="continue_str">Продолжить</string>
+    <string name="about_yourself">О себе</string>
+    <string name="name">Имя</string>
+    <string name="birthday">Дата рождения</string>
+    <string name="sex">Пол</string>
+    <string name="user_agreement">Нажатием кнопки \"Продолжить\"\n Вы принимаете условия\n <i>пользовательского соглашения</i>></string>
+    <string name="description">Описание</string>
+    <string name="little_bit_about_yourself">Немного о себе</string>
+    <string name="tell_about_yourself">Расскажите нам больше о себе</string>
+    <string name="point_your_interests">Укажи свои интересы</string>
+    <string name="this_will_help_us">Данная информация поможет нам\n подобрать мероприятие\n специально для вас</string>
+    <string name="search">Поиск</string>
+    <string name="for_you">Для вас</string>
+    <string name="dialogs">Диалоги</string>
+    <string name="profile">Профиль</string>
+    <string name="free">Бесплатно</string>
+    <string name="error_message">Это поле не должно быть пустым!</string>
+    <string name="passwords_must_be_equal">Пароли должны совпадать</string>
+
+    <string-array name="interests">
+        <item>Бизнес и образование</item>
+        <item>Танцы</item>
+        <item>Театр и кино</item>
+        <item>Выставки и искусство</item>
+        <item>Юмор</item>
+        <item>Концерты и фестивали</item>
+        <item>Мода</item>
+        <item>Игры, квесты</item>
+        <item>Романтика</item>
+        <item>Активный отдых</item>
+    </string-array>
+</resources>
