@@ -3,7 +3,13 @@ package com.kandyba.gotogether.models.data.events
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class EventInfoDataModel (
+data class EventsResponse(
+    @SerializedName("events")
+    @Expose
+    val events: Map<String, EventInfoDataModel>
+)
+
+data class EventInfoDataModel(
     @SerializedName("title")
     @Expose
     val title: String,
@@ -30,7 +36,8 @@ data class EventInfoDataModel (
 
     @SerializedName("categories")
     @Expose
-    val categories: List<String>) {
+    val categories: List<String>
+) {
 
     inner class Date (
         @SerializedName("start_unix")

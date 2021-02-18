@@ -13,6 +13,8 @@ class StartFragment : Fragment() {
     private lateinit var enterButton: Button
     private lateinit var registrationButton: Button
 
+    private val TAG = "StartFragment: "
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,5 +43,6 @@ class StartFragment : Fragment() {
             return fragment
         }
     }
+
 
 }

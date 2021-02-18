@@ -1,18 +1,33 @@
 package com.kandyba.gotogether.presentation.fragment
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
+import com.kandyba.gotogether.models.general.EMPTY_STRING
+import com.kandyba.gotogether.models.general.TOKEN
+import com.kandyba.gotogether.models.general.USER_ID
+import com.kandyba.gotogether.models.general.UserRequestBody
+import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
 class DescriptionFragment : Fragment() {
 
     private lateinit var continueButton: Button
     private lateinit var backButton: ImageView
+    private lateinit var aboutYou: EditText
+
+    private lateinit var viewModel: StartViewModel
+    private lateinit var settings: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,17 +37,64 @@ class DescriptionFragment : Fragment() {
         val root = inflater.inflate(R.layout.description_fragment, container, false)
         backButton = root.findViewById(R.id.back_btn)
         continueButton = root.findViewById(R.id.continue_btn)
+        aboutYou = root.findViewById(R.id.about_you)
         return root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        resolveDependencies()
+        initListeners()
+        initObservsers()
+    }
+
+
+    private fun resolveDependencies() {
+        val component = (requireActivity().application as App).appComponent
+        viewModel = ViewModelProvider(
+            requireActivity(),
+            component.getStartViewModelFactory()
+        )[StartViewModel::class.java]
+        settings = component.getSharedPreferences()
+    }
+
+    private fun initListeners() {
         backButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
         continueButton.setOnClickListener {
-            (activity as FragmentManager).openFragment(InterestsFragment.newInstance())
+            val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
+            val uid = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
+            viewModel.updateUserInfo(token, uid, createUserRequest())
         }
     }
 
+    private fun initObservsers() {
+        viewModel.updateUserInfo.observe(requireActivity(), Observer {
+            if (it != null) {
+                (activity as FragmentManager).openFragment(InterestsFragment.newInstance())
+                Log.d("DescriptionFragment", "is not null")
+            } else {
+                Log.d("DescriptionFragment", "is null")
+            }
+        })
+    }
+
+    private fun createUserRequest(): UserRequestBody {
+        val body = UserRequestBody(mutableMapOf())
+        if (aboutYou.text.toString() != EMPTY_STRING) {
+            body.fields[INFO_KEY] = aboutYou.text.toString()
+        }
+        return body
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.updateUserInfo.removeObservers(requireActivity())
+        Log.d("DescriptionFragment", "onDestroyView() called")
+    }
+
     companion object {
+        private const val INFO_KEY = "info"
+
         fun newInstance(): DescriptionFragment {
             val args = Bundle()
 

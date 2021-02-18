@@ -33,6 +33,20 @@ class InterestsAdapter(
 
         fun bindViews(interest: Interest) {
             title.text = interest.name
+            level.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    interest.level = progress
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+
+            })
         }
     }
 }

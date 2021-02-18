@@ -1,16 +1,19 @@
-package com.kandyba.gotogether.data.converter.auth
+package com.kandyba.gotogether.domain.user
 
-
-import com.kandyba.gotogether.models.data.user.UserInfoDataModel
-import com.kandyba.gotogether.models.domain.events.Date
-import com.kandyba.gotogether.models.domain.events.EventInfoDomainModel
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
 import com.kandyba.gotogether.models.general.BaseConverter
+import com.kandyba.gotogether.models.presentation.Date
+import com.kandyba.gotogether.models.presentation.EventModel
+import com.kandyba.gotogether.models.presentation.UserInfoModel
 
-class UserDataConverter: BaseConverter<UserInfoDataModel, UserInfoDomainModel>() {
+/**
+ * @author Кандыба Никита
+ * @since 06.02.2021
+ */
+class UserDomainConverter : BaseConverter<UserInfoDomainModel, UserInfoModel>() {
 
-    override fun convert(from: UserInfoDataModel): UserInfoDomainModel {
-        return UserInfoDomainModel(
+    override fun convert(from: UserInfoDomainModel): UserInfoModel {
+        return UserInfoModel(
             from.tokens,
             from.id,
             from.passwordDigest,
@@ -26,7 +29,7 @@ class UserDataConverter: BaseConverter<UserInfoDataModel, UserInfoDomainModel>()
             from.info,
             from.isLoyal,
             from.events?.mapValues { pair ->
-                EventInfoDomainModel(
+                EventModel(
                     pair.value.title,
                     pair.value.photoLinks,
                     pair.value.likedByUser,
@@ -38,4 +41,5 @@ class UserDataConverter: BaseConverter<UserInfoDataModel, UserInfoDomainModel>()
             }
         )
     }
+
 }
