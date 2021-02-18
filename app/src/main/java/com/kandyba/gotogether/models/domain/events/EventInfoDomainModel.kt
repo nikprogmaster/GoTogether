@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.models.domain.events
 
+
 data class EventInfoDomainModel(
     val title: String,
     val photoLinks: List<String>,

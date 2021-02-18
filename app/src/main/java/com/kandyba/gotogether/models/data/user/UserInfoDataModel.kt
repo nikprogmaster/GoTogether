@@ -6,9 +6,17 @@ import com.kandyba.gotogether.models.data.events.EventInfoDataModel
 
 
 data class UserInfoDataModel(
+    @SerializedName("tokens")
+    @Expose
+    val tokens: List<String>,
+
     @SerializedName("id")
     @Expose
     val id: String,
+
+    @SerializedName("password_digest")
+    @Expose
+    val passwordDigest: String,
 
     @SerializedName("email")
     @Expose
@@ -16,27 +24,27 @@ data class UserInfoDataModel(
 
     @SerializedName("first_name")
     @Expose
-    val firstName: String,
+    val firstName: String? = null,
+
+    @SerializedName("phone")
+    @Expose
+    val phone: String? = null,
 
     @SerializedName("birth_date")
     @Expose
-    val birthDate: String,
+    val birthDate: String? = null,
 
     @SerializedName("sex")
     @Expose
-    val sex: String,
-
-    @SerializedName("age")
-    @Expose
-    val age: String,
+    val sex: String? = null,
 
     @SerializedName("longitude")
     @Expose
-    val longitude: String,
+    val longitude: String? = null,
 
     @SerializedName("latitude")
     @Expose
-    val latitude: String,
+    val latitude: String? = null,
 
     @SerializedName("created_at")
     @Expose
@@ -46,7 +54,17 @@ data class UserInfoDataModel(
     @Expose
     val updatedAt: String,
 
+    @SerializedName("info")
+    @Expose
+    val info: String? = null,
+
+    @SerializedName("is_loyal")
+    @Expose
+    val isLoyal: Boolean,
+
     @SerializedName("events")
     @Expose
-    val events: Map<String, EventInfoDataModel>
-)
+    val events: Map<String, EventInfoDataModel>? = null
+) {
+
+}

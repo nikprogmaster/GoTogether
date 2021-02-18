@@ -2,5 +2,6 @@ package com.kandyba.gotogether.models.presentation
 
 data class Interest(
     val name: String,
-    val level: Int = 5
+    var code: String = "",
+    var level: Int = 50
 )

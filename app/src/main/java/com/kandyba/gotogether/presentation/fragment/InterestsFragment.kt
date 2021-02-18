@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.presentation.fragment
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +8,19 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
+import com.kandyba.gotogether.models.general.EMPTY_STRING
+import com.kandyba.gotogether.models.general.TOKEN
+import com.kandyba.gotogether.models.general.USER_ID
+import com.kandyba.gotogether.models.general.UserRequestBody
+import com.kandyba.gotogether.models.presentation.Events
 import com.kandyba.gotogether.models.presentation.Interest
 import com.kandyba.gotogether.presentation.adapter.InterestsAdapter
+import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
 class InterestsFragment : Fragment() {
 
@@ -18,6 +28,11 @@ class InterestsFragment : Fragment() {
     private lateinit var interestList: RecyclerView
     private lateinit var backButton: ImageView
     private lateinit var continueButton: Button
+
+    private lateinit var viewModel: StartViewModel
+    private lateinit var settings: SharedPreferences
+
+    private lateinit var list: MutableList<Interest>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,19 +48,60 @@ class InterestsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        interestAdapter = InterestsAdapter(fullInterestsList())
-        interestList.adapter = interestAdapter
         setListeners()
+        resolveDependencies()
+        initListeners()
+    }
+
+    private fun initListeners() {
+        viewModel.updateUserInfo.observe(requireActivity(), Observer {
+            (requireActivity() as FragmentManager).openMainActivity(
+                Events(
+                    it.events?.values?.toList() ?: listOf()
+                )
+            )
+        })
     }
 
     private fun setListeners() {
         backButton.setOnClickListener { (requireActivity() as FragmentManager).closeFragment() }
-        //continueButton.setOnClickListener { (requireActivity() as FragmentManager).openMainActivity() }
+        continueButton.setOnClickListener {
+            val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
+            val uid = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
+            viewModel.updateUserInfo(token, uid, createUserRequest())
+        }
     }
 
-    private fun fullInterestsList(): MutableList<Interest> {
+    private fun createUserRequest(): UserRequestBody {
+        val body = UserRequestBody(mutableMapOf())
+        for (i in list) {
+            body.fields[i.code] = i.level.toString()
+        }
+        return body
+    }
+
+    private fun resolveDependencies() {
+        val component = (requireActivity().application as App).appComponent
+        viewModel = ViewModelProvider(
+            requireActivity(),
+            component.getStartViewModelFactory()
+        )[StartViewModel::class.java]
+        settings = component.getSharedPreferences()
+        interestAdapter = InterestsAdapter(fillInterestsList())
+        interestList.adapter = interestAdapter
+    }
+
+    private fun fillInterestsList(): MutableList<Interest> {
         val array = requireContext().resources.getStringArray(R.array.interests)
-        return array.map { Interest(it) }.toMutableList()
+
+        //НУ ТУТ ПРОСТО КОЛХОЗ КОЛХОЗНЫЙ!!!!!
+        //ИСПРАВИТЬ, ИНАЧЕ УВОЛЬНЕНИЕ!
+        val array2 = requireContext().resources.getStringArray(R.array.categories)
+        list = array.map { Interest(it) }.toMutableList()
+        for (i in 0..9) {
+            list[i].code = array2[i]
+        }
+        return list
     }
 
     companion object {

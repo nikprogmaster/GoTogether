@@ -1,8 +1,10 @@
-package com.kandyba.gotogether.models.domain.user
+package com.kandyba.gotogether.models.presentation
 
-import com.kandyba.gotogether.models.domain.events.EventInfoDomainModel
-
-data class UserInfoDomainModel(
+/**
+ * @author Кандыба Никита
+ * @since 06.02.2021
+ */
+class UserInfoModel(
     var tokens: List<String>,
     var id: String,
     var passwordDigest: String,
@@ -17,5 +19,5 @@ data class UserInfoDomainModel(
     var updatedAt: String,
     var info: String? = null,
     var isLoyal: Boolean,
-    var events: Map<String, EventInfoDomainModel>?
+    var events: Map<String, EventModel>?
 )

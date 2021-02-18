@@ -1,8 +1,8 @@
 package com.kandyba.gotogether.data.api
 
 import com.kandyba.gotogether.models.data.auth.LoginDataResponse
-import com.kandyba.gotogether.models.general.LoginRequestBody
 import com.kandyba.gotogether.models.data.auth.SignupDataResponse
+import com.kandyba.gotogether.models.general.LoginRequestBody
 import com.kandyba.gotogether.models.general.SignupRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -20,11 +20,12 @@ interface AuthApiMapper {
     fun login(@Body body: LoginRequestBody): Single<LoginDataResponse>
 
     @DELETE(LOGOUT_ENDPOINT)
-    fun logout(@Header("Authorization") token: String): Completable
+    fun logout(@Header(AUTHORIZATION_VALUE) token: String): Completable
 
     companion object Endpoints {
         private const val SIGNUP_ENDPOINT = "signup/"
         private const val LOGIN_ENDPOINT = "login/"
         private const val LOGOUT_ENDPOINT = "logout/"
+        private const val AUTHORIZATION_VALUE = "Authorization"
     }
 }

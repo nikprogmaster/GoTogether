@@ -13,7 +13,7 @@ class EventsRepositoryImpl(
     override fun getEventsRecommendations(token: String): Single<Map<String, EventInfoDomainModel>> {
         val tokenResult = TOKEN_PREFIX + token
         return eventsApiMapper.getEventsRecommendations(tokenResult)
-            .map { eventsDataConverter.convert(it) }
+            .map { eventsDataConverter.convert(it.events) }
     }
 
     companion object {

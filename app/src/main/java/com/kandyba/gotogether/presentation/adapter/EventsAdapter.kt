@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
-import com.kandyba.gotogether.models.domain.auth.EventInfoDomainModel
 import com.kandyba.gotogether.models.presentation.EventModel
 
 

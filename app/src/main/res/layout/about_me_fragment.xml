@@ -62,13 +62,13 @@
         android:textSize="36sp"
         app:fontFamily="@font/exo"
         app:layout_constraintTop_toBottomOf="@+id/back_btn"
-        app:layout_constraintBottom_toTopOf="@+id/email"
+        app:layout_constraintBottom_toTopOf="@+id/name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/email"
+        android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
@@ -79,13 +79,13 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         app:fontFamily="@font/exo"
-        app:layout_constraintBottom_toTopOf="@+id/email_et"
+        app:layout_constraintBottom_toTopOf="@+id/name_et"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <EditText
-        android:id="@+id/email_et"
+        android:id="@+id/name_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="26dp"
@@ -94,7 +94,7 @@
         app:layout_constraintBottom_toTopOf="@+id/birthday"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@+id/name" />
 
     <TextView
         android:id="@+id/birthday"
@@ -111,7 +111,7 @@
         app:layout_constraintBottom_toTopOf="@+id/birthday_et"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_et" />
+        app:layout_constraintTop_toBottomOf="@+id/name_et" />
 
     <EditText
         android:id="@+id/birthday_et"
