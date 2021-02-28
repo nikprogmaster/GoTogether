@@ -1,4 +1,4 @@
-package com.kandyba.gotogether.presentation.fragment
+package com.kandyba.gotogether.presentation.fragment.prelogin
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -18,15 +18,14 @@ import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.models.general.USER_ID
 import com.kandyba.gotogether.models.general.UserRequestBody
+import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
-class AboutMeFragment : Fragment() {
+class DescriptionFragment : Fragment() {
 
     private lateinit var continueButton: Button
     private lateinit var backButton: ImageView
-    private lateinit var name: EditText
-    private lateinit var sex: EditText
-    private lateinit var birthday: EditText
+    private lateinit var aboutYou: EditText
 
     private lateinit var viewModel: StartViewModel
     private lateinit var settings: SharedPreferences
@@ -36,12 +35,10 @@ class AboutMeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.about_me_fragment, container, false)
+        val root = inflater.inflate(R.layout.description_fragment, container, false)
         backButton = root.findViewById(R.id.back_btn)
         continueButton = root.findViewById(R.id.continue_btn)
-        name = root.findViewById(R.id.name_et)
-        sex = root.findViewById(R.id.sex_et)
-        birthday = root.findViewById(R.id.birthday_et)
+        aboutYou = root.findViewById(R.id.about_you)
         return root
     }
 
@@ -49,8 +46,9 @@ class AboutMeFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         resolveDependencies()
         initListeners()
-        initObservers()
+        initObservsers()
     }
+
 
     private fun resolveDependencies() {
         val component = (requireActivity().application as App).appComponent
@@ -61,35 +59,30 @@ class AboutMeFragment : Fragment() {
         settings = component.getSharedPreferences()
     }
 
-    private fun initObservers() {
+    private fun initListeners() {
+        backButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
+        continueButton.setOnClickListener {
+            val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
+            val uid = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
+            viewModel.updateUserInfo(token, uid, createUserRequest())
+        }
+    }
+
+    private fun initObservsers() {
         viewModel.updateUserInfo.observe(requireActivity(), Observer {
-            (activity as FragmentManager).openFragment(DescriptionFragment.newInstance())
-            Log.d("AboutMeFragment", "initObservers() called")
+            if (it != null) {
+                (activity as FragmentManager).openFragment(InterestsFragment.newInstance())
+                Log.d("DescriptionFragment", "is not null")
+            } else {
+                Log.d("DescriptionFragment", "is null")
+            }
         })
     }
 
-    private fun initListeners() {
-        continueButton.setOnClickListener {
-            val request = createUserUpdateRequest()
-            if (request.fields.isNotEmpty()) {
-                val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
-                val uid = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
-                viewModel.updateUserInfo(token, uid, request)
-            }
-        }
-        backButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
-    }
-
-    private fun createUserUpdateRequest(): UserRequestBody {
+    private fun createUserRequest(): UserRequestBody {
         val body = UserRequestBody(mutableMapOf())
-        if (name.text.toString() != EMPTY_STRING) {
-            body.fields[NAME_KEY] = name.text.toString()
-        }
-        if (sex.text.toString() != EMPTY_STRING) {
-            body.fields[SEX_KEY] = sex.text.toString()
-        }
-        if (birthday.text.toString() != EMPTY_STRING) {
-            body.fields[BIRTHDAY_KEY] = birthday.text.toString()
+        if (aboutYou.text.toString() != EMPTY_STRING) {
+            body.fields[INFO_KEY] = aboutYou.text.toString()
         }
         return body
     }
@@ -97,18 +90,16 @@ class AboutMeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.updateUserInfo.removeObservers(requireActivity())
-        Log.d("AboutMeFragment", "onDestroyView() called")
+        Log.d("DescriptionFragment", "onDestroyView() called")
     }
 
     companion object {
-        private const val NAME_KEY = "first_name"
-        private const val SEX_KEY = "sex"
-        private const val BIRTHDAY_KEY = "birth_date"
+        private const val INFO_KEY = "info"
 
-        fun newInstance(): AboutMeFragment {
+        fun newInstance(): DescriptionFragment {
             val args = Bundle()
 
-            val fragment = AboutMeFragment()
+            val fragment = DescriptionFragment()
             fragment.arguments = args
             return fragment
         }

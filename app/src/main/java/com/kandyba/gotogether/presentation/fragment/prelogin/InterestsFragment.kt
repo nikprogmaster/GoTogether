@@ -1,4 +1,4 @@
-package com.kandyba.gotogether.presentation.fragment
+package com.kandyba.gotogether.presentation.fragment.prelogin
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -19,7 +19,9 @@ import com.kandyba.gotogether.models.general.USER_ID
 import com.kandyba.gotogether.models.general.UserRequestBody
 import com.kandyba.gotogether.models.presentation.Events
 import com.kandyba.gotogether.models.presentation.Interest
+import com.kandyba.gotogether.models.presentation.getListOfCategories
 import com.kandyba.gotogether.presentation.adapter.InterestsAdapter
+import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
 class InterestsFragment : Fragment() {
@@ -32,7 +34,7 @@ class InterestsFragment : Fragment() {
     private lateinit var viewModel: StartViewModel
     private lateinit var settings: SharedPreferences
 
-    private lateinit var list: MutableList<Interest>
+    private lateinit var interests: MutableList<Interest>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,7 +76,7 @@ class InterestsFragment : Fragment() {
 
     private fun createUserRequest(): UserRequestBody {
         val body = UserRequestBody(mutableMapOf())
-        for (i in list) {
+        for (i in interests) {
             body.fields[i.code] = i.level.toString()
         }
         return body
@@ -92,16 +94,12 @@ class InterestsFragment : Fragment() {
     }
 
     private fun fillInterestsList(): MutableList<Interest> {
-        val array = requireContext().resources.getStringArray(R.array.interests)
-
-        //НУ ТУТ ПРОСТО КОЛХОЗ КОЛХОЗНЫЙ!!!!!
-        //ИСПРАВИТЬ, ИНАЧЕ УВОЛЬНЕНИЕ!
-        val array2 = requireContext().resources.getStringArray(R.array.categories)
-        list = array.map { Interest(it) }.toMutableList()
-        for (i in 0..9) {
-            list[i].code = array2[i]
+        val categoriesList = getListOfCategories()
+        interests = mutableListOf()
+        for (category in categoriesList) {
+            interests.add(Interest(category.categoryName, category.serverName))
         }
-        return list
+        return interests
     }
 
     companion object {

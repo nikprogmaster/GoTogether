@@ -1,4 +1,4 @@
-package com.kandyba.gotogether.presentation.fragment
+package com.kandyba.gotogether.presentation.fragment.prelogin
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.SignupRequestBody
+import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
 class RegistrationFragment : Fragment() {

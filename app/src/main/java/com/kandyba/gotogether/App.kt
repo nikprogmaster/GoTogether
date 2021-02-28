@@ -7,4 +7,5 @@ class App: Application() {
     val appComponent = DaggerAppComponent
         .factory()
         .create(this)
+
 }

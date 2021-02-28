@@ -11,5 +11,4 @@ interface FragmentManager {
 
     fun openMainActivity(events: Events)
 
-    fun showProgress(show: Boolean)
 }
