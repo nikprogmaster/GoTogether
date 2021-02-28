@@ -4,12 +4,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EVENTS_KEY
@@ -19,14 +21,16 @@ import com.kandyba.gotogether.models.presentation.AuthResponse
 import com.kandyba.gotogether.models.presentation.Events
 import com.kandyba.gotogether.presentation.animation.StartAppAnimation
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
-import com.kandyba.gotogether.presentation.fragment.StartFragment
+import com.kandyba.gotogether.presentation.fragment.prelogin.StartFragment
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
+
 
 class StartActivity : AppCompatActivity(), FragmentManager {
 
     private lateinit var progress: LinearLayout
     private lateinit var animatedLogo: ImageView
     private lateinit var animationLayout: LinearLayout
+    private lateinit var root: FrameLayout
 
     private lateinit var prefs: SharedPreferences
     private lateinit var viewModel: StartViewModel
@@ -50,12 +54,14 @@ class StartActivity : AppCompatActivity(), FragmentManager {
             openMainActivity(Events(eventsMap.values.toList()))
         })
         viewModel.showProgress.observe(this, Observer { show -> showProgress(show) })
+        viewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
     }
 
     private fun resolveDependencies() {
         animationLayout = findViewById(R.id.animation_layout)
         animatedLogo = findViewById(R.id.animated_logo)
         progress = findViewById(R.id.progress)
+        root = findViewById(R.id.root)
 
         val component = (application as App).appComponent
         prefs = component.getSharedPreferences()
@@ -87,7 +93,7 @@ class StartActivity : AppCompatActivity(), FragmentManager {
         finish()
     }
 
-    override fun showProgress(show: Boolean) {
+    private fun showProgress(show: Boolean) {
         progress.visibility = if (show) View.VISIBLE else View.GONE
     }
 
@@ -106,6 +112,11 @@ class StartActivity : AppCompatActivity(), FragmentManager {
             animationLayout.visibility = View.GONE
             animation.finishAnimation()
         }
+    }
+
+    private fun showSnackbar(message: String) {
+        val snackbar = Snackbar.make(root, message, Snackbar.LENGTH_SHORT)
+        snackbar.show()
     }
 
 }

@@ -26,6 +26,10 @@
     <string name="free">Бесплатно</string>
     <string name="error_message">Это поле не должно быть пустым!</string>
     <string name="passwords_must_be_equal">Пароли должны совпадать</string>
+    <string name="are_you_sure">Вы уверены?</string>
+    <string name="need_to_fill_form">Необходимо будет ввести \n учетные данные</string>
+    <string name="cancel">Отмена</string>
+    <string name="exit">Выйти</string>
 
     <string-array name="interests">
         <item>Бизнес и образование</item>

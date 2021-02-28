@@ -12,19 +12,60 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.KeyStore
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.*
+
 
 @Module
 class NetworkModule {
 
     @Provides
     fun provideRetrofit(): Retrofit {
+        val trustAllCerts = arrayOf<TrustManager>(
+            object : X509TrustManager {
+                @Throws(CertificateException::class)
+                override fun checkClientTrusted(
+                    chain: Array<X509Certificate?>?,
+                    authType: String?
+                ) {
+                }
+
+                @Throws(CertificateException::class)
+                override fun checkServerTrusted(
+                    chain: Array<X509Certificate?>?,
+                    authType: String?
+                ) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate?>? {
+                    return arrayOf()
+                }
+            }
+        )
+
+        val trustManager: X509TrustManager = trustAllCerts[0] as X509TrustManager
+        val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
+        keyStore.load(null, null)
+        val keyManagerFactory =
+            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+        keyManagerFactory.init(keyStore, "keystore_pass".toCharArray())
+
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(keyManagerFactory.keyManagers, trustAllCerts, SecureRandom())
+        val sslSocketFactory: SSLSocketFactory = sslContext.socketFactory
+
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         val okHttpClient: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .retryOnConnectionFailure(true)
             .callTimeout(60, TimeUnit.SECONDS)
+            //.sslSocketFactory(sslSocketFactory, trustManager)
+            //.hostnameVerifier(HostnameVerifier { _, _ -> true })
             .addNetworkInterceptor(object : Interceptor {
                 override fun intercept(chain: Interceptor.Chain): Response {
                     val request = chain.request()
@@ -60,6 +101,6 @@ class NetworkModule {
     }
 
     companion object {
-        private const val BASE_URL = "https://gotogether.site/api/v1/"
+        private const val BASE_URL = "http://51.15.104.77:3000/api/v1/"
     }
 }

@@ -1,23 +1,29 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import com.kandyba.gotogether.domain.auth.AuthInteractor
 import com.kandyba.gotogether.domain.events.EventsInteractor
 import com.kandyba.gotogether.domain.user.UserInteractor
 import com.kandyba.gotogether.models.general.*
 import com.kandyba.gotogether.models.presentation.AuthResponse
 import com.kandyba.gotogether.models.presentation.EventModel
+import com.kandyba.gotogether.models.presentation.SnackbarMessage
 import com.kandyba.gotogether.models.presentation.UserInfoModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import okhttp3.ResponseBody
+import retrofit2.Converter
+import java.net.ConnectException
+
 
 class StartViewModel(
     private val authInteractor: AuthInteractor,
     private val eventsInteractor: EventsInteractor,
-    private val userInteractor: UserInteractor
+    private val userInteractor: UserInteractor,
+    private val gsonConverter: Converter<ResponseBody, *>?
 ) : BaseViewModel() {
 
     private val loginResponseMLD = MutableLiveData<AuthResponse>()
@@ -28,6 +34,7 @@ class StartViewModel(
     private val showMainActivityMLD = MutableLiveData<Map<String, EventModel>>()
     private val signupResponseMLD = MutableLiveData<AuthResponse>()
     private var updateUserInfoMLD = MutableLiveData<UserInfoModel>()
+    private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
 
     val loginResponse: LiveData<AuthResponse>
         get() = loginResponseMLD
@@ -45,10 +52,11 @@ class StartViewModel(
         get() = signupResponseMLD
     val updateUserInfo: LiveData<UserInfoModel>
         get() = updateUserInfoMLD
+    val showSnackbar: LiveData<SnackbarMessage>
+        get() = showSnackbarMLD
 
     fun init(settings: SharedPreferences) {
         val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
-        Log.i("token: ", token)
         if (token != EMPTY_STRING) {
             showHeadpieceMLD.postValue(true)
             eventsInteractor.getEventsRecommendations(token)
@@ -58,16 +66,16 @@ class StartViewModel(
                     { eventModel ->
                         showMainActivityMLD.postValue(eventModel)
                         showHeadpieceMLD.postValue(false)
-                        Log.i("Нуууу ", "сюда приходим")
                     },
                     {
                         showStartFragmentMLD.postValue(Unit)
                         showHeadpieceMLD.postValue(false)
-                        Log.i("А может быть мы здесь?", "А?")
+                        if (it is ConnectException) {
+                            showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                        }
                     }
                 ).addTo(rxCompositeDisposable)
         } else {
-            Log.i("И здесь нам ", "хорошооо")
             showStartFragmentMLD.postValue(Unit)
         }
     }
@@ -82,11 +90,16 @@ class StartViewModel(
                     updateUserInfoMLD.postValue(userInfo)
                     showProgressMLD.postValue(false)
                     updateUserInfoMLD = MutableLiveData()
-                    Log.i("StartViewModel", "Ну сюда-то я дошель!!!1!!!!!")
                 },
                 {
+                    if (it is HttpException) {
+                        val error = handleError(it)
+                        showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
+                    }
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    }
                     showProgressMLD.postValue(false)
-                    Log.i("StartViewModel", "К сожалению, я здесь")
                 }
             ).addTo(rxCompositeDisposable)
     }
@@ -103,6 +116,13 @@ class StartViewModel(
                     showProgressMLD.postValue(false)
                 },
                 {
+                    if (it is HttpException) {
+                        val error = handleError(it)
+                        showSnackbarMLD.postValue(SnackbarMessage.USER_ALREADY_EXISTS)
+                    }
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    }
                     showProgressMLD.postValue(false)
                 }
             ).addTo(rxCompositeDisposable)
@@ -116,14 +136,27 @@ class StartViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { response ->
-                    Log.i("RESPONSE", response.toString())
                     loginResponseMLD.postValue(response)
                     saveUserInfoMLD.postValue(response)
                 },
                 {
-                    //show error dialog
+                    if (it is HttpException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.INCORRECT_PASSWORD)
+                    }
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    }
+                    showProgressMLD.postValue(false)
                 }
             ).addTo(rxCompositeDisposable)
     }
 
+    private fun handleError(e: HttpException): ServerExceptionEntity {
+        val errorBody = e.response().errorBody()
+        var error = ServerExceptionEntity()
+        if (gsonConverter != null && errorBody != null) {
+            error = gsonConverter.convert(errorBody) as ServerExceptionEntity
+        }
+        return error
+    }
 }
