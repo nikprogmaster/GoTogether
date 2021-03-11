@@ -28,22 +28,24 @@ class InterestsAdapter(
 
     class InterestHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private var title: TextView = itemView.findViewById(R.id.title)
-        private var level: SeekBar = itemView.findViewById(R.id.interest_level)
+        private val title: TextView = itemView.findViewById(R.id.title)
+        private val seekbar: SeekBar = itemView.findViewById(R.id.interest_level)
+        private val level: TextView = itemView.findViewById(R.id.seekbar_value)
 
         fun bindViews(interest: Interest) {
             title.text = interest.name
-            level.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            level.text = interest.level.toString()
+            seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?,
                     progress: Int,
                     fromUser: Boolean
                 ) {
                     interest.level = progress
+                    level.text = seekBar?.progress.toString()
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 
             })

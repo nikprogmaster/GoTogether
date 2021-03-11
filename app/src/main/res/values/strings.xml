@@ -30,6 +30,14 @@
     <string name="need_to_fill_form">Необходимо будет ввести \n учетные данные</string>
     <string name="cancel">Отмена</string>
     <string name="exit">Выйти</string>
+    <string name="zero">0</string>
+    <string name="hundred">100</string>
+    <string name="show_all">Показать полностью</string>
+    <string name="price">Цена</string>
+    <string name="age">Возраст</string>
+    <string name="eighteen_and_older">18+</string>
+    <string name="when_to_go">Когда можно сходить?</string>
+    <string name="who_will_go">Кто пойдет?</string>
 
     <string-array name="interests">
         <item>Бизнес и образование</item>
@@ -56,5 +64,10 @@
         <item>igri_kvesti</item>
         <item>romantika</item>
         <item>activniy_otdih</item>
+    </string-array>
+
+    <string-array name="sex">
+        <item>Мужской</item>
+        <item>Женский</item>
     </string-array>
 </resources>

@@ -8,7 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
+import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.presentation.EventModel
+import com.kandyba.gotogether.models.presentation.getMonth
+import com.squareup.picasso.Picasso
 
 
 class EventsAdapter: RecyclerView.Adapter<EventsAdapter.EventHolder>() {
@@ -48,18 +51,24 @@ class EventsAdapter: RecyclerView.Adapter<EventsAdapter.EventHolder>() {
             title.text = event.title
             event.dates.let { if (it.isNotEmpty()) {
                 dayOfMonth.text = it[0].getStartCalendarDay()
-                month.text = it[0].getStartCalendarMonth()
-            }}
+                month.text = getMonth(it[0].getStartCalendarMonth())
+            }
+            }
             if (event.isFree) {
                 price.text = itemView.resources.getText(R.string.free)
             } else {
                 price.text = event.price
             }
             categoriesAdapter.setCategories(event.categories)
-            val layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.VERTICAL, false)
+            val layoutManager =
+                LinearLayoutManager(itemView.context, LinearLayoutManager.VERTICAL, false)
             categories.layoutManager = layoutManager
             categories.adapter = categoriesAdapter
-            //TODO: set picture imageRes
+            Picasso.get()
+                .load(event.photoLinks.let { if (it.isNotEmpty()) it[0] else EMPTY_STRING })
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.error_placeholder)
+                .into(picture)
         }
     }
 }
