@@ -18,7 +18,7 @@ data class Date(
     val endUnix: String
 ): Serializable {
 
-    fun getStartCalendarDate(): Calendar {
+    private fun getStartCalendarDate(): Calendar {
         val date = getAnchorDate()
         date.timeInMillis = date.timeInMillis + startUnix.toLong() * 1000
         return date
@@ -28,21 +28,9 @@ data class Date(
         return getStartCalendarDate().get(Calendar.DAY_OF_MONTH).toString()
     }
 
-    fun getStartCalendarMonth(): String {
-        return getStartCalendarDate().get(Calendar.MONTH).toString()
+    fun getStartCalendarMonth(): Int {
+        return getStartCalendarDate().get(Calendar.MONTH)
     }
-
-    private fun getAnchorDate(): Calendar {
-        calendarInstance.set(1970, 1, 0, 0, 0, 0)
-        calendarInstance.set(Calendar.MILLISECOND, 0)
-        calendarInstance.add(Calendar.MILLISECOND, TimeZone.getDefault().rawOffset)
-        return calendarInstance
-    }
-
-    companion object {
-        private val calendarInstance = Calendar.getInstance(TimeZone.getDefault())
-    }
-
 }
 
 class Events(val events: List<EventModel>): Serializable
