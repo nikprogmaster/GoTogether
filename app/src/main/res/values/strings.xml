@@ -38,6 +38,9 @@
     <string name="eighteen_and_older">18+</string>
     <string name="when_to_go">Когда можно сходить?</string>
     <string name="who_will_go">Кто пойдет?</string>
+    <string name="find_error">Нашли ошибку? \n <u>Сообщите нам</u></string>
+    <string name="complain">Пожаловаться</string>
+    <string name="where">Где проводится?</string>
 
     <string-array name="interests">
         <item>Бизнес и образование</item>

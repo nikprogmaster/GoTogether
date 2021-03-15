@@ -31,7 +31,7 @@ class StartViewModel(
     private val saveUserInfoMLD = MutableLiveData<AuthResponse>()
     private val showStartFragmentMLD = MutableLiveData<Unit>()
     private val showHeadpieceMLD = MutableLiveData<Boolean>()
-    private val showMainActivityMLD = MutableLiveData<Map<String, EventModel>>()
+    private val showMainActivityMLD = MutableLiveData<List<EventModel>>()
     private val signupResponseMLD = MutableLiveData<AuthResponse>()
     private var updateUserInfoMLD = MutableLiveData<UserInfoModel>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
@@ -46,7 +46,7 @@ class StartViewModel(
         get() = showStartFragmentMLD
     val showHeadpiece: LiveData<Boolean>
         get() = showHeadpieceMLD
-    val showMainActivity: LiveData<Map<String, EventModel>>
+    val showMainActivity: LiveData<List<EventModel>>
         get() = showMainActivityMLD
     val signupResponse: LiveData<AuthResponse>
         get() = signupResponseMLD

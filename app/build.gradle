@@ -24,6 +24,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "http://maven.google.com/"
+    }
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -67,4 +73,9 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    //CircleImageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //MapKit (Yandex maps)
+    implementation 'com.yandex.android:maps.mobile:4.0.0-lite'
 }

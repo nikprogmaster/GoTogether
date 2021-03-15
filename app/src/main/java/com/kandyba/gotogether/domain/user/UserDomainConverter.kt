@@ -30,6 +30,7 @@ class UserDomainConverter : BaseConverter<UserInfoDomainModel, UserInfoModel>() 
             from.isLoyal,
             from.events?.mapValues { pair ->
                 EventModel(
+                    pair.key,
                     pair.value.title,
                     pair.value.photoLinks,
                     pair.value.likedByUser,

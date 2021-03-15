@@ -1,4 +1,4 @@
-package com.kandyba.gotogether.data.converter.auth
+package com.kandyba.gotogether.data.converter.users
 
 
 import com.kandyba.gotogether.models.data.user.UserInfoDataModel

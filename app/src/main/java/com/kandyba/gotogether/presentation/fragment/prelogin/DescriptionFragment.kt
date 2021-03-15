@@ -2,7 +2,6 @@ package com.kandyba.gotogether.presentation.fragment.prelogin
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,9 +71,6 @@ class DescriptionFragment : Fragment() {
         viewModel.updateUserInfo.observe(requireActivity(), Observer {
             if (it != null) {
                 (activity as FragmentManager).openFragment(InterestsFragment.newInstance())
-                Log.d("DescriptionFragment", "is not null")
-            } else {
-                Log.d("DescriptionFragment", "is null")
             }
         })
     }
@@ -90,7 +86,6 @@ class DescriptionFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.updateUserInfo.removeObservers(requireActivity())
-        Log.d("DescriptionFragment", "onDestroyView() called")
     }
 
     companion object {

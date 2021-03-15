@@ -37,16 +37,4 @@ data class EventInfoDataModel(
     @SerializedName("categories")
     @Expose
     val categories: List<String>
-) {
-
-    inner class Date (
-        @SerializedName("start_unix")
-        @Expose
-        val startUnix: String,
-
-        @SerializedName("end_unix")
-        @Expose
-        val endUnix: String
-    )
-}
-
+)

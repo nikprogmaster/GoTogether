@@ -50,8 +50,8 @@ class StartActivity : AppCompatActivity(), FragmentManager {
             openFragment(StartFragment.newInstance())
         })
         viewModel.showHeadpiece.observe(this, Observer { show -> showHeadPiece(show) })
-        viewModel.showMainActivity.observe(this, Observer { eventsMap ->
-            openMainActivity(Events(eventsMap.values.toList()))
+        viewModel.showMainActivity.observe(this, Observer { eventsList ->
+            openMainActivity(Events(eventsList))
         })
         viewModel.showProgress.observe(this, Observer { show -> showProgress(show) })
         viewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
