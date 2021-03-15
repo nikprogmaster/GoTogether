@@ -3,18 +3,22 @@ package com.kandyba.gotogether.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kandyba.gotogether.domain.auth.AuthInteractor
+import com.kandyba.gotogether.domain.events.EventsInteractor
+import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.presentation.SnackbarMessage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.net.ConnectException
 
 class ForYouViewModel(
-    private val authInteractor: AuthInteractor
+    private val authInteractor: AuthInteractor,
+    private val eventsInteractor: EventsInteractor
 ) : BaseViewModel() {
 
     private val showProgressMLD = MutableLiveData<Boolean>()
     private val logoutCompletedMLD = MutableLiveData<Unit>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
+    private val eventInfoMLD = MutableLiveData<EventDetailsDomainModel>()
 
     val showProgress: LiveData<Boolean>
         get() = showProgressMLD
@@ -22,6 +26,8 @@ class ForYouViewModel(
         get() = logoutCompletedMLD
     val showSnackbar: LiveData<SnackbarMessage>
         get() = showSnackbarMLD
+    val eventInfo: LiveData<EventDetailsDomainModel>
+        get() = eventInfoMLD
 
     fun logout(token: String) {
         showProgressMLD.postValue(true)
@@ -31,6 +37,25 @@ class ForYouViewModel(
             .subscribe(
                 {
                     logoutCompletedMLD.postValue(Unit)
+                    showProgressMLD.postValue(false)
+                },
+                {
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    }
+                    showProgressMLD.postValue(false)
+                }
+            ).addTo(rxCompositeDisposable)
+    }
+
+    fun loadEventInfo(token: String, eventId: String) {
+        showProgressMLD.postValue(true)
+        eventsInteractor.getEventInfo(token, eventId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    eventInfoMLD.postValue(it)
                     showProgressMLD.postValue(false)
                 },
                 {

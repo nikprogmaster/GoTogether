@@ -1,4 +1,4 @@
-package com.kandyba.gotogether.data.converter.auth
+package com.kandyba.gotogether.data.converter.events
 
 import com.kandyba.gotogether.models.data.events.EventInfoDataModel
 import com.kandyba.gotogether.models.domain.events.Date

@@ -11,9 +11,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.kandyba.gotogether.App
@@ -22,26 +22,27 @@ import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.EVENTS_KEY
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.models.presentation.Events
-import com.kandyba.gotogether.presentation.adapter.EventsAdapter
+import com.kandyba.gotogether.presentation.fragment.FragmentManager
+import com.kandyba.gotogether.presentation.fragment.main.ForYouFragment
 import com.kandyba.gotogether.presentation.viewmodel.ForYouViewModel
 import com.kandyba.gotogether.presentation.viewmodel.factory.ForYouViewModelFactory
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FragmentManager {
 
-    private lateinit var eventsRecyclerView: RecyclerView
-    private lateinit var eventsAdapter: EventsAdapter
     private lateinit var toolbar: Toolbar
     private lateinit var logoutButton: ImageView
     private lateinit var cancelAlertButton: Button
     private lateinit var confirmAlertButton: Button
     private lateinit var alertDialog: AlertDialog
     private lateinit var progress: LinearLayout
-    private lateinit var root: ConstraintLayout
+    private lateinit var mainLayout: ConstraintLayout
 
     private lateinit var factory: ForYouViewModelFactory
     private lateinit var viewModel: ForYouViewModel
     private lateinit var settings: SharedPreferences
+
+    private lateinit var events: Events
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         resolveDependencies()
         initListeners()
         initObservers()
+        openFragment(ForYouFragment.newInstance(events))
     }
 
     private fun resolveDependencies() {
@@ -64,8 +66,8 @@ class MainActivity : AppCompatActivity() {
 
         //init alert
         logoutButton = findViewById(R.id.exit)
-        root = findViewById(R.id.main_root)
-        val alert = layoutInflater.inflate(R.layout.exit_dialog_layout, root, false)
+        mainLayout = findViewById(R.id.main_layout)
+        val alert = layoutInflater.inflate(R.layout.exit_dialog_layout, mainLayout, false)
         cancelAlertButton = alert.findViewById(R.id.cancel_btn)
         confirmAlertButton = alert.findViewById(R.id.logout_btn)
         val builder = MaterialAlertDialogBuilder(
@@ -75,11 +77,7 @@ class MainActivity : AppCompatActivity() {
         alertDialog = builder.create()
 
         //init Events
-        eventsRecyclerView = findViewById(R.id.events)
-        val events: Events = intent.extras?.getSerializable(EVENTS_KEY) as Events
-        eventsAdapter = EventsAdapter()
-        eventsAdapter.setEvents(events.events)
-        eventsRecyclerView.adapter = eventsAdapter
+        events = intent.extras?.getSerializable(EVENTS_KEY) as Events
     }
 
     private fun initListeners() {
@@ -115,8 +113,23 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
+    override fun openFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_root, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun closeFragment() {
+        TODO("Not yet implemented")
+    }
+
+    override fun openMainActivity(events: Events) {
+        TODO("Not yet implemented")
+    }
+
     private fun showSnackbar(message: String) {
-        Snackbar.make(root, message, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(mainLayout, message, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun showProgress(show: Boolean) {

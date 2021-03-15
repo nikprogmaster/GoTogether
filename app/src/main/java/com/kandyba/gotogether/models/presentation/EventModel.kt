@@ -4,6 +4,7 @@ import java.io.Serializable
 import java.util.*
 
 data class EventModel(
+    val id: String,
     val title: String,
     val photoLinks: List<String>,
     val likedByUser: Boolean,

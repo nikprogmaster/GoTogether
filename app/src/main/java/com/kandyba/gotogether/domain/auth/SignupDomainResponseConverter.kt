@@ -10,18 +10,21 @@ class SignupDomainResponseConverter: BaseConverter<SignupDomainResponse, AuthRes
 
     override fun convert(from: SignupDomainResponse): AuthResponse {
         return AuthResponse(
-        from.id,
-        false,
-        from.token,
-        from.events.mapValues { pair -> EventModel(
-            pair.value.title,
-            pair.value.photoLinks,
-            pair.value.likedByUser,
-            pair.value.dates.map { date -> Date(date.startUnix, date.endUnix) },
-            pair.value.price,
-            pair.value.isFree,
-            pair.value.categories
-        ) }
+            from.id,
+            false,
+            from.token,
+            from.events.mapValues { pair ->
+                EventModel(
+                    pair.key,
+                    pair.value.title,
+                    pair.value.photoLinks,
+                    pair.value.likedByUser,
+                    pair.value.dates.map { date -> Date(date.startUnix, date.endUnix) },
+                    pair.value.price,
+                    pair.value.isFree,
+                    pair.value.categories
+                )
+            }
         )
     }
 }

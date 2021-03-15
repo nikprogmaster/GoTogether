@@ -1,7 +1,7 @@
 package com.kandyba.gotogether.data.repository
 
 import com.kandyba.gotogether.data.api.UserApiMapper
-import com.kandyba.gotogether.data.converter.auth.UserDataConverter
+import com.kandyba.gotogether.data.converter.users.UserDataConverter
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
 import com.kandyba.gotogether.models.general.UserRequestBody
 import io.reactivex.Single

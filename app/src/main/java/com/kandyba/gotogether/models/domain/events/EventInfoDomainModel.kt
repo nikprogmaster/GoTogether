@@ -11,9 +11,6 @@ data class EventInfoDomainModel(
     val categories: List<String>
 )
 
-data class Date(
-    val startUnix: String,
-    val endUnix: String
-)
+
 
 
