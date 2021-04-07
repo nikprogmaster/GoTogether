@@ -56,25 +56,31 @@ class RegistrationFragment : Fragment() {
         exitButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
         continueButton.setOnClickListener {
             if (validateFields()) {
-                viewModel.signup(createRequest(
-                    email.text.toString(), password.text.toString(), confirmPassword.text.toString()
-                ))
+                viewModel.signup(
+                    createRequest(
+                        email.text.toString(), password.text.toString()
+                    )
+                )
             }
         }
     }
 
     private fun initObservers() {
         viewModel.signupResponse.observe(this, Observer {
-            (activity as FragmentManager).openFragment(AboutMeFragment.newInstance())
+            viewModel.login(email.text.toString(), password.text.toString(), true)
+        })
+        viewModel.loginResponse.observe(this, Observer {
+            if (!viewModel.requestEvents) {
+                (activity as FragmentManager).openFragment(AboutMeFragment.newInstance())
+            }
         })
     }
 
     private fun createRequest(
         email: String,
-        password: String,
-        confirmPassword: String
+        password: String
     ): SignupRequestBody {
-        return SignupRequestBody(email, password, confirmPassword)
+        return SignupRequestBody(email, password)
     }
 
     private fun validateFields(): Boolean {

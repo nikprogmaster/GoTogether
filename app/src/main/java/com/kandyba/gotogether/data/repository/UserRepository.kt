@@ -1,7 +1,9 @@
 package com.kandyba.gotogether.data.repository
 
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
-import com.kandyba.gotogether.models.general.UserRequestBody
+import com.kandyba.gotogether.models.general.UserInfoRequestBody
+import com.kandyba.gotogether.models.general.UserInterestsRequestBody
+import com.kandyba.gotogether.models.general.UserMainRequestBody
 import io.reactivex.Single
 
 /**
@@ -10,11 +12,17 @@ import io.reactivex.Single
  */
 interface UserRepository {
 
-    fun updateUserInfo(
+    fun getUserInfo(token: String, uid: String): Single<UserInfoDomainModel>
+
+    fun updateMainUserInfo(
         token: String,
-        uid: String,
-        requestBody: UserRequestBody
+        bodyMain: UserMainRequestBody
     ): Single<UserInfoDomainModel>
 
-    fun getUserInfo(token: String, uid: String): Single<UserInfoDomainModel>
+    fun updateUserInfo(token: String, body: UserInfoRequestBody): Single<UserInfoDomainModel>
+
+    fun updateUserInterests(
+        token: String,
+        body: UserInterestsRequestBody
+    ): Single<UserInfoDomainModel>
 }

@@ -15,8 +15,7 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.general.USER_ID
-import com.kandyba.gotogether.models.general.UserRequestBody
+import com.kandyba.gotogether.models.general.UserInfoRequestBody
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
@@ -62,30 +61,21 @@ class DescriptionFragment : Fragment() {
         backButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
         continueButton.setOnClickListener {
             val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
-            val uid = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
-            viewModel.updateUserInfo(token, uid, createUserRequest())
+            viewModel.updateAdditionalUserInfo(token, createUserRequest())
         }
     }
 
     private fun initObservsers() {
-        viewModel.updateUserInfo.observe(requireActivity(), Observer {
+        viewModel.updateAdditionalUserInfo.observe(requireActivity(), Observer {
             if (it != null) {
                 (activity as FragmentManager).openFragment(InterestsFragment.newInstance())
             }
         })
     }
 
-    private fun createUserRequest(): UserRequestBody {
-        val body = UserRequestBody(mutableMapOf())
-        if (aboutYou.text.toString() != EMPTY_STRING) {
-            body.fields[INFO_KEY] = aboutYou.text.toString()
-        }
-        return body
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        viewModel.updateUserInfo.removeObservers(requireActivity())
+    private fun createUserRequest(): UserInfoRequestBody {
+        val info = aboutYou.text.toString()
+        return UserInfoRequestBody(info)
     }
 
     companion object {

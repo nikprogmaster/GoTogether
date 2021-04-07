@@ -1,25 +1,36 @@
 package com.kandyba.gotogether.domain.user
 
 import com.kandyba.gotogether.data.repository.UserRepository
-import com.kandyba.gotogether.models.general.UserRequestBody
+import com.kandyba.gotogether.models.general.UserInfoRequestBody
+import com.kandyba.gotogether.models.general.UserInterestsRequestBody
+import com.kandyba.gotogether.models.general.UserMainRequestBody
 import com.kandyba.gotogether.models.presentation.UserInfoModel
 import io.reactivex.Single
 
-/**
- * @author Кандыба Никита
- * @since 06.02.2021
- */
 class UserInteractorImpl(
     val repository: UserRepository,
     val converter: UserDomainConverter
 ) : UserInteractor {
 
+    override fun updateMainUserInfo(
+        token: String,
+        bodyMain: UserMainRequestBody
+    ): Single<UserInfoModel> {
+        return repository.updateMainUserInfo(token, bodyMain).map { converter.convert(it) }
+    }
+
     override fun updateUserInfo(
         token: String,
-        uid: String,
-        requestBody: UserRequestBody
+        body: UserInfoRequestBody
     ): Single<UserInfoModel> {
-        return repository.updateUserInfo(token, uid, requestBody).map { converter.convert(it) }
+        return repository.updateUserInfo(token, body).map { converter.convert(it) }
+    }
+
+    override fun updateUserInterests(
+        token: String,
+        body: UserInterestsRequestBody
+    ): Single<UserInfoModel> {
+        return repository.updateUserInterests(token, body).map { converter.convert(it) }
     }
 
     override fun getUserInfo(token: String, uid: String): Single<UserInfoModel> {

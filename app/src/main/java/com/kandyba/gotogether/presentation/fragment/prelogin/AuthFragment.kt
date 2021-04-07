@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.presentation.fragment.prelogin
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
-import com.kandyba.gotogether.models.presentation.Events
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 import com.kandyba.gotogether.presentation.viewmodel.factory.StartViewModelFactory
@@ -27,6 +27,7 @@ class AuthFragment : Fragment() {
 
     private lateinit var viewModel: StartViewModel
     private lateinit var viewModelFactory: StartViewModelFactory
+    private lateinit var settings: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +57,7 @@ class AuthFragment : Fragment() {
         exitButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
         enterButton.setOnClickListener {
             if (validateFields()) {
-                viewModel.login(email.text.toString(), password.text.toString())
+                viewModel.login(email.text.toString(), password.text.toString(), false)
             }
         }
     }
@@ -66,11 +67,14 @@ class AuthFragment : Fragment() {
             (requireActivity().application as App).appComponent.getStartViewModelFactory()
         viewModel =
             ViewModelProvider(requireActivity(), viewModelFactory)[StartViewModel::class.java]
+        settings = (requireActivity().application as App).appComponent.getSharedPreferences()
     }
 
     private fun initObservers() {
         viewModel.loginResponse.observe(requireActivity(), Observer { response ->
-            (requireActivity() as FragmentManager).openMainActivity(Events(response.events.values.toList()))
+            if (viewModel.requestEvents) {
+                viewModel.getEventsRecommendations(response.token)
+            }
         })
     }
 

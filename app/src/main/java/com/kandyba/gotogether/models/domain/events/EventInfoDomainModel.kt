@@ -5,7 +5,7 @@ data class EventInfoDomainModel(
     val title: String,
     val photoLinks: List<String>,
     val likedByUser: Boolean,
-    val dates: List<Date>,
+    val dates: List<DateDomainModel>,
     val price: String,
     val isFree: Boolean,
     val categories: List<String>

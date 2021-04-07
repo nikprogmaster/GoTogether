@@ -7,10 +7,10 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
-import com.kandyba.gotogether.models.presentation.Interest
+import com.kandyba.gotogether.models.presentation.LevelInterest
 
 class InterestsAdapter(
-    private val interestsList: MutableList<Interest>
+    private val interestsList: MutableList<LevelInterest>
 ) : RecyclerView.Adapter<InterestsAdapter.InterestHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InterestHolder {
@@ -32,16 +32,16 @@ class InterestsAdapter(
         private val seekbar: SeekBar = itemView.findViewById(R.id.interest_level)
         private val level: TextView = itemView.findViewById(R.id.seekbar_value)
 
-        fun bindViews(interest: Interest) {
-            title.text = interest.name
-            level.text = interest.level.toString()
+        fun bindViews(levelInterest: LevelInterest) {
+            title.text = levelInterest.name
+            level.text = levelInterest.level.toString()
             seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?,
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    interest.level = progress
+                    levelInterest.level = progress
                     level.text = seekBar?.progress.toString()
                 }
 

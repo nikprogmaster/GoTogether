@@ -13,7 +13,7 @@
     <string name="name">Имя</string>
     <string name="birthday">Дата рождения</string>
     <string name="sex">Пол</string>
-    <string name="user_agreement">Нажатием кнопки \"Продолжить\"\n Вы принимаете условия\n <i>пользовательского соглашения</i>></string>
+    <string name="user_agreement">Нажатием кнопки \"Продолжить\"\n Вы принимаете условия\n <a href="http://51.15.104.77:3000/api/v1/privacy">Пользовательского соглашения</a></string>
     <string name="description">Описание</string>
     <string name="little_bit_about_yourself">Немного о себе</string>
     <string name="tell_about_yourself">Расскажите нам больше о себе</string>
@@ -38,9 +38,23 @@
     <string name="eighteen_and_older">18+</string>
     <string name="when_to_go">Когда можно сходить?</string>
     <string name="who_will_go">Кто пойдет?</string>
+    <string name="who_will_go_with_you">Кто пойдет с вами?</string>
     <string name="find_error">Нашли ошибку? \n <u>Сообщите нам</u></string>
     <string name="complain">Пожаловаться</string>
     <string name="where">Где проводится?</string>
+    <string name="send">Отправить</string>
+    <string name="special_for_you">Специально для вас</string>
+    <string name="participants_appbar_text">Посмотрите, кто ещё хочет посетить данное мероприятие</string>
+    <string name="roll_up">Свернуть</string>
+    <string name="events_search">Поиск мероприятий</string>
+    <string name="search_parameters">Параметры поиса</string>
+    <string name="cost">Стоимость</string>
+    <string name="distance">Расстояние</string>
+    <string name="event_type">Вид мероприятия</string>
+    <string name="apply">Применить</string>
+    <string name="clear">Очистить</string>
+    <string name="user_profile">Страница пользователя</string>
+
 
     <string-array name="interests">
         <item>Бизнес и образование</item>
@@ -56,17 +70,17 @@
     </string-array>
 
     <string-array name="categories">
-        <item>busines_obrazovanie</item>
-        <item>teatr_kino</item>
-        <item>tanci_balli</item>
-        <item>vecherinki_shou</item>
-        <item>vistavki_tvorchestvo</item>
+        <item>businesObrazovanie</item>
+        <item>teatrKino</item>
+        <item>tanciBalli</item>
+        <item>vecherinkiShou</item>
+        <item>vistavkiTvorchestvo</item>
         <item>umor</item>
-        <item>koncerti_festivali</item>
+        <item>koncertiFestivali</item>
         <item>moda</item>
-        <item>igri_kvesti</item>
+        <item>igriKvesti</item>
         <item>romantika</item>
-        <item>activniy_otdih</item>
+        <item>activniyOtdih</item>
     </string-array>
 
     <string-array name="sex">

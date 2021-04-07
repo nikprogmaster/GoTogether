@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.kandyba.gotogether.domain.auth.AuthInteractor
 import com.kandyba.gotogether.domain.events.EventsInteractor
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
+import com.kandyba.gotogether.models.presentation.EventModel
 import com.kandyba.gotogether.models.presentation.SnackbarMessage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -18,7 +19,11 @@ class ForYouViewModel(
     private val showProgressMLD = MutableLiveData<Boolean>()
     private val logoutCompletedMLD = MutableLiveData<Unit>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
-    private val eventInfoMLD = MutableLiveData<EventDetailsDomainModel>()
+    private var eventInfoMLD = MutableLiveData<EventDetailsDomainModel>()
+    private val enableLikeButtonMLD = MutableLiveData<String>()
+    private val eventNotLikedMLD = MutableLiveData<String>()
+    private val changeToolbarInfoMLD = MutableLiveData<Unit>()
+    private val eventsRecommendationsMLD = MutableLiveData<List<EventModel>>()
 
     val showProgress: LiveData<Boolean>
         get() = showProgressMLD
@@ -28,6 +33,37 @@ class ForYouViewModel(
         get() = showSnackbarMLD
     val eventInfo: LiveData<EventDetailsDomainModel>
         get() = eventInfoMLD
+    val enableLikeButton: LiveData<String>
+        get() = enableLikeButtonMLD
+    val eventNotLiked: LiveData<String>
+        get() = eventNotLikedMLD
+    val changeToolbarInfo: LiveData<Unit>
+        get() = changeToolbarInfoMLD
+    val eventsRecommendations: LiveData<List<EventModel>>
+        get() = eventsRecommendationsMLD
+
+    fun init(token: String) {
+        getEventsRecommendation(token)
+    }
+
+    fun getEventsRecommendation(token: String) {
+        showProgressMLD.postValue(true)
+        eventsInteractor.getEventsRecommendations(token, DEFAULT_EVENTS_AMOUNT)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { eventModel ->
+                    eventsRecommendationsMLD.postValue(eventModel)
+                    showProgressMLD.postValue(false)
+                },
+                {
+                    showProgressMLD.postValue(false)
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    }
+                }
+            ).addTo(rxCompositeDisposable)
+    }
 
     fun logout(token: String) {
         showProgressMLD.postValue(true)
@@ -56,6 +92,7 @@ class ForYouViewModel(
             .subscribe(
                 {
                     eventInfoMLD.postValue(it)
+                    eventInfoMLD = MutableLiveData()
                     showProgressMLD.postValue(false)
                 },
                 {
@@ -65,5 +102,34 @@ class ForYouViewModel(
                     showProgressMLD.postValue(false)
                 }
             ).addTo(rxCompositeDisposable)
+    }
+
+    fun likeEvent(token: String, eventId: String) {
+        enableLikeButtonMLD.postValue(eventId)
+        eventsInteractor.participateInEvent(token, eventId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    enableLikeButtonMLD.postValue(eventId)
+                },
+                {
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    } else {
+                        showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
+                    }
+                    eventNotLikedMLD.postValue(eventId)
+                    enableLikeButtonMLD.postValue(eventId)
+                }
+            ).addTo(rxCompositeDisposable)
+    }
+
+    fun makeForYouEventsToolbar() {
+        changeToolbarInfoMLD.postValue(Unit)
+    }
+
+    companion object {
+        private const val DEFAULT_EVENTS_AMOUNT = 50
     }
 }

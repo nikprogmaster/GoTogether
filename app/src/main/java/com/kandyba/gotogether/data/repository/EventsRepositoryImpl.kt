@@ -4,7 +4,8 @@ import com.kandyba.gotogether.data.api.EventsApiMapper
 import com.kandyba.gotogether.data.converter.events.EventDetailsDataConverter
 import com.kandyba.gotogether.data.converter.events.EventsDataConverter
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
-import com.kandyba.gotogether.models.domain.events.EventInfoDomainModel
+import com.kandyba.gotogether.models.general.EventComplaintRequestBody
+import io.reactivex.Completable
 import io.reactivex.Single
 
 class EventsRepositoryImpl(
@@ -13,19 +14,47 @@ class EventsRepositoryImpl(
     private val eventDetailsDataConverter: EventDetailsDataConverter
 ): EventsRepository {
 
-    override fun getEventsRecommendations(token: String): Single<Map<String, EventInfoDomainModel>> {
-        val tokenResult = TOKEN_PREFIX + token
-        return eventsApiMapper.getEventsRecommendations(tokenResult)
-            .map { eventsDataConverter.convert(it.events) }
+    override fun getEventsRecommendations(
+        token: String,
+        amount: Int
+    ): Single<List<EventDetailsDomainModel>> {
+        return eventsApiMapper.getEventsRecommendations(token, 10)
+            .map { eventsDataConverter.convert(it) }
     }
 
     override fun getEventInfo(token: String, eventId: String): Single<EventDetailsDomainModel> {
-        val tokenResult = TOKEN_PREFIX + token
-        return eventsApiMapper.getEventInfo(tokenResult, eventId)
-            .map { eventDetailsDataConverter.convert(it) }
+        return eventsApiMapper.getEventInfo(token, eventId)
+            .map { eventDetailsDataConverter.convertWithId(it, eventId) }
     }
 
-    companion object {
-        private const val TOKEN_PREFIX = "Bearer "
+    override fun complainEvent(
+        token: String,
+        eventId: String,
+        body: EventComplaintRequestBody
+    ): Completable {
+        return eventsApiMapper.complainEvent(token, eventId, body)
+    }
+
+    override fun participateInEvent(
+        token: String,
+        eventId: String
+    ): Completable {
+        return eventsApiMapper.participateInEvent(token, eventId)
+    }
+
+    override fun searchEventsByInterests(
+        token: String,
+        interests: List<String>
+    ): Single<List<EventDetailsDomainModel>> {
+        return eventsApiMapper.searchEventsByInterests(token, interests)
+            .map { eventsDataConverter.convert(it) }
+    }
+
+    override fun searchEventsByTextQuery(
+        token: String,
+        text: String
+    ): Single<List<EventDetailsDomainModel>> {
+        return eventsApiMapper.searchEventsByTextQuery(token, text)
+            .map { eventsDataConverter.convert(it) }
     }
 }

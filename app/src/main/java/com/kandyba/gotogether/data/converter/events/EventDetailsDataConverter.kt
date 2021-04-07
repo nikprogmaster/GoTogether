@@ -1,15 +1,15 @@
 package com.kandyba.gotogether.data.converter.events
 
 import com.kandyba.gotogether.models.data.events.EventDetailsDataModel
-import com.kandyba.gotogether.models.domain.events.Date
+import com.kandyba.gotogether.models.domain.events.DateDomainModel
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.domain.events.Participant
-import com.kandyba.gotogether.models.general.BaseConverter
 
-class EventDetailsDataConverter : BaseConverter<EventDetailsDataModel, EventDetailsDomainModel>() {
+class EventDetailsDataConverter {
 
-    override fun convert(from: EventDetailsDataModel): EventDetailsDomainModel {
+    fun convertWithId(from: EventDetailsDataModel, eventId: String): EventDetailsDomainModel {
         return EventDetailsDomainModel(
+            eventId,
             from.likedByUser,
             from.title,
             from.shortTitle,
@@ -25,12 +25,11 @@ class EventDetailsDataConverter : BaseConverter<EventDetailsDataModel, EventDeta
             from.isFree,
             from.price,
             from.images,
-            from.createdAt,
-            from.updatedAt,
-            from.dates.map { Date(it.startUnix, it.endUnix) },
+            from.dates?.map { DateDomainModel(it.startUnix, it.endUnix) } ?: emptyList(),
             from.categories,
-            from.participants.map { Participant(it.id, it.firstName, it.avatar) },
+            from.participants?.map { Participant(it.id, it.firstName, it.avatar) } ?: emptyList(),
             from.amountOfParticipants
         )
     }
+
 }

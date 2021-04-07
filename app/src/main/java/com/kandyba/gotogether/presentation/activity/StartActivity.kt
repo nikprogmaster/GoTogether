@@ -8,16 +8,17 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
+import com.kandyba.gotogether.models.domain.auth.LoginDomainResponse
 import com.kandyba.gotogether.models.general.EVENTS_KEY
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.models.general.USER_ID
-import com.kandyba.gotogether.models.presentation.AuthResponse
 import com.kandyba.gotogether.models.presentation.Events
 import com.kandyba.gotogether.presentation.animation.StartAppAnimation
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
@@ -45,9 +46,13 @@ class StartActivity : AppCompatActivity(), FragmentManager {
     }
 
     private fun initObservers() {
-        viewModel.saveUserInfo.observe(this, Observer { response -> saveUserInfo(response) })
         viewModel.showStartFragment.observe(this, Observer {
-            openFragment(StartFragment.newInstance())
+            //openMainActivity(Events(listOf(EventModel("d83b5792-4273-40d2-babd-6e2a05865894", "Событие", emptyList(), true, emptyList(), "200", false, emptyList(), true))))
+            openFragment(
+                StartFragment.newInstance()
+                //ForYouFragment.newInstance(Events(listOf(EventModel("df34rf34f34f", "Событие", emptyList(), true, emptyList(), "200", false, emptyList(), true))))
+                //EventFragment.newInstance(EventDetailsDomainModel(true, "", "", "", "", "", "", "", "", "", "", "", true, "", emptyList(), "", "", emptyList(), emptyList(), emptyList(), 0))
+            )
         })
         viewModel.showHeadpiece.observe(this, Observer { show -> showHeadPiece(show) })
         viewModel.showMainActivity.observe(this, Observer { eventsList ->
@@ -55,6 +60,7 @@ class StartActivity : AppCompatActivity(), FragmentManager {
         })
         viewModel.showProgress.observe(this, Observer { show -> showProgress(show) })
         viewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
+        viewModel.loginResponse.observe(this, Observer { response -> saveUserInfo(response) })
     }
 
     private fun resolveDependencies() {
@@ -93,13 +99,17 @@ class StartActivity : AppCompatActivity(), FragmentManager {
         finish()
     }
 
+    override fun showDialogFragment(dialog: DialogFragment) {
+        TODO("Not yet implemented")
+    }
+
     private fun showProgress(show: Boolean) {
         progress.visibility = if (show) View.VISIBLE else View.GONE
     }
 
-    private fun saveUserInfo(authResponse: AuthResponse) {
+    private fun saveUserInfo(authResponse: LoginDomainResponse) {
         val editor = prefs.edit()
-        editor.putString(USER_ID, authResponse.user)
+        editor.putString(USER_ID, authResponse.userId)
         editor.putString(TOKEN, authResponse.token)
         editor.apply()
     }

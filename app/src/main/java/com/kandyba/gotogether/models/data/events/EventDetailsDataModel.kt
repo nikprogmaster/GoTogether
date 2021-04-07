@@ -4,89 +4,85 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class EventDetailsDataModel(
-    @SerializedName("liked_by_user")
+    @SerializedName("likedByUser")
     @Expose
     val likedByUser: Boolean,
+
+    @SerializedName("id")
+    @Expose
+    val id: String,
 
     @SerializedName("title")
     @Expose
     val title: String,
 
-    @SerializedName("short_title")
+    @SerializedName("shortTitle")
     @Expose
-    val shortTitle: String,
+    val shortTitle: String? = null,
 
     @SerializedName("slug")
     @Expose
-    val slug: String,
+    val slug: String? = null,
 
     @SerializedName("description")
     @Expose
-    val description: String,
+    val description: String? = null,
 
-    @SerializedName("body_text")
+    @SerializedName("bodyText")
     @Expose
-    val bodyText: String,
+    val bodyText: String? = null,
 
-    @SerializedName("kudago_url")
+    @SerializedName("kudagoUrl")
     @Expose
-    val kudagoUrl: Any,
+    val kudagoUrl: String? = null,
 
-    @SerializedName("place_id")
+    @SerializedName("placeId")
     @Expose
-    val placeId: Any,
+    val placeId: String? = null,
 
     @SerializedName("latitude")
     @Expose
-    val latitude: String,
+    val latitude: String? = null,
 
     @SerializedName("longitude")
     @Expose
-    val longitude: String,
+    val longitude: String? = null,
 
     @SerializedName("language")
     @Expose
-    val language: String,
+    val language: String? = null,
 
-    @SerializedName("age_restriction")
+    @SerializedName("ageRestriction")
     @Expose
-    val ageRestriction: String,
+    val ageRestriction: String? = null,
 
-    @SerializedName("is_free")
+    @SerializedName("isFree")
     @Expose
-    val isFree: Boolean,
+    val isFree: Boolean? = null,
 
     @SerializedName("price")
     @Expose
-    val price: String,
+    val price: String? = null,
 
     @SerializedName("images")
     @Expose
     val images: List<String>,
 
-    @SerializedName("created_at")
-    @Expose
-    val createdAt: String,
-
-    @SerializedName("updated_at")
-    @Expose
-    val updatedAt: String,
-
     @SerializedName("dates")
     @Expose
-    val dates: List<Date>,
+    val dates: List<DateDataModel>? = null,
 
     @SerializedName("categories")
     @Expose
-    val categories: List<String>,
+    val categories: List<String>? = null,
 
     @SerializedName("participants")
     @Expose
-    val participants: List<Participant>,
+    val participants: List<Participant>? = null,
 
-    @SerializedName("amount_of_participants")
+    @SerializedName("amountOfParticipants")
     @Expose
-    val amountOfParticipants: Int
+    val amountOfParticipants: Int? = null
 )
 
 data class Participant(
@@ -94,11 +90,11 @@ data class Participant(
     @Expose
     val id: String,
 
-    @SerializedName("first_name")
+    @SerializedName("firstName")
     @Expose
-    val firstName: String,
+    val firstName: String? = null,
 
     @SerializedName("avatar")
     @Expose
-    val avatar: String
+    var avatar: String? = null
 )
