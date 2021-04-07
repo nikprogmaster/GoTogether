@@ -10,8 +10,48 @@ fun getAnchorDate(): Calendar {
     return calendarInstance
 }
 
-fun getMonth(month: Int): String =
-    when (month) {
+fun getCalendarDate(unixTime: Long): Calendar {
+    val date = getAnchorDate()
+    date.timeInMillis = date.timeInMillis + unixTime * 1000
+    return date
+}
+
+fun getFormattedDate(unixTime: Long): String {
+    val date = getCalendarDate(unixTime)
+    val result =
+        "${date.get(Calendar.DAY_OF_MONTH)}.${date.get(Calendar.MONTH)}.${date.get(Calendar.YEAR)}"
+    return result
+}
+
+fun getFormattedTime(unixTime: Long): String {
+    val date = getCalendarDate(unixTime)
+    val result = "${date.get(Calendar.HOUR_OF_DAY)}:${getMinutes(date)}"
+    return result
+}
+
+private fun getMinutes(date: Calendar): String {
+    val minute = date.get(Calendar.MINUTE)
+    return if (minute > 9) {
+        "$minute"
+    } else {
+        "0$minute"
+    }
+}
+
+fun getCalendarDay(unixTime: Long): String {
+    return getCalendarDate(unixTime).get(Calendar.DAY_OF_MONTH).toString()
+}
+
+fun getDayOfWeek(unixTime: Long): String? {
+    return getCalendarDate(unixTime).getDisplayName(
+        Calendar.DAY_OF_WEEK,
+        Calendar.SHORT,
+        Locale.getDefault()
+    )?.toUpperCase(Locale.getDefault())
+}
+
+fun getMonth(unixTime: Long): String =
+    when (getCalendarDate(unixTime).get(Calendar.MONTH)) {
         0 -> "Января"
         1 -> "Февраля"
         2 -> "Марта"

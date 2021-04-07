@@ -15,10 +15,8 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.general.USER_ID
-import com.kandyba.gotogether.models.general.UserRequestBody
-import com.kandyba.gotogether.models.presentation.Events
-import com.kandyba.gotogether.models.presentation.Interest
+import com.kandyba.gotogether.models.general.UserInterestsRequestBody
+import com.kandyba.gotogether.models.presentation.LevelInterest
 import com.kandyba.gotogether.models.presentation.getListOfCategories
 import com.kandyba.gotogether.presentation.adapter.InterestsAdapter
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
@@ -34,7 +32,7 @@ class InterestsFragment : Fragment() {
     private lateinit var viewModel: StartViewModel
     private lateinit var settings: SharedPreferences
 
-    private lateinit var interests: MutableList<Interest>
+    private lateinit var levelInterests: MutableList<LevelInterest>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,11 +54,9 @@ class InterestsFragment : Fragment() {
     }
 
     private fun initListeners() {
-        viewModel.updateUserInfo.observe(requireActivity(), Observer {
-            (requireActivity() as FragmentManager).openMainActivity(
-                Events(
-                    it.events?.values?.toList() ?: listOf()
-                )
+        viewModel.updateUserInterests.observe(requireActivity(), Observer {
+            viewModel.getEventsRecommendations(
+                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
             )
         })
     }
@@ -69,17 +65,16 @@ class InterestsFragment : Fragment() {
         backButton.setOnClickListener { (requireActivity() as FragmentManager).closeFragment() }
         continueButton.setOnClickListener {
             val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
-            val uid = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
-            viewModel.updateUserInfo(token, uid, createUserRequest())
+            viewModel.updateUserInterests(token, createUserRequest())
         }
     }
 
-    private fun createUserRequest(): UserRequestBody {
-        val body = UserRequestBody(mutableMapOf())
-        for (i in interests) {
-            body.fields[i.code] = i.level.toString()
+    private fun createUserRequest(): UserInterestsRequestBody {
+        val map = mutableMapOf<String, Int>()
+        for (i in levelInterests) {
+            map[i.code] = i.level
         }
-        return body
+        return UserInterestsRequestBody(map)
     }
 
     private fun resolveDependencies() {
@@ -93,13 +88,13 @@ class InterestsFragment : Fragment() {
         interestList.adapter = interestAdapter
     }
 
-    private fun fillInterestsList(): MutableList<Interest> {
+    private fun fillInterestsList(): MutableList<LevelInterest> {
         val categoriesList = getListOfCategories()
-        interests = mutableListOf()
+        levelInterests = mutableListOf()
         for (category in categoriesList) {
-            interests.add(Interest(category.categoryName, category.serverName))
+            levelInterests.add(LevelInterest(category.categoryName, category.serverName))
         }
-        return interests
+        return levelInterests
     }
 
     companion object {

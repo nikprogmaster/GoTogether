@@ -2,7 +2,7 @@ package com.kandyba.gotogether.models.domain.events
 
 import java.io.Serializable
 
-data class Date(
+data class DateDomainModel(
     val startUnix: String,
     val endUnix: String
 ) : Serializable

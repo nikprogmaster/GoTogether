@@ -1,105 +1,36 @@
 package com.kandyba.gotogether.models.domain.events
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 class EventDetailsDomainModel(
-    @SerializedName("liked_by_user")
-    @Expose
+    val id: String,
     val likedByUser: Boolean,
-
-    @SerializedName("title")
-    @Expose
     val title: String,
-
-    @SerializedName("short_title")
-    @Expose
-    val shortTitle: String,
-
-    @SerializedName("slug")
-    @Expose
-    val slug: String,
-
-    @SerializedName("description")
-    @Expose
-    val description: String,
-
-    @SerializedName("body_text")
-    @Expose
-    val bodyText: String,
-
-    @SerializedName("kudago_url")
-    @Expose
-    val kudagoUrl: Any,
-
-    @SerializedName("place_id")
-    @Expose
-    val placeId: Any,
-
-    @SerializedName("latitude")
-    @Expose
-    val latitude: String,
-
-    @SerializedName("longitude")
-    @Expose
-    val longitude: String,
-
-    @SerializedName("language")
-    @Expose
-    val language: String,
-
-    @SerializedName("age_restriction")
-    @Expose
-    val ageRestriction: String,
-
-    @SerializedName("is_free")
-    @Expose
-    val isFree: Boolean,
-
-    @SerializedName("price")
-    @Expose
-    val price: String,
-
-    @SerializedName("images")
-    @Expose
+    val shortTitle: String?,
+    val slug: String?,
+    val description: String?,
+    val bodyText: String?,
+    val kudagoUrl: String?,
+    val placeId: String?,
+    val latitude: String?,
+    val longitude: String?,
+    val language: String?,
+    val ageRestriction: String?,
+    val isFree: Boolean?,
+    val price: String?,
     val images: List<String>,
-
-    @SerializedName("created_at")
-    @Expose
-    val createdAt: String,
-
-    @SerializedName("updated_at")
-    @Expose
-    val updatedAt: String,
-
-    @SerializedName("dates")
-    @Expose
-    val dates: List<Date>,
-
-    @SerializedName("categories")
-    @Expose
-    val categories: List<String>,
-
-    @SerializedName("participants")
-    @Expose
-    val participants: List<Participant>,
-
-    @SerializedName("amount_of_participants")
-    @Expose
-    val amountOfParticipants: Int
+    val dates: List<DateDomainModel>?,
+    val categories: List<String>?,
+    val participants: List<Participant>?,
+    val amountOfParticipants: Int?
 ) : Serializable
 
 class Participant(
-    @SerializedName("id")
-    @Expose
     val id: String,
+    val firstName: String?,
+    var avatar: String? = null
+) : Serializable
 
-    @SerializedName("first_name")
-    @Expose
-    val firstName: String,
-
-    @SerializedName("avatar")
-    @Expose
-    val avatar: String
+class ParticipantsList(
+    val participants: List<Participant>
 ) : Serializable

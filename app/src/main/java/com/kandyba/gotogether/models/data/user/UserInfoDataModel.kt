@@ -2,27 +2,18 @@ package com.kandyba.gotogether.models.data.user
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.kandyba.gotogether.models.data.events.EventInfoDataModel
 
 
 data class UserInfoDataModel(
-    @SerializedName("tokens")
-    @Expose
-    val tokens: List<String>,
-
     @SerializedName("id")
     @Expose
     val id: String,
-
-    @SerializedName("password_digest")
-    @Expose
-    val passwordDigest: String,
 
     @SerializedName("email")
     @Expose
     val email: String,
 
-    @SerializedName("first_name")
+    @SerializedName("firstName")
     @Expose
     val firstName: String? = null,
 
@@ -30,7 +21,7 @@ data class UserInfoDataModel(
     @Expose
     val phone: String? = null,
 
-    @SerializedName("birth_date")
+    @SerializedName("birthDate")
     @Expose
     val birthDate: String? = null,
 
@@ -46,25 +37,19 @@ data class UserInfoDataModel(
     @Expose
     val latitude: String? = null,
 
-    @SerializedName("created_at")
-    @Expose
-    val createdAt: String,
-
-    @SerializedName("updated_at")
-    @Expose
-    val updatedAt: String,
-
     @SerializedName("info")
     @Expose
     val info: String? = null,
 
-    @SerializedName("is_loyal")
+    @SerializedName("isLoyal")
     @Expose
     val isLoyal: Boolean,
 
-    @SerializedName("events")
+    @SerializedName("avatar")
     @Expose
-    val events: Map<String, EventInfoDataModel>? = null
-) {
+    val avatar: String? = null,
 
-}
+    @SerializedName("interests")
+    @Expose
+    val interests: Map<String, Int>
+)

@@ -6,5 +6,6 @@ enum class SnackbarMessage(
     NO_INTERNET_CONNECTION("Отсутствует интернет соединение"),
     USER_ALREADY_EXISTS("Пользователь с такими данными уже существует"),
     INCORRECT_PASSWORD("Неверный логин или пароль"),
-    COMMON_MESSAGE("Ошибка загрузки данных")
+    COMMON_MESSAGE("Ошибка загрузки данных"),
+    COMPLAIN_SENDED("Жалоба отправлена")
 }

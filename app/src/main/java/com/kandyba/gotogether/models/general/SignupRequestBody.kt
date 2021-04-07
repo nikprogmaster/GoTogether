@@ -12,7 +12,19 @@ data class SignupRequestBody(
     @Expose
     val password: String,
 
-    @SerializedName("password_confirmation")
+    @SerializedName("firstName")
     @Expose
-    val passwordConfirmation: String
+    val firstName: String = "",
+
+    @SerializedName("sex")
+    @Expose
+    val sex: Int = 0,
+
+    @SerializedName("birthdate")
+    @Expose
+    val birthdate: Int = 0,
+
+    @SerializedName("info")
+    @Expose
+    val info: String = ""
 )

@@ -5,17 +5,17 @@ enum class Category(
     val serverName: String
 ) {
 
-    BUSINES_OBRAZOVANIE("Бизнес и образование", "busines_obrazovanie"),
-    TANCI("Танцы", "tanci_balli"),
-    TEATR_KINO("Театр и кино", "teatr_kino"),
-    VISTAVKI_TVORCHESTVO("Выставки и искусство", "vistavki_tvorchestvo"),
-    VECHERINKI_SHOY("Вечеринки и шоу", "vecherinki_shou"),
+    BUSINES_OBRAZOVANIE("Бизнес и образование", "businesObrazovanie"),
+    TANCI("Танцы", "tanciBalli"),
+    TEATR_KINO("Театр и кино", "teatrKino"),
+    VISTAVKI_TVORCHESTVO("Выставки и искусство", "vistavkiTvorchestvo"),
+    VECHERINKI_SHOY("Вечеринки и шоу", "vecherinkiShou"),
     HUMOR("Юмор", "umor"),
-    KONCERTI_FESTIVALI("Концерты и фестивали", "koncerti_festivali"),
+    KONCERTI_FESTIVALI("Концерты и фестивали", "koncertiFestivali"),
     MODA("Мода", "moda"),
-    IGRI_KVESTI("Игры, квесты", "igri_kvesti"),
+    IGRI_KVESTI("Игры, квесты", "igriKvesti"),
     ROMANTIKA("Романтика", "romantika"),
-    ACTIVNIY_OTDIH("Активный отдых", "activniy_otdih")
+    ACTIVNIY_OTDIH("Активный отдых", "activniyOtdih")
 
 
 }

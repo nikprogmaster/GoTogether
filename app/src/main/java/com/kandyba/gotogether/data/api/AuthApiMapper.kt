@@ -23,9 +23,9 @@ interface AuthApiMapper {
     fun logout(@Header(AUTHORIZATION_VALUE) token: String): Completable
 
     companion object Endpoints {
-        private const val SIGNUP_ENDPOINT = "signup/"
-        private const val LOGIN_ENDPOINT = "login/"
-        private const val LOGOUT_ENDPOINT = "logout/"
-        private const val AUTHORIZATION_VALUE = "Authorization"
+        private const val SIGNUP_ENDPOINT = "signup"
+        private const val LOGIN_ENDPOINT = "login"
+        private const val LOGOUT_ENDPOINT = "logout"
+        private const val AUTHORIZATION_VALUE = "ssid"
     }
 }

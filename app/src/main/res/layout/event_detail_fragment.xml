@@ -18,7 +18,7 @@
             <FrameLayout
                 android:id="@+id/cover_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -27,6 +27,7 @@
                     android:id="@+id/cover"
                     android:layout_width="match_parent"
                     android:layout_height="295dp"
+                    android:scaleType="centerCrop"
                     tools:src="@drawable/test_event" />
 
                 <ImageView
@@ -35,6 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="22dp"
+                    android:elevation="10dp"
                     android:background="?android:selectableItemBackgroundBorderless"
                     android:src="@drawable/back_shadow"
                     android:translationZ="8dp" />
@@ -66,7 +68,7 @@
 
             <TextView
                 android:id="@+id/event_title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="10dp"
@@ -107,8 +109,7 @@
                     android:maxLines="5"
                     android:textColor="@color/black"
                     android:textFontWeight="400"
-                    android:textSize="14sp"
-                    tools:text="Новая встреча юмористического проекта «Закрытый Микроfон» обещает стать одним из самых ярких событий сезона, ведь в этот раз удивлять публику своим комическим талантом " />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/show_all_text"
@@ -305,7 +306,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/user1"
+                    android:src="@drawable/user_placeholder"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:civ_border_color="@color/white"
@@ -317,8 +318,8 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="36dp"
                     android:layout_marginTop="16dp"
+                    android:src="@drawable/user_placeholder"
                     app:layout_constraintStart_toStartOf="@+id/person1"
-                    android:src="@drawable/user2"
                     app:layout_constraintTop_toTopOf="parent"
                     app:civ_border_color="@color/white"
                     app:civ_border_width="3dp" />
@@ -329,8 +330,8 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="36dp"
                     android:layout_marginTop="16dp"
+                    android:src="@drawable/user_placeholder"
                     app:layout_constraintStart_toStartOf="@id/person2"
-                    android:src="@drawable/user3"
                     app:layout_constraintTop_toTopOf="parent"
                     app:civ_border_color="@color/white"
                     app:civ_border_width="3dp" />
@@ -341,9 +342,9 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="36dp"
                     android:layout_marginTop="16dp"
+                    android:src="@drawable/user_placeholder"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/person3"
-                    android:src="@drawable/user4"
                     app:civ_border_color="@color/white"
                     app:civ_border_width="3dp" />
 
@@ -374,7 +375,7 @@
                 android:text="@string/find_error"
                 android:textColor="@color/secondary"
                 android:textFontWeight="400"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/people_group" />
@@ -391,6 +392,7 @@
                 android:background="@drawable/gray_button_background"
                 android:fontFamily="@font/arimo"
                 android:text="@string/complain"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
                 android:textFontWeight="400"
                 android:textSize="16sp"

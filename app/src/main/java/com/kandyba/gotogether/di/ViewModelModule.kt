@@ -13,16 +13,19 @@ import com.kandyba.gotogether.data.repository.EventsRepositoryImpl
 import com.kandyba.gotogether.data.repository.UserRepositoryImpl
 import com.kandyba.gotogether.domain.auth.AuthInteractor
 import com.kandyba.gotogether.domain.auth.AuthInteractorImpl
-import com.kandyba.gotogether.domain.auth.LoginDomainResponseConverter
-import com.kandyba.gotogether.domain.auth.SignupDomainResponseConverter
 import com.kandyba.gotogether.domain.events.EventsDomainConverter
+import com.kandyba.gotogether.domain.events.EventsInteractor
 import com.kandyba.gotogether.domain.events.EventsInteractorImpl
 import com.kandyba.gotogether.domain.user.UserDomainConverter
 import com.kandyba.gotogether.domain.user.UserInteractorImpl
 import com.kandyba.gotogether.models.general.ServerExceptionEntity
+import com.kandyba.gotogether.presentation.viewmodel.EventDetailsViewModel
 import com.kandyba.gotogether.presentation.viewmodel.ForYouViewModel
+import com.kandyba.gotogether.presentation.viewmodel.SearchViewModel
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
+import com.kandyba.gotogether.presentation.viewmodel.factory.EventDetailsViewModelFactory
 import com.kandyba.gotogether.presentation.viewmodel.factory.ForYouViewModelFactory
+import com.kandyba.gotogether.presentation.viewmodel.factory.SearchViewModelFactory
 import com.kandyba.gotogether.presentation.viewmodel.factory.StartViewModelFactory
 import dagger.Module
 import dagger.Provides
@@ -33,14 +36,10 @@ class ViewModelModule {
 
     @Provides
     fun provideStartViewModelFactory(
-        eventsMapper: EventsApiMapper,
         userMapper: UserApiMapper,
+        eventsInteractor: EventsInteractor,
         authInteractor: AuthInteractor
     ): StartViewModelFactory {
-        val eventsInteractor = EventsInteractorImpl(
-            EventsRepositoryImpl(eventsMapper, EventsDataConverter(), EventDetailsDataConverter()),
-            EventsDomainConverter()
-        )
         val userInteractor = UserInteractorImpl(
             UserRepositoryImpl(userMapper, UserDataConverter()),
             UserDomainConverter()
@@ -60,9 +59,30 @@ class ViewModelModule {
     }
 
     @Provides
-    fun provideForYouViewModelFactory(authInteractor: AuthInteractor): ForYouViewModelFactory {
+    fun provideForYouViewModelFactory(
+        authInteractor: AuthInteractor,
+        eventsInteractor: EventsInteractor
+    ): ForYouViewModelFactory {
         return ForYouViewModelFactory {
-            ForYouViewModel(authInteractor)
+            ForYouViewModel(authInteractor, eventsInteractor)
+        }
+    }
+
+    @Provides
+    fun provideEventDetailsViewModelFactory(
+        eventsInteractor: EventsInteractor
+    ): EventDetailsViewModelFactory {
+        return EventDetailsViewModelFactory {
+            EventDetailsViewModel(eventsInteractor)
+        }
+    }
+
+    @Provides
+    fun provideSearchViewModelFactory(
+        eventsInteractor: EventsInteractor
+    ): SearchViewModelFactory {
+        return SearchViewModelFactory {
+            SearchViewModel(eventsInteractor)
         }
     }
 
@@ -73,9 +93,19 @@ class ViewModelModule {
                 authMapper,
                 LoginDataResponseConverter(),
                 SignupDataResponseConverter()
+            )
+        )
+    }
+
+    @Provides
+    fun provideEventsInteractor(eventsMapper: EventsApiMapper): EventsInteractor {
+        return EventsInteractorImpl(
+            EventsRepositoryImpl(
+                eventsMapper,
+                EventsDataConverter(),
+                EventDetailsDataConverter()
             ),
-            LoginDomainResponseConverter(),
-            SignupDomainResponseConverter()
+            EventsDomainConverter()
         )
     }
 }
