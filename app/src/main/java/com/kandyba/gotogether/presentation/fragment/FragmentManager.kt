@@ -14,4 +14,7 @@ interface FragmentManager {
     fun showDialogFragment(dialog: DialogFragment)
 
 
+    fun showDialogFragment(dialog: DialogFragment)
+
+
 }
