@@ -101,6 +101,6 @@ class NetworkModule {
     }
 
     companion object {
-        private const val BASE_URL = "http://51.15.104.77:3000/api/v1/"
+        private const val BASE_URL = "http://51.15.104.77:8085/api/"
     }
 }

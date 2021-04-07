@@ -1,26 +1,27 @@
 package com.kandyba.gotogether.domain.events
 
-import com.kandyba.gotogether.models.domain.events.EventInfoDomainModel
+import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.general.BaseConverter
 import com.kandyba.gotogether.models.presentation.Date
 import com.kandyba.gotogether.models.presentation.EventModel
 
 class EventsDomainConverter :
-    BaseConverter<Map<String, EventInfoDomainModel>, List<EventModel>>() {
+    BaseConverter<List<EventDetailsDomainModel>, List<EventModel>>() {
 
-    override fun convert(from: Map<String, EventInfoDomainModel>): List<EventModel> {
-        return from.mapValues { pair ->
+    override fun convert(from: List<EventDetailsDomainModel>): List<EventModel> {
+        return from.map {
             EventModel(
-                pair.key,
-                pair.value.title,
-                pair.value.photoLinks,
-                pair.value.likedByUser,
-                pair.value.dates.map { date -> Date(date.startUnix, date.endUnix) },
-                pair.value.price,
-                pair.value.isFree,
-                pair.value.categories
+                it.id,
+                it.title,
+                it.images,
+                it.likedByUser,
+                it.dates.map { date -> Date(date.startUnix, date.endUnix) },
+                it.price,
+                it.isFree,
+                it.categories,
+                true
             )
-        }.values.toList()
+        }
     }
 
 }

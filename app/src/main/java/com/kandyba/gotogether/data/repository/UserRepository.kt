@@ -10,11 +10,7 @@ import io.reactivex.Single
  */
 interface UserRepository {
 
-    fun updateUserInfo(
-        token: String,
-        uid: String,
-        requestBody: UserRequestBody
-    ): Single<UserInfoDomainModel>
+    fun updateUserInfo(token: String, requestBody: UserRequestBody): Single<UserInfoDomainModel>
 
     fun getUserInfo(token: String, uid: String): Single<UserInfoDomainModel>
 }

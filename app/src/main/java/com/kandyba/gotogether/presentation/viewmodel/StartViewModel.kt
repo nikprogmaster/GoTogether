@@ -1,14 +1,16 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import com.kandyba.gotogether.domain.auth.AuthInteractor
 import com.kandyba.gotogether.domain.events.EventsInteractor
 import com.kandyba.gotogether.domain.user.UserInteractor
+import com.kandyba.gotogether.models.domain.auth.LoginDomainResponse
+import com.kandyba.gotogether.models.domain.auth.SignupDomainResponse
 import com.kandyba.gotogether.models.general.*
-import com.kandyba.gotogether.models.presentation.AuthResponse
 import com.kandyba.gotogether.models.presentation.EventModel
 import com.kandyba.gotogether.models.presentation.SnackbarMessage
 import com.kandyba.gotogether.models.presentation.UserInfoModel
@@ -26,40 +28,40 @@ class StartViewModel(
     private val gsonConverter: Converter<ResponseBody, *>?
 ) : BaseViewModel() {
 
-    private val loginResponseMLD = MutableLiveData<AuthResponse>()
+    private val loginResponseMLD = MutableLiveData<LoginDomainResponse>()
     private val showProgressMLD = MutableLiveData<Boolean>()
-    private val saveUserInfoMLD = MutableLiveData<AuthResponse>()
     private val showStartFragmentMLD = MutableLiveData<Unit>()
     private val showHeadpieceMLD = MutableLiveData<Boolean>()
     private val showMainActivityMLD = MutableLiveData<List<EventModel>>()
-    private val signupResponseMLD = MutableLiveData<AuthResponse>()
+    private val signupResponseMLD = MutableLiveData<SignupDomainResponse>()
     private var updateUserInfoMLD = MutableLiveData<UserInfoModel>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
 
-    val loginResponse: LiveData<AuthResponse>
+    val loginResponse: LiveData<LoginDomainResponse>
         get() = loginResponseMLD
     val showProgress: LiveData<Boolean>
         get() = showProgressMLD
-    val saveUserInfo: LiveData<AuthResponse>
-        get() = saveUserInfoMLD
     val showStartFragment: LiveData<Unit>
         get() = showStartFragmentMLD
     val showHeadpiece: LiveData<Boolean>
         get() = showHeadpieceMLD
     val showMainActivity: LiveData<List<EventModel>>
         get() = showMainActivityMLD
-    val signupResponse: LiveData<AuthResponse>
+    val signupResponse: LiveData<SignupDomainResponse>
         get() = signupResponseMLD
     val updateUserInfo: LiveData<UserInfoModel>
         get() = updateUserInfoMLD
     val showSnackbar: LiveData<SnackbarMessage>
         get() = showSnackbarMLD
 
+    var requestEvents: Boolean = false
+        private set
+
     fun init(settings: SharedPreferences) {
         val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
         if (token != EMPTY_STRING) {
             showHeadpieceMLD.postValue(true)
-            eventsInteractor.getEventsRecommendations(token)
+            eventsInteractor.getEventsRecommendations(token, DEFAULT_EVENTS_AMOUNT)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -80,9 +82,31 @@ class StartViewModel(
         }
     }
 
-    fun updateUserInfo(token: String, uid: String, request: UserRequestBody) {
+    fun getEventsRecommendations(token: String) {
         showProgressMLD.postValue(true)
-        userInteractor.updateUserInfo(token, uid, request)
+        eventsInteractor.getEventsRecommendations(token, DEFAULT_EVENTS_AMOUNT)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { eventModel ->
+                    Log.i("Уря", "я здесь")
+                    showMainActivityMLD.postValue(eventModel)
+                    showProgressMLD.postValue(false)
+                },
+                {
+                    Log.i("Увы", "но я здесь")
+                    showStartFragmentMLD.postValue(Unit)
+                    showProgressMLD.postValue(false)
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    }
+                }
+            ).addTo(rxCompositeDisposable)
+    }
+
+    fun updateUserInfo(token: String, request: UserRequestBody) {
+        showProgressMLD.postValue(true)
+        userInteractor.updateUserInfo(token, request)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -112,7 +136,6 @@ class StartViewModel(
             .subscribe(
                 { response ->
                     signupResponseMLD.postValue(response)
-                    saveUserInfoMLD.postValue(response)
                     showProgressMLD.postValue(false)
                 },
                 {
@@ -128,7 +151,8 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, justLogin: Boolean) {
+        requestEvents = !justLogin
         showProgressMLD.postValue(true)
         val credential = LoginRequestBody(email, password)
         authInteractor.login(credential)
@@ -137,7 +161,7 @@ class StartViewModel(
             .subscribe(
                 { response ->
                     loginResponseMLD.postValue(response)
-                    saveUserInfoMLD.postValue(response)
+                    showProgressMLD.postValue(false)
                 },
                 {
                     if (it is HttpException) {
@@ -146,6 +170,7 @@ class StartViewModel(
                     if (it is ConnectException) {
                         showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
                     }
+                    showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
                     showProgressMLD.postValue(false)
                 }
             ).addTo(rxCompositeDisposable)
@@ -158,5 +183,9 @@ class StartViewModel(
             error = gsonConverter.convert(errorBody) as ServerExceptionEntity
         }
         return error
+    }
+
+    companion object {
+        private const val DEFAULT_EVENTS_AMOUNT = 50
     }
 }

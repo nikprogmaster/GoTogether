@@ -33,6 +33,14 @@
         <item name="cornerSize">8dp</item>
     </style>
 
+    <style name="FAB" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:color">#6002EE</item>
+        <item name="android:colorPrimary">#6002EE</item>
+        <item name="android:colorButtonNormal">#6002EE</item>
+        <item name="android:colorAccent">#6002EE</item>
+    </style>
+
+
     <style name="MyCardViewStyle" parent="Theme.AppCompat.Light">
         <item name="cardCornerRadius">20dp</item>
         <item name="cardElevation">8dp</item>

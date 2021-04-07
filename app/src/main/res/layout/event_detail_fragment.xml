@@ -18,7 +18,7 @@
             <FrameLayout
                 android:id="@+id/cover_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -27,6 +27,7 @@
                     android:id="@+id/cover"
                     android:layout_width="match_parent"
                     android:layout_height="295dp"
+                    android:scaleType="centerCrop"
                     tools:src="@drawable/test_event" />
 
                 <ImageView
@@ -66,7 +67,7 @@
 
             <TextView
                 android:id="@+id/event_title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="10dp"
@@ -374,7 +375,7 @@
                 android:text="@string/find_error"
                 android:textColor="@color/secondary"
                 android:textFontWeight="400"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/people_group" />
@@ -391,6 +392,7 @@
                 android:background="@drawable/gray_button_background"
                 android:fontFamily="@font/arimo"
                 android:text="@string/complain"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
                 android:textFontWeight="400"
                 android:textSize="16sp"

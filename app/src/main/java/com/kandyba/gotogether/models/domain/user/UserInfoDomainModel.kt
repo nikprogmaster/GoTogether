@@ -1,7 +1,5 @@
 package com.kandyba.gotogether.models.domain.user
 
-import com.kandyba.gotogether.models.domain.events.EventInfoDomainModel
-
 data class UserInfoDomainModel(
     var tokens: List<String>,
     var id: String,
@@ -16,6 +14,5 @@ data class UserInfoDomainModel(
     var createdAt: String,
     var updatedAt: String,
     var info: String? = null,
-    var isLoyal: Boolean,
-    var events: Map<String, EventInfoDomainModel>?
+    var isLoyal: Boolean
 )

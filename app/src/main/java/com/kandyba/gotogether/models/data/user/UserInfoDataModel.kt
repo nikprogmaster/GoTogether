@@ -2,7 +2,6 @@ package com.kandyba.gotogether.models.data.user
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.kandyba.gotogether.models.data.events.EventInfoDataModel
 
 
 data class UserInfoDataModel(
@@ -60,11 +59,7 @@ data class UserInfoDataModel(
 
     @SerializedName("is_loyal")
     @Expose
-    val isLoyal: Boolean,
-
-    @SerializedName("events")
-    @Expose
-    val events: Map<String, EventInfoDataModel>? = null
+    val isLoyal: Boolean
 ) {
 
 }

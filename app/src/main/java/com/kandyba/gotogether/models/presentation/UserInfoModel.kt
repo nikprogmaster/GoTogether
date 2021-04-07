@@ -18,6 +18,5 @@ class UserInfoModel(
     var createdAt: String,
     var updatedAt: String,
     var info: String? = null,
-    var isLoyal: Boolean,
-    var events: Map<String, EventModel>?
+    var isLoyal: Boolean
 )

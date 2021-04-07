@@ -15,9 +15,6 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.general.USER_ID
-import com.kandyba.gotogether.models.general.UserRequestBody
-import com.kandyba.gotogether.models.presentation.Events
 import com.kandyba.gotogether.models.presentation.Interest
 import com.kandyba.gotogether.models.presentation.getListOfCategories
 import com.kandyba.gotogether.presentation.adapter.InterestsAdapter
@@ -57,10 +54,8 @@ class InterestsFragment : Fragment() {
 
     private fun initListeners() {
         viewModel.updateUserInfo.observe(requireActivity(), Observer {
-            (requireActivity() as FragmentManager).openMainActivity(
-                Events(
-                    it.events?.values?.toList() ?: listOf()
-                )
+            viewModel.getEventsRecommendations(
+                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
             )
         })
     }
@@ -69,18 +64,17 @@ class InterestsFragment : Fragment() {
         backButton.setOnClickListener { (requireActivity() as FragmentManager).closeFragment() }
         continueButton.setOnClickListener {
             val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
-            val uid = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
-            viewModel.updateUserInfo(token, uid, createUserRequest())
+            //viewModel.updateUserInfo(token, createUserRequest())
         }
     }
 
-    private fun createUserRequest(): UserRequestBody {
+    /*private fun createUserRequest(): UserRequestBody {
         val body = UserRequestBody(mutableMapOf())
         for (i in interests) {
             body.fields[i.code] = i.level.toString()
         }
         return body
-    }
+    }*/
 
     private fun resolveDependencies() {
         val component = (requireActivity().application as App).appComponent

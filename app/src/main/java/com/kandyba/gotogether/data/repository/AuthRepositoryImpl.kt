@@ -27,11 +27,6 @@ class AuthRepositoryImpl(
     }
 
     override fun logout(token: String): Completable {
-        val tokenResult = TOKEN_PREFIX + token
-        return authApiMapper.logout(tokenResult)
-    }
-
-    companion object {
-        private const val TOKEN_PREFIX = "Bearer "
+        return authApiMapper.logout(token)
     }
 }

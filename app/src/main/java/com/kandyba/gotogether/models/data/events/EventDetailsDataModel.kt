@@ -4,15 +4,19 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class EventDetailsDataModel(
-    @SerializedName("liked_by_user")
+    @SerializedName("likedByUser")
     @Expose
     val likedByUser: Boolean,
+
+    @SerializedName("id")
+    @Expose
+    val id: String,
 
     @SerializedName("title")
     @Expose
     val title: String,
 
-    @SerializedName("short_title")
+    @SerializedName("shortTitle")
     @Expose
     val shortTitle: String,
 
@@ -24,17 +28,17 @@ data class EventDetailsDataModel(
     @Expose
     val description: String,
 
-    @SerializedName("body_text")
+    @SerializedName("bodyText")
     @Expose
     val bodyText: String,
 
-    @SerializedName("kudago_url")
+    @SerializedName("kudagoUrl")
     @Expose
-    val kudagoUrl: Any,
+    val kudagoUrl: String? = null,
 
-    @SerializedName("place_id")
+    @SerializedName("placeId")
     @Expose
-    val placeId: Any,
+    val placeId: String? = null,
 
     @SerializedName("latitude")
     @Expose
@@ -48,11 +52,11 @@ data class EventDetailsDataModel(
     @Expose
     val language: String,
 
-    @SerializedName("age_restriction")
+    @SerializedName("ageRestriction")
     @Expose
     val ageRestriction: String,
 
-    @SerializedName("is_free")
+    @SerializedName("isFree")
     @Expose
     val isFree: Boolean,
 
@@ -64,17 +68,9 @@ data class EventDetailsDataModel(
     @Expose
     val images: List<String>,
 
-    @SerializedName("created_at")
-    @Expose
-    val createdAt: String,
-
-    @SerializedName("updated_at")
-    @Expose
-    val updatedAt: String,
-
     @SerializedName("dates")
     @Expose
-    val dates: List<Date>,
+    val dates: List<DateDataModel>,
 
     @SerializedName("categories")
     @Expose
@@ -84,7 +80,7 @@ data class EventDetailsDataModel(
     @Expose
     val participants: List<Participant>,
 
-    @SerializedName("amount_of_participants")
+    @SerializedName("amountOfParticipants")
     @Expose
     val amountOfParticipants: Int
 )
@@ -94,7 +90,7 @@ data class Participant(
     @Expose
     val id: String,
 
-    @SerializedName("first_name")
+    @SerializedName("firstName")
     @Expose
     val firstName: String,
 

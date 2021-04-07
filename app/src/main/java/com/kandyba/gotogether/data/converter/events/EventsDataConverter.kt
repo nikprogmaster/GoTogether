@@ -1,22 +1,39 @@
 package com.kandyba.gotogether.data.converter.events
 
-import com.kandyba.gotogether.models.data.events.EventInfoDataModel
-import com.kandyba.gotogether.models.domain.events.Date
-import com.kandyba.gotogether.models.domain.events.EventInfoDomainModel
+import com.kandyba.gotogether.models.data.events.EventDetailsDataModel
+import com.kandyba.gotogether.models.domain.events.DateDomainModel
+import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
+import com.kandyba.gotogether.models.domain.events.Participant
 import com.kandyba.gotogether.models.general.BaseConverter
 
-class EventsDataConverter: BaseConverter<Map<String, EventInfoDataModel>, Map<String, EventInfoDomainModel>>() {
+class EventsDataConverter :
+    BaseConverter<List<EventDetailsDataModel>, List<EventDetailsDomainModel>>() {
 
-    override fun convert(from: Map<String, EventInfoDataModel>): Map<String, EventInfoDomainModel> {
-        return from.mapValues { pair -> EventInfoDomainModel(
-            pair.value.title,
-            pair.value.photoLinks,
-            pair.value.likedByUser,
-            pair.value.dates.map { date -> Date(date.startUnix, date.endUnix) },
-            pair.value.price,
-            pair.value.isFree,
-            pair.value.categories
-        ) }
+    override fun convert(from: List<EventDetailsDataModel>): List<EventDetailsDomainModel> {
+        return from.map {
+            EventDetailsDomainModel(
+                it.id,
+                it.likedByUser,
+                it.title,
+                it.shortTitle,
+                it.slug,
+                it.description,
+                it.bodyText,
+                it.kudagoUrl,
+                it.placeId,
+                it.latitude,
+                it.longitude,
+                it.language,
+                it.ageRestriction,
+                it.isFree,
+                it.price,
+                it.images,
+                it.dates.map { date -> DateDomainModel(date.startUnix, date.endUnix) },
+                it.categories,
+                it.participants.map { part -> Participant(part.id, part.firstName, part.avatar) },
+                it.amountOfParticipants
+            )
+        }
     }
 
 }

@@ -4,14 +4,12 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Spinner
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,7 +17,6 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.general.USER_ID
 import com.kandyba.gotogether.models.general.UserRequestBody
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
@@ -33,6 +30,7 @@ class AboutMeFragment : Fragment() {
     private lateinit var name: EditText
     private lateinit var sex: Spinner
     private lateinit var birthday: EditText
+    private lateinit var policy: TextView
 
     private lateinit var viewModel: StartViewModel
     private lateinit var settings: SharedPreferences
@@ -51,6 +49,7 @@ class AboutMeFragment : Fragment() {
         name = root.findViewById(R.id.name_et)
         sex = root.findViewById(R.id.sex_et)
         birthday = root.findViewById(R.id.birthday_et)
+        policy = root.findViewById(R.id.privacy_policy)
         return root
     }
 
@@ -80,11 +79,9 @@ class AboutMeFragment : Fragment() {
     private fun initListeners() {
         continueButton.setOnClickListener {
             val request = createUserUpdateRequest()
-            if (request.fields.isNotEmpty()) {
-                val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
-                val uid = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
-                viewModel.updateUserInfo(token, uid, request)
-            }
+            val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
+            viewModel.updateUserInfo(token, request)
+
         }
         backButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
         birthday.setOnFocusChangeListener { v, hasFocus ->
@@ -92,25 +89,20 @@ class AboutMeFragment : Fragment() {
                 setDate(birthday)
             }
         }
+        policy.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun createUserUpdateRequest(): UserRequestBody {
-        Log.i("time1", dateAndTime.timeInMillis.toString())
-        Log.i("time2", dateAndTime2.timeInMillis.toString())
-        val body = UserRequestBody(mutableMapOf())
-        if (name.text.toString() != EMPTY_STRING) {
-            body.fields[NAME_KEY] = name.text.toString()
-        }
-        if (birthday.text.toString() != EMPTY_STRING) {
-            body.fields[BIRTHDAY_KEY] =
-                (dateAndTime.timeInMillis / MILLISECOND_DIVISOR)
-                    .toString()
-        }
+        val name = if (name.text.toString() != EMPTY_STRING) {
+            name.text.toString()
+        } else null
+        val birthDate = if (birthday.text.toString() != EMPTY_STRING) {
+            (dateAndTime.timeInMillis / MILLISECOND_DIVISOR)
+        } else null
+        val sex =
+            if (sex.selectedItem.toString() == resources.getStringArray(R.array.sex)[0].toString()) 0 else 1
 
-        body.fields[SEX_KEY] =
-            if (sex.selectedItem.toString() == resources.getStringArray(R.array.sex)[0].toString()) "0" else "1"
-
-        return body
+        return UserRequestBody(name, birthDate, sex)
     }
 
     // отображаем диалоговое окно для выбора даты
@@ -144,9 +136,9 @@ class AboutMeFragment : Fragment() {
     }
 
     companion object {
-        private const val NAME_KEY = "first_name"
+        private const val NAME_KEY = "firstName"
         private const val SEX_KEY = "sex"
-        private const val BIRTHDAY_KEY = "birth_date"
+        private const val BIRTHDAY_KEY = "birthDate"
 
         private const val MILLISECOND_DIVISOR = 1000
 

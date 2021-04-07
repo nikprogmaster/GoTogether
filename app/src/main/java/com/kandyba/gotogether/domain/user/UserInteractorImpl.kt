@@ -5,10 +5,6 @@ import com.kandyba.gotogether.models.general.UserRequestBody
 import com.kandyba.gotogether.models.presentation.UserInfoModel
 import io.reactivex.Single
 
-/**
- * @author Кандыба Никита
- * @since 06.02.2021
- */
 class UserInteractorImpl(
     val repository: UserRepository,
     val converter: UserDomainConverter
@@ -16,10 +12,9 @@ class UserInteractorImpl(
 
     override fun updateUserInfo(
         token: String,
-        uid: String,
         requestBody: UserRequestBody
     ): Single<UserInfoModel> {
-        return repository.updateUserInfo(token, uid, requestBody).map { converter.convert(it) }
+        return repository.updateUserInfo(token, requestBody).map { converter.convert(it) }
     }
 
     override fun getUserInfo(token: String, uid: String): Single<UserInfoModel> {
