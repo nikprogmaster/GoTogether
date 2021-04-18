@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -23,18 +22,18 @@ import com.google.android.material.snackbar.Snackbar
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
-import com.kandyba.gotogether.models.general.EVENTS_KEY
 import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.presentation.Events
-import com.kandyba.gotogether.presentation.fragment.FragmentManager
+import com.kandyba.gotogether.presentation.fragment.main.EventFragment
 import com.kandyba.gotogether.presentation.fragment.main.ForYouFragment
+import com.kandyba.gotogether.presentation.fragment.main.ProfileFragment
 import com.kandyba.gotogether.presentation.fragment.main.SearchFragment
 import com.kandyba.gotogether.presentation.viewmodel.EventDetailsViewModel
 import com.kandyba.gotogether.presentation.viewmodel.ForYouViewModel
+import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import com.kandyba.gotogether.presentation.viewmodel.SearchViewModel
 
 
-class MainActivity : AppCompatActivity(), FragmentManager {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var toolbar: Toolbar
     private lateinit var logoutButton: ImageView
@@ -51,9 +50,8 @@ class MainActivity : AppCompatActivity(), FragmentManager {
     private lateinit var forYouViewModel: ForYouViewModel
     private lateinit var eventDetailsViewModel: EventDetailsViewModel
     private lateinit var searchViewModel: SearchViewModel
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
-
-    private lateinit var events: Events
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,26 +61,28 @@ class MainActivity : AppCompatActivity(), FragmentManager {
         initViews()
         initListeners()
         initObservers()
-        setAppbarTitle(R.string.special_for_you)
+        setAppbarTitle(getString(R.string.special_for_you))
         openFragment(ForYouFragment.newInstance())
     }
 
     private fun resolveDependencies() {
         //init di
-        settings = (application as App).appComponent.getSharedPreferences()
-        val forYouViewModelFactory = (application as App).appComponent.getForYouViewModelFactory()
+        val component = (application as App).appComponent
+        settings = component.getSharedPreferences()
+        val forYouViewModelFactory = component.getForYouViewModelFactory()
         forYouViewModel = ViewModelProvider(this, forYouViewModelFactory)
             .get(ForYouViewModel::class.java)
         val eventDetailsViewModelFactory =
-            (application as App).appComponent.getEventDetailsViewModelFactory()
+            component.getEventDetailsViewModelFactory()
         eventDetailsViewModel = ViewModelProvider(this, eventDetailsViewModelFactory)
             .get(EventDetailsViewModel::class.java)
-        val searchViewModelFactory = (application as App).appComponent.getSearchViewModelFactory()
+        val searchViewModelFactory = component.getSearchViewModelFactory()
         searchViewModel = ViewModelProvider(this, searchViewModelFactory)
             .get(SearchViewModel::class.java)
+        val mainViewModelFactory = component.getMainViewModelFactory()
+        mainViewModel = ViewModelProvider(this, mainViewModelFactory)
+            .get(MainViewModel::class.java)
 
-        //init Events
-        events = intent.extras?.getSerializable(EVENTS_KEY) as Events
     }
 
     private fun initViews() {
@@ -117,8 +117,7 @@ class MainActivity : AppCompatActivity(), FragmentManager {
             alertDialog.show()
         }
         backButton.setOnClickListener {
-            onBackPressed()
-            showToolbar(false)
+            closeFragment()
         }
         navigation.setOnNavigationItemSelectedListener {
             clearBackStack()
@@ -130,6 +129,10 @@ class MainActivity : AppCompatActivity(), FragmentManager {
                 }
                 R.id.for_you -> {
                     openFragment(ForYouFragment.newInstance())
+                    true
+                }
+                R.id.profile -> {
+                    openFragment(ProfileFragment.newInstance())
                     true
                 }
                 else -> false
@@ -158,13 +161,18 @@ class MainActivity : AppCompatActivity(), FragmentManager {
             clearPrefs()
             openStartActivity()
         })
-        forYouViewModel.changeToolbarInfo.observe(this, Observer { makeForYouEventsToolbar() })
-        eventDetailsViewModel.showToolBar.observe(this, Observer { hide -> showToolbar(hide) })
-        eventDetailsViewModel.changeToolbarInfo.observe(
-            this,
-            Observer { makeParticipantsToolbar() })
         searchViewModel.showProgress.observe(this, Observer { showProgress(it) })
         searchViewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
+        searchViewModel.eventInfo.observe(this, Observer {
+            openFragment(EventFragment.newInstance(it))
+        })
+        mainViewModel.appbarTitle.observe(this, Observer { setAppbarTitle(it) })
+        mainViewModel.closeFragment.observe(this, Observer { closeFragment() })
+        mainViewModel.makeForYouToolbar.observe(this, Observer { makeForYouEventsToolbar() })
+        mainViewModel.makeParticipantsToolbar.observe(this, Observer { makeParticipantsToolbar() })
+        mainViewModel.openDialogFragment.observe(this, Observer { showDialogFragment(it) })
+        mainViewModel.openFragment.observe(this, Observer { openFragment(it) })
+        mainViewModel.showToolbar.observe(this, Observer { showToolbar(it) })
     }
 
     private fun clearPrefs() {
@@ -180,42 +188,40 @@ class MainActivity : AppCompatActivity(), FragmentManager {
         finish()
     }
 
-    override fun openFragment(fragment: Fragment) {
+    private fun openFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_root, fragment)
             .addToBackStack(null)
             .commit()
     }
 
-    override fun closeFragment() {
+    private fun closeFragment() {
         onBackPressed()
     }
 
-    override fun openMainActivity(events: Events) {
-        TODO("Not yet implemented")
-    }
-
-    override fun showDialogFragment(dialog: DialogFragment) {
+    private fun showDialogFragment(dialog: DialogFragment) {
         dialog.show(supportFragmentManager, null)
     }
 
-    private fun setAppbarTitle(@StringRes title: Int) {
-        appbarTitle.text = resources.getText(title)
+    private fun setAppbarTitle(title: String) {
+        appbarTitle.text = title
     }
 
     private fun makeParticipantsToolbar() {
-        setAppbarTitle(R.string.who_will_go_with_you)
+        setAppbarTitle(getString(R.string.who_will_go_with_you))
         appbarTitle.visibility = View.VISIBLE
         appbarSubtitle.visibility = View.VISIBLE
         logoutButton.visibility = View.INVISIBLE
+        backButton.visibility = View.VISIBLE
     }
 
     private fun makeForYouEventsToolbar() {
         showToolbar(true)
-        setAppbarTitle(R.string.special_for_you)
+        setAppbarTitle(getString(R.string.special_for_you))
         appbarTitle.visibility = View.VISIBLE
         appbarSubtitle.visibility = View.GONE
         logoutButton.visibility = View.VISIBLE
+        backButton.visibility = View.GONE
     }
 
     private fun showToolbar(show: Boolean) {

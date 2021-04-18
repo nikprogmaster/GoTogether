@@ -9,18 +9,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.net.ConnectException
 
-/**
- * @author Кандыба Никита
- * @since 26.03.2021
- */
+
 class EventDetailsViewModel(
     private val eventsInteractor: EventsInteractor
 ) : BaseViewModel() {
 
     private val showProgressMLD = MutableLiveData<Boolean>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
-    private val showToolBarMLD = MutableLiveData<Boolean>()
-    private val changeToolbarInfoMLD = MutableLiveData<Unit>()
     private val enableLikeButtonMLD = MutableLiveData<Boolean>()
     private val changeEventLikePropertyMLD = MutableLiveData<String>()
 
@@ -28,16 +23,13 @@ class EventDetailsViewModel(
         get() = showProgressMLD
     val showSnackbar: LiveData<SnackbarMessage>
         get() = showSnackbarMLD
-    val showToolBar: LiveData<Boolean>
-        get() = showToolBarMLD
-    val changeToolbarInfo: LiveData<Unit>
-        get() = changeToolbarInfoMLD
     val enableLikeButton: LiveData<Boolean>
         get() = enableLikeButtonMLD
     val changeEventLikeProperty: LiveData<String>
         get() = changeEventLikePropertyMLD
 
     fun complain(token: String, eventId: String, request: EventComplaintRequestBody) {
+        showProgressMLD.postValue(true)
         eventsInteractor.complainEvent(token, eventId, request)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -77,12 +69,5 @@ class EventDetailsViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
-    fun showToolbar(show: Boolean) {
-        showToolBarMLD.postValue(show)
-    }
-
-    fun makeParticipantsToolbar() {
-        changeToolbarInfoMLD.postValue(Unit)
-    }
 
 }

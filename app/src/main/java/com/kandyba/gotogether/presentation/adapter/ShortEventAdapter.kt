@@ -5,7 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.ToggleButton
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.presentation.EventModel
 import com.kandyba.gotogether.models.presentation.getCalendarDate
@@ -15,12 +17,34 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 class ShortEventAdapter(
-    private var events: List<EventModel>
+    private var events: List<EventModel>,
+    private val listener: OnEventClickListener
 ) : RecyclerView.Adapter<ShortEventAdapter.ShortEventViewHolder>() {
 
     fun setEvents(newEvents: List<EventModel>) {
         events = newEvents
         notifyDataSetChanged()
+    }
+
+    fun changeButtonState(eventId: String) {
+        for (i in events.indices) {
+            if (events[i].id == eventId) {
+                events[i].activated = !events[i].activated
+            }
+        }
+    }
+
+    fun changeUserLikedProperty(eventId: String) {
+        var idInList = -1
+        for (i in events.indices) {
+            if (events[i].id == eventId) {
+                events[i].likedByUser = !events[i].likedByUser
+                idInList = i
+            }
+        }
+        if (idInList != -1) {
+            notifyItemChanged(idInList)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShortEventViewHolder {
@@ -37,12 +61,14 @@ class ShortEventAdapter(
         return events.size
     }
 
-    class ShortEventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ShortEventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val picture: ImageView = itemView.findViewById(R.id.picture)
         private val title: TextView = itemView.findViewById(R.id.short_card_title)
         private val dateAndTime: TextView = itemView.findViewById(R.id.event_date_time)
         private val price: TextView = itemView.findViewById(R.id.price)
+        private val likeButton: ToggleButton = itemView.findViewById(R.id.like_event)
+        private val card: MaterialCardView = itemView.findViewById(R.id.short_event_card)
 
         fun bindViews(event: EventModel) {
             title.text = event.title
@@ -66,7 +92,22 @@ class ShortEventAdapter(
                     .error(R.drawable.error_placeholder)
                     .into(picture)
             }
+            likeButton.isChecked = event.likedByUser
+            card.setOnClickListener {
+                listener.onClick(event.id)
+            }
+            likeButton.setOnClickListener {
+                event.likedByUser = !event.likedByUser
+                listener.onLikeButtonClick(
+                    event.id
+                )
+            }
         }
 
+    }
+
+    interface OnEventClickListener {
+        fun onClick(eventId: String)
+        fun onLikeButtonClick(eventId: String)
     }
 }

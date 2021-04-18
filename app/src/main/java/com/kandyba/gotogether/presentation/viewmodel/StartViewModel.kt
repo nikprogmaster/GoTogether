@@ -1,7 +1,6 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
@@ -11,7 +10,6 @@ import com.kandyba.gotogether.domain.user.UserInteractor
 import com.kandyba.gotogether.models.domain.auth.LoginDomainResponse
 import com.kandyba.gotogether.models.domain.auth.SignupDomainResponse
 import com.kandyba.gotogether.models.general.*
-import com.kandyba.gotogether.models.presentation.EventModel
 import com.kandyba.gotogether.models.presentation.SnackbarMessage
 import com.kandyba.gotogether.models.presentation.UserInfoModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -32,7 +30,7 @@ class StartViewModel(
     private val showProgressMLD = MutableLiveData<Boolean>()
     private val showStartFragmentMLD = MutableLiveData<Unit>()
     private val showHeadpieceMLD = MutableLiveData<Boolean>()
-    private val showMainActivityMLD = MutableLiveData<List<EventModel>>()
+    private val showMainActivityMLD = MutableLiveData<Unit>()
     private val signupResponseMLD = MutableLiveData<SignupDomainResponse>()
     private val updateMainUserInfoMLD = MutableLiveData<UserInfoModel>()
     private val updateAdditionalUserInfoMLD = MutableLiveData<UserInfoModel>()
@@ -47,7 +45,7 @@ class StartViewModel(
         get() = showStartFragmentMLD
     val showHeadpiece: LiveData<Boolean>
         get() = showHeadpieceMLD
-    val showMainActivity: LiveData<List<EventModel>>
+    val showMainActivity: LiveData<Unit>
         get() = showMainActivityMLD
     val signupResponse: LiveData<SignupDomainResponse>
         get() = signupResponseMLD
@@ -72,20 +70,39 @@ class StartViewModel(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { eventModel ->
-                        showMainActivityMLD.postValue(eventModel)
-                        showHeadpieceMLD.postValue(false)
+                        val userId = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
+                        loadUserInfo(token, userId)
                     },
                     {
-                        showStartFragmentMLD.postValue(Unit)
-                        showHeadpieceMLD.postValue(false)
+
                         if (it is ConnectException) {
                             showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
                         }
                     }
                 ).addTo(rxCompositeDisposable)
         } else {
+            showHeadpieceMLD.postValue(false)
             showStartFragmentMLD.postValue(Unit)
         }
+    }
+
+    fun loadUserInfo(token: String, userId: String) {
+        userInteractor.getUserInfo(token, userId, true)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    showMainActivityMLD.postValue(Unit)
+                    showHeadpieceMLD.postValue(false)
+                },
+                {
+                    showStartFragmentMLD.postValue(Unit)
+                    showHeadpieceMLD.postValue(false)
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    }
+                }
+            ).addTo(rxCompositeDisposable)
     }
 
     fun getEventsRecommendations(token: String) {
@@ -94,13 +111,11 @@ class StartViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { eventModel ->
-                    Log.i("Уря", "я здесь")
-                    showMainActivityMLD.postValue(eventModel)
+                {
+                    showMainActivityMLD.postValue(Unit)
                     showProgressMLD.postValue(false)
                 },
                 {
-                    Log.i("Увы", "но я здесь")
                     showStartFragmentMLD.postValue(Unit)
                     showProgressMLD.postValue(false)
                     if (it is ConnectException) {

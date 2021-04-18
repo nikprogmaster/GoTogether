@@ -14,12 +14,12 @@ class EventsInteractorImpl(
 ): EventsInteractor {
 
     override fun getEventsRecommendations(token: String, amount: Int): Single<List<EventModel>> {
-        return if (Cache.instance.getCache() == null) {
+        return if (Cache.instance.getCachedEvents() == null) {
             eventsRepository.getEventsRecommendations(token, amount)
                 .map { eventsDomainConverter.convert(it) }
-                .doAfterSuccess { Cache.instance.saveCache(it) }
+                .doAfterSuccess { Cache.instance.saveEvents(it) }
         } else {
-            Single.just(Cache.instance.getCache())
+            Single.just(Cache.instance.getCachedEvents())
         }
     }
 

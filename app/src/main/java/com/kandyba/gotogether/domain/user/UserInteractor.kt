@@ -15,5 +15,5 @@ interface UserInteractor {
 
     fun updateUserInterests(token: String, body: UserInterestsRequestBody): Single<UserInfoModel>
 
-    fun getUserInfo(token: String, uid: String): Single<UserInfoModel>
+    fun getUserInfo(token: String, uid: String, updateCache: Boolean): Single<UserInfoModel>
 }

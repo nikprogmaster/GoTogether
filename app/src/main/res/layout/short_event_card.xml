@@ -2,15 +2,15 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card"
+    android:id="@+id/short_event_card"
     style="@style/MyCardViewStyle"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:layout_constraintTop_toTopOf="parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="24dp"
@@ -28,29 +28,27 @@
 
 
         <ToggleButton
-            android:id="@+id/like"
+            android:id="@+id/like_event"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="28dp"
             android:layout_marginTop="6dp"
-            android:layout_marginEnd="6dp"
-            android:textOn=""
+            android:background="@drawable/like_selector_small"
             android:textOff=""
-            app:layout_constraintStart_toEndOf="@+id/price"
-            app:layout_constraintTop_toBottomOf="@id/event_date_time"
-            android:background="@drawable/like_selector_small" />
+            android:textOn=""
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/event_date_time" />
 
         <TextView
             android:id="@+id/short_card_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:fontFamily="@font/arimo"
             android:textColor="@color/black"
             android:textFontWeight="400"
-            android:textSize="16sp"
+            android:textSize="15sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -60,12 +58,12 @@
 
         <TextView
             android:id="@+id/event_date_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/arimo"
             android:textColor="@color/secondary"
             android:textFontWeight="400"
-            android:textSize="13sp"
+            android:textSize="10sp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="6dp"
             app:layout_constraintHorizontal_bias="0.0"
@@ -77,8 +75,8 @@
 
         <ImageView
             android:id="@+id/rouble"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="6dp"
             android:src="@drawable/rouble"
@@ -88,14 +86,19 @@
 
         <TextView
             android:id="@+id/price"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
             android:fontFamily="@font/exo"
             android:textColor="@color/black"
             android:textFontWeight="700"
-            android:textSize="14sp"
+            android:textSize="12sp"
+            android:maxLines="1"
             app:layout_constraintBottom_toBottomOf="@+id/rouble"
+            app:layout_constraintEnd_toStartOf="@+id/like_event"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/rouble"
             app:layout_constraintTop_toTopOf="@+id/rouble"
             tools:targetApi="p"
