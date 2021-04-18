@@ -17,16 +17,11 @@ import com.kandyba.gotogether.domain.events.EventsDomainConverter
 import com.kandyba.gotogether.domain.events.EventsInteractor
 import com.kandyba.gotogether.domain.events.EventsInteractorImpl
 import com.kandyba.gotogether.domain.user.UserDomainConverter
+import com.kandyba.gotogether.domain.user.UserInteractor
 import com.kandyba.gotogether.domain.user.UserInteractorImpl
 import com.kandyba.gotogether.models.general.ServerExceptionEntity
-import com.kandyba.gotogether.presentation.viewmodel.EventDetailsViewModel
-import com.kandyba.gotogether.presentation.viewmodel.ForYouViewModel
-import com.kandyba.gotogether.presentation.viewmodel.SearchViewModel
-import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
-import com.kandyba.gotogether.presentation.viewmodel.factory.EventDetailsViewModelFactory
-import com.kandyba.gotogether.presentation.viewmodel.factory.ForYouViewModelFactory
-import com.kandyba.gotogether.presentation.viewmodel.factory.SearchViewModelFactory
-import com.kandyba.gotogether.presentation.viewmodel.factory.StartViewModelFactory
+import com.kandyba.gotogether.presentation.viewmodel.*
+import com.kandyba.gotogether.presentation.viewmodel.factory.*
 import dagger.Module
 import dagger.Provides
 import retrofit2.converter.gson.GsonConverterFactory
@@ -36,14 +31,10 @@ class ViewModelModule {
 
     @Provides
     fun provideStartViewModelFactory(
-        userMapper: UserApiMapper,
+        userInteractor: UserInteractor,
         eventsInteractor: EventsInteractor,
         authInteractor: AuthInteractor
     ): StartViewModelFactory {
-        val userInteractor = UserInteractorImpl(
-            UserRepositoryImpl(userMapper, UserDataConverter()),
-            UserDomainConverter()
-        )
         val gsonConverter = GsonConverterFactory.create().responseBodyConverter(
             ServerExceptionEntity::class.java, null, null
         )
@@ -87,6 +78,22 @@ class ViewModelModule {
     }
 
     @Provides
+    fun provideMainViewModelFactory(): MainViewModelFactory {
+        return MainViewModelFactory {
+            MainViewModel()
+        }
+    }
+
+    @Provides
+    fun provideProfileViewModelFactory(
+        userInteractor: UserInteractor
+    ): ProfileViewModelFactory {
+        return ProfileViewModelFactory {
+            ProfileViewModel(userInteractor)
+        }
+    }
+
+    @Provides
     fun provideAuthInteractor(authMapper: AuthApiMapper): AuthInteractor {
         return AuthInteractorImpl(
             AuthRepositoryImpl(
@@ -94,6 +101,14 @@ class ViewModelModule {
                 LoginDataResponseConverter(),
                 SignupDataResponseConverter()
             )
+        )
+    }
+
+    @Provides
+    fun provideUserInteractor(userMapper: UserApiMapper): UserInteractor {
+        return UserInteractorImpl(
+            UserRepositoryImpl(userMapper, UserDataConverter()),
+            UserDomainConverter()
         )
     }
 

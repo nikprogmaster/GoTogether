@@ -27,7 +27,7 @@ interface UserApiMapper {
         @Body body: UserInterestsRequestBody
     ): Single<UserInfoDataModel>
 
-    @GET("$USER_INFO_ENDPOINT/{${UUID_VALUE}}/")
+    @GET("$USER_INFO_ENDPOINT/{${UUID_VALUE}}")
     fun getUserInfo(
         @Header(AUTHORIZATION_VALUE) token: String,
         @Path(UUID_VALUE) userId: String

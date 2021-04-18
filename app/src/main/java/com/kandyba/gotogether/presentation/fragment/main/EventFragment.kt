@@ -28,8 +28,8 @@ import com.kandyba.gotogether.models.general.EVENT_KEY
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.presentation.adapter.CategoriesAdapter
 import com.kandyba.gotogether.presentation.adapter.ScheduleAdapter
-import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.EventDetailsViewModel
+import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import com.squareup.picasso.Picasso
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -66,6 +66,7 @@ class EventFragment : Fragment() {
 
     private lateinit var participantsList: List<CircleImageView>
     private lateinit var viewModel: EventDetailsViewModel
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
 
     private var expanded = false
@@ -112,14 +113,16 @@ class EventFragment : Fragment() {
         viewModel =
             ViewModelProvider(requireActivity(), appComponent.getEventDetailsViewModelFactory())
                 .get(EventDetailsViewModel::class.java)
-        viewModel.showToolbar(false)
+        mainViewModel = ViewModelProvider(requireActivity(), appComponent.getMainViewModelFactory())
+            .get(MainViewModel::class.java)
+        mainViewModel.showToolbar(false)
         settings = appComponent.getSharedPreferences()
     }
 
     private fun initViews(root: View) {
         cover = root.findViewById(R.id.cover)
         back = root.findViewById(R.id.back_arrow)
-        likeButton = root.findViewById(R.id.like)
+        likeButton = root.findViewById(R.id.like_event)
         categoriesRecycler = root.findViewById(R.id.categories_event_list)
         title = root.findViewById(R.id.event_title)
         description = root.findViewById(R.id.description)
@@ -185,17 +188,22 @@ class EventFragment : Fragment() {
         complainButton.setOnClickListener {
             val complaintDialogFragment =
                 ComplaintDialogFragment.newInstance("d83b5792-4273-40d2-babd-6e2a05865894")
-            (requireActivity() as FragmentManager).showDialogFragment(complaintDialogFragment)
+            mainViewModel.showDialogFragment(complaintDialogFragment)
         }
 
         peopleGroup.setOnClickListener {
             val participants =
                 (requireArguments().getSerializable(EVENT_KEY) as EventDetailsDomainModel).participants
             if (participants != null) {
-                viewModel.showToolbar(true)
-                (requireActivity() as FragmentManager)
-                    .openFragment(ParticipantsFragment.newInstance(ParticipantsList(participants)))
-                viewModel.makeParticipantsToolbar()
+                mainViewModel.openFragment(
+                    ParticipantsFragment.newInstance(
+                        ParticipantsList(
+                            participants
+                        )
+                    )
+                )
+                mainViewModel.showToolbar(true)
+                mainViewModel.makeParticipantsToolbar()
             }
         }
 
@@ -203,7 +211,9 @@ class EventFragment : Fragment() {
             if (expanded) {
                 showAllText.text = resources.getText(R.string.show_all)
                 description.maxLines = 5
-                description.text = event.description
+                description.text = Html.fromHtml(event.bodyText)
+                description.linksClickable = true
+                description.movementMethod = LinkMovementMethod.getInstance()
             } else {
                 description.maxLines = 10000
                 description.text = Html.fromHtml(event.bodyText)
@@ -221,12 +231,13 @@ class EventFragment : Fragment() {
             )
         }
         back.setOnClickListener {
-            requireActivity().onBackPressed()
+            mainViewModel.closeFragment()
         }
     }
 
     private fun changeUserParticipation(eventId: String) {
-        Cache.instance.getCache()?.map { if (it.id == eventId) it.likedByUser = !it.likedByUser }
+        Cache.instance.getCachedEvents()
+            ?.map { if (it.id == eventId) it.likedByUser = !it.likedByUser }
     }
 
     private fun initObservers() {

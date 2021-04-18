@@ -16,10 +16,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.domain.auth.LoginDomainResponse
-import com.kandyba.gotogether.models.general.EVENTS_KEY
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.models.general.USER_ID
-import com.kandyba.gotogether.models.presentation.Events
 import com.kandyba.gotogether.presentation.animation.StartAppAnimation
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.fragment.prelogin.StartFragment
@@ -47,16 +45,11 @@ class StartActivity : AppCompatActivity(), FragmentManager {
 
     private fun initObservers() {
         viewModel.showStartFragment.observe(this, Observer {
-            //openMainActivity(Events(listOf(EventModel("d83b5792-4273-40d2-babd-6e2a05865894", "Событие", emptyList(), true, emptyList(), "200", false, emptyList(), true))))
-            openFragment(
-                StartFragment.newInstance()
-                //ForYouFragment.newInstance(Events(listOf(EventModel("df34rf34f34f", "Событие", emptyList(), true, emptyList(), "200", false, emptyList(), true))))
-                //EventFragment.newInstance(EventDetailsDomainModel(true, "", "", "", "", "", "", "", "", "", "", "", true, "", emptyList(), "", "", emptyList(), emptyList(), emptyList(), 0))
-            )
+            openFragment(StartFragment.newInstance())
         })
         viewModel.showHeadpiece.observe(this, Observer { show -> showHeadPiece(show) })
-        viewModel.showMainActivity.observe(this, Observer { eventsList ->
-            openMainActivity(Events(eventsList))
+        viewModel.showMainActivity.observe(this, Observer {
+            openMainActivity()
         })
         viewModel.showProgress.observe(this, Observer { show -> showProgress(show) })
         viewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
@@ -91,9 +84,8 @@ class StartActivity : AppCompatActivity(), FragmentManager {
         onBackPressed()
     }
 
-    override fun openMainActivity(events: Events) {
+    override fun openMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra(EVENTS_KEY, events)
         startActivity(intent)
         showProgress(false)
         finish()

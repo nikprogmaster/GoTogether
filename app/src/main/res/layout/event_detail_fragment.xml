@@ -37,12 +37,14 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="22dp"
                     android:elevation="10dp"
+                    android:clickable="true"
                     android:background="?android:selectableItemBackgroundBorderless"
                     android:src="@drawable/back_shadow"
-                    android:translationZ="8dp" />
+                    android:translationZ="8dp"
+                    android:focusable="true" />
 
                 <ToggleButton
-                    android:id="@+id/like"
+                    android:id="@+id/like_event"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="end|bottom"
@@ -118,7 +120,7 @@
                     android:layout_gravity="center"
                     android:fontFamily="@font/arimo"
                     android:text="@string/show_all"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/selected_tint"
                     android:textFontWeight="400"
                     android:textSize="14sp" />
 
@@ -363,23 +365,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/tell_about_error"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="@font/arimo"
-                android:text="@string/find_error"
-                android:textColor="@color/secondary"
-                android:textFontWeight="400"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/people_group" />
-
             <Button
                 android:id="@+id/complain_btn"
                 style="@style/GrayButton"
@@ -399,7 +384,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tell_about_error" />
+                app:layout_constraintTop_toBottomOf="@id/people_group" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

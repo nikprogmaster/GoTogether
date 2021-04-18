@@ -65,7 +65,22 @@ class SearchFragment : Fragment() {
 
     private fun initObservers() {
         viewModel.eventsRecommendations.observe(requireActivity(), Observer { events ->
-            eventsAdapter = ShortEventAdapter(events)
+            eventsAdapter =
+                ShortEventAdapter(events, object : ShortEventAdapter.OnEventClickListener {
+                    override fun onClick(eventId: String) {
+                        viewModel.loadEventInfo(
+                            settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
+                            eventId
+                        )
+                    }
+
+                    override fun onLikeButtonClick(eventId: String) {
+                        viewModel.likeEvent(
+                            settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
+                            eventId
+                        )
+                    }
+                })
             eventsRecyclerView.adapter = eventsAdapter
         })
         viewModel.closeBottomSheet.observe(requireActivity(), Observer {
@@ -73,6 +88,12 @@ class SearchFragment : Fragment() {
         })
         viewModel.searchResultEvents.observe(requireActivity(), Observer {
             eventsAdapter.setEvents(it)
+        })
+        viewModel.enableLikeButton.observe(requireActivity(), Observer {
+            eventsAdapter.changeButtonState(it)
+        })
+        viewModel.eventNotLiked.observe(requireActivity(), Observer {
+            eventsAdapter.changeUserLikedProperty(it)
         })
     }
 

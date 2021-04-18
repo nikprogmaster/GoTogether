@@ -22,7 +22,6 @@ class ForYouViewModel(
     private var eventInfoMLD = MutableLiveData<EventDetailsDomainModel>()
     private val enableLikeButtonMLD = MutableLiveData<String>()
     private val eventNotLikedMLD = MutableLiveData<String>()
-    private val changeToolbarInfoMLD = MutableLiveData<Unit>()
     private val eventsRecommendationsMLD = MutableLiveData<List<EventModel>>()
 
     val showProgress: LiveData<Boolean>
@@ -37,8 +36,6 @@ class ForYouViewModel(
         get() = enableLikeButtonMLD
     val eventNotLiked: LiveData<String>
         get() = eventNotLikedMLD
-    val changeToolbarInfo: LiveData<Unit>
-        get() = changeToolbarInfoMLD
     val eventsRecommendations: LiveData<List<EventModel>>
         get() = eventsRecommendationsMLD
 
@@ -123,10 +120,6 @@ class ForYouViewModel(
                     enableLikeButtonMLD.postValue(eventId)
                 }
             ).addTo(rxCompositeDisposable)
-    }
-
-    fun makeForYouEventsToolbar() {
-        changeToolbarInfoMLD.postValue(Unit)
     }
 
     companion object {

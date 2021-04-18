@@ -1,6 +1,7 @@
 package com.kandyba.gotogether.domain.user
 
 import com.kandyba.gotogether.data.repository.UserRepository
+import com.kandyba.gotogether.models.general.Cache
 import com.kandyba.gotogether.models.general.UserInfoRequestBody
 import com.kandyba.gotogether.models.general.UserInterestsRequestBody
 import com.kandyba.gotogether.models.general.UserMainRequestBody
@@ -33,7 +34,17 @@ class UserInteractorImpl(
         return repository.updateUserInterests(token, body).map { converter.convert(it) }
     }
 
-    override fun getUserInfo(token: String, uid: String): Single<UserInfoModel> {
-        return repository.getUserInfo(token, uid).map { converter.convert(it) }
+    override fun getUserInfo(
+        token: String,
+        uid: String,
+        updateCache: Boolean
+    ): Single<UserInfoModel> {
+        return if (Cache.instance.getCachedUserInfo() == null || updateCache) {
+            repository.getUserInfo(token, uid)
+                .map { converter.convert(it) }
+                .doAfterSuccess { Cache.instance.setUserInfo(it) }
+        } else {
+            Single.just(Cache.instance.getCachedUserInfo())
+        }
     }
 }

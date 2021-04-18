@@ -1,5 +1,7 @@
 package com.kandyba.gotogether.models.presentation
 
+import java.time.LocalDate
+import java.time.Period
 import java.util.*
 
 fun getAnchorDate(): Calendar {
@@ -36,6 +38,26 @@ private fun getMinutes(date: Calendar): String {
     } else {
         "0$minute"
     }
+}
+
+fun getAge(unixTime: Long): String {
+    val date = getCalendarDate(unixTime)
+    val birthDate = LocalDate.of(
+        date.get(Calendar.YEAR),
+        date.get(Calendar.MONTH),
+        date.get(Calendar.DAY_OF_MONTH)
+    )
+    val now = LocalDate.now()
+    val delta = Period.between(birthDate, now)
+    var str = when (delta.years % 10) {
+        1 -> "год"
+        2, 3, 4 -> "года"
+        else -> "лет"
+    }
+    if (delta.years == 11 || delta.years == 12 || delta.years == 13 || delta.years == 14) {
+        str = "лет"
+    }
+    return "${delta.years} $str"
 }
 
 fun getCalendarDay(unixTime: Long): String {

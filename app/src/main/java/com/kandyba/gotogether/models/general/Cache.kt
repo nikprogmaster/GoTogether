@@ -1,21 +1,31 @@
 package com.kandyba.gotogether.models.general
 
 import com.kandyba.gotogether.models.presentation.EventModel
+import com.kandyba.gotogether.models.presentation.UserInfoModel
 
-private const val NAME = "events"
+private const val EVENTS_NAME = "events"
+private const val USER_NAME = "user"
 
 class Cache {
 
-    private val cache = HashMap<String, List<EventModel>>()
+    private val eventsCache = HashMap<String, List<EventModel>>()
+    private val userCache = HashMap<String, UserInfoModel>()
 
-    fun getCache(): List<EventModel>? {
-        return if (cache.isNotEmpty()) cache[NAME]
-        else null
+    fun getCachedEvents(): List<EventModel>? {
+        return if (eventsCache.isNotEmpty()) eventsCache[EVENTS_NAME] else null
     }
 
-    fun saveCache(events: List<EventModel>?) {
+    fun getCachedUserInfo(): UserInfoModel? {
+        return if (userCache.isNotEmpty()) userCache[USER_NAME] else null
+    }
+
+    fun setUserInfo(userInfoModel: UserInfoModel?) {
+        userInfoModel?.apply { userCache[USER_NAME] = userInfoModel }
+    }
+
+    fun saveEvents(events: List<EventModel>?) {
         events?.apply {
-            cache[NAME] = events
+            eventsCache[EVENTS_NAME] = events
         }
     }
 

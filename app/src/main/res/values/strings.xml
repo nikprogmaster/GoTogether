@@ -35,6 +35,7 @@
     <string name="show_all">Показать полностью</string>
     <string name="price">Цена</string>
     <string name="age">Возраст</string>
+    <string name="age_">Возраст:</string>
     <string name="eighteen_and_older">18+</string>
     <string name="when_to_go">Когда можно сходить?</string>
     <string name="who_will_go">Кто пойдет?</string>
@@ -54,6 +55,10 @@
     <string name="apply">Применить</string>
     <string name="clear">Очистить</string>
     <string name="user_profile">Страница пользователя</string>
+    <string name="about_me">Обо мне:</string>
+    <string name="events">Мероприятия</string>
+    <string name="change"><u>Изменить</u></string>
+    <string name="interests"><u>Интересы</u></string>
 
 
     <string-array name="interests">

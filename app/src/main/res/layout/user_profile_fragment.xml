@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
         android:id="@+id/profile_back_btn"
@@ -11,6 +12,7 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:layout_marginTop="16dp"
         android:layout_marginStart="12dp"
+        android:visibility="gone"
         android:src="@drawable/ic_arrow_back_36"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -41,10 +43,13 @@
 
     <ImageView
         android:id="@+id/profile_avatar"
-        android:layout_width="108dp"
-        android:layout_height="108dp"
+        android:layout_width="116dp"
+        android:layout_height="116dp"
         android:layout_marginTop="24dp"
         android:layout_marginStart="12dp"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:background="@drawable/description_background"
         app:layout_constraintTop_toBottomOf="@+id/divider"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -53,11 +58,132 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="22dp"
         android:layout_marginEnd="12dp"
+        android:fontFamily="@font/arimo_bold"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        tools:text="Никита Кандыба"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/profile_avatar"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
+    <TextView
+        android:id="@+id/user_age"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:fontFamily="@font/arimo"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profile_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/user_name"
+        tools:text="21 год" />
+
+    <Button
+        android:id="@+id/edit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="12dp"
+        android:fontFamily="@font/arimo_bold"
+        android:text="Редактировать"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textSize="14sp"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/profile_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/user_age"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_avatar" />
+
+    <TextView
+        android:id="@+id/about_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/arimo_bold"
+        android:text="@string/about_me"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_button" />
+
+    <LinearLayout
+        android:id="@+id/user_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/date_background"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:padding="4dp"
+        android:translationZ="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/about_title">
+
+        <TextView
+            android:id="@+id/description_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/arimo"
+            android:maxLines="5"
+            android:textColor="@color/black"
+            android:textFontWeight="400"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/show_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/arimo"
+            android:text="@string/show_all"
+            android:textColor="@color/colorPrimary"
+            android:textFontWeight="400"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/my_events"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/arimo_bold"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_description"
+        android:text="@string/events" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/my_events_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_events" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -121,6 +121,4 @@ class EventsAdapter(
         fun onClick(eventId: String)
         fun onLikeButtonClick(eventId: String)
     }
-
-
 }
