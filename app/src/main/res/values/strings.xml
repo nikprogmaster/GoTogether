@@ -13,7 +13,7 @@
     <string name="name">Имя</string>
     <string name="birthday">Дата рождения</string>
     <string name="sex">Пол</string>
-    <string name="user_agreement">Нажатием кнопки \"Продолжить\"\n Вы принимаете условия\n <a href="http://51.15.104.77:3000/api/v1/privacy">Пользовательского соглашения</a></string>
+    <string name="user_agreement">Нажатием кнопки \"Продолжить\"\n Вы принимаете условия\n <a href="http://51.15.104.77:8085/api/privacy-policy/android">Пользовательского соглашения</a></string>
     <string name="description">Описание</string>
     <string name="little_bit_about_yourself">Немного о себе</string>
     <string name="tell_about_yourself">Расскажите нам больше о себе</string>
@@ -65,6 +65,7 @@
     <string name="no_description">Вы пока ничего не рассказали другим о себе</string>
     <string name="edit">Редактировать</string>
     <string name="type_message">Написать сообщение</string>
+    <string name="recommend_people">Рекомендуем вам пойти с ними</string>
 
     <string-array name="interests">
         <item>Бизнес и образование</item>

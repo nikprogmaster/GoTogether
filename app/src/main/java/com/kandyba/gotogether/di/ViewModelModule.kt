@@ -10,6 +10,7 @@ import com.kandyba.gotogether.data.converter.events.EventDetailsDataConverter
 import com.kandyba.gotogether.data.converter.events.EventsDataConverter
 import com.kandyba.gotogether.data.converter.messages.DialogDataConverter
 import com.kandyba.gotogether.data.converter.messages.MessageDataConverter
+import com.kandyba.gotogether.data.converter.users.ParticipantsConverter
 import com.kandyba.gotogether.data.converter.users.UserDataConverter
 import com.kandyba.gotogether.data.repository.AuthRepositoryImpl
 import com.kandyba.gotogether.data.repository.EventsRepositoryImpl
@@ -67,10 +68,11 @@ class ViewModelModule {
 
     @Provides
     fun provideEventDetailsViewModelFactory(
-        eventsInteractor: EventsInteractor
+        eventsInteractor: EventsInteractor,
+        userInteractor: UserInteractor
     ): EventDetailsViewModelFactory {
         return EventDetailsViewModelFactory {
-            EventDetailsViewModel(eventsInteractor)
+            EventDetailsViewModel(eventsInteractor, userInteractor)
         }
     }
 
@@ -124,7 +126,11 @@ class ViewModelModule {
     @Provides
     fun provideUserInteractor(userMapper: UserApiMapper): UserInteractor {
         return UserInteractorImpl(
-            UserRepositoryImpl(userMapper, UserDataConverter(EventDetailsDataConverter())),
+            UserRepositoryImpl(
+                userMapper,
+                UserDataConverter(EventDetailsDataConverter()),
+                ParticipantsConverter()
+            ),
             UserDomainConverter(EventsDomainConverter())
         )
     }

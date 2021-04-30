@@ -1,6 +1,7 @@
 package com.kandyba.gotogether.data.repository
 
 import com.kandyba.gotogether.data.api.UserApiMapper
+import com.kandyba.gotogether.data.converter.users.ParticipantsConverter
 import com.kandyba.gotogether.data.converter.users.UserDataConverter
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
 import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
@@ -13,7 +14,8 @@ import okhttp3.RequestBody
 
 class UserRepositoryImpl(
     private val apiMapper: UserApiMapper,
-    private val converter: UserDataConverter
+    private val converter: UserDataConverter,
+    private val participantsConverter: ParticipantsConverter
 ) : UserRepository {
 
     override fun updateUserInfo(
@@ -44,5 +46,13 @@ class UserRepositoryImpl(
     override fun uploadUserAvatar(token: String, filePart: MultipartBody.Part): Completable {
         val type = RequestBody.create(MultipartBody.FORM, "image/jpeg")
         return apiMapper.uploadUserAvatar(token, filePart)
+    }
+
+    override fun getParticipantsRecommendations(
+        token: String,
+        amount: Int
+    ): Single<List<com.kandyba.gotogether.models.domain.events.Participant>> {
+        return apiMapper.getParticipantsRecommendations(token, amount)
+            .map { participantsConverter.convert(it) }
     }
 }

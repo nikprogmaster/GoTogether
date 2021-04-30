@@ -22,4 +22,6 @@ interface EventsInteractor {
     ): Single<List<EventModel>>
 
     fun searchEventsByTextQuery(token: String, text: String): Single<List<EventModel>>
+
+
 }

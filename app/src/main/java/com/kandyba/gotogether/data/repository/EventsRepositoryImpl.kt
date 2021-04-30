@@ -18,7 +18,7 @@ class EventsRepositoryImpl(
         token: String,
         amount: Int
     ): Single<List<EventDetailsDomainModel>> {
-        return eventsApiMapper.getEventsRecommendations(token, 10)
+        return eventsApiMapper.getEventsRecommendations(token, amount)
             .map { eventsDataConverter.convert(it) }
     }
 
