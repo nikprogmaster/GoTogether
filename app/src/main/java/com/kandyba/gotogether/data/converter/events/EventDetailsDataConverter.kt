@@ -4,6 +4,7 @@ import com.kandyba.gotogether.models.data.events.EventDetailsDataModel
 import com.kandyba.gotogether.models.domain.events.DateDomainModel
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.domain.events.Participant
+import com.kandyba.gotogether.models.domain.events.Place
 
 class EventDetailsDataConverter {
 
@@ -17,7 +18,22 @@ class EventDetailsDataConverter {
             from.description,
             from.bodyText,
             from.kudagoUrl,
-            from.placeId,
+            from.place?.let {
+                Place(
+                    it.title,
+                    it.slug,
+                    it.address,
+                    it.siteUrl,
+                    it.timetable,
+                    it.phone,
+                    it.bodyText,
+                    it.description,
+                    it.foreignUrl,
+                    it.longitude,
+                    it.latitude,
+                    it.subway
+                )
+            },
             from.latitude,
             from.longitude,
             from.language,

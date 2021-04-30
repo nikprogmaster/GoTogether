@@ -1,10 +1,12 @@
 package com.kandyba.gotogether.data.repository
 
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
-import com.kandyba.gotogether.models.general.UserInfoRequestBody
-import com.kandyba.gotogether.models.general.UserInterestsRequestBody
-import com.kandyba.gotogether.models.general.UserMainRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInterestsRequestBody
+import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
+import io.reactivex.Completable
 import io.reactivex.Single
+import okhttp3.MultipartBody
 
 /**
  * @author Кандыба Никита
@@ -25,4 +27,8 @@ interface UserRepository {
         token: String,
         body: UserInterestsRequestBody
     ): Single<UserInfoDomainModel>
+
+    fun uploadUserAvatar(token: String, filePart: MultipartBody.Part): Completable
 }
+
+

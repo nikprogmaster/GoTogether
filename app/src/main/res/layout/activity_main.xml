@@ -41,15 +41,6 @@
                     android:src="@drawable/ic_arrow_back_36"
                     android:tint="@color/white" />
 
-                <ImageView
-                    android:id="@+id/exit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="20dp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_login_24" />
 
                 <TextView
                     android:id="@+id/appbar_title"
@@ -59,7 +50,6 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@+id/exit"
                     android:gravity="center"
                     android:textSize="20sp"
                     tools:text="@string/special_for_you"

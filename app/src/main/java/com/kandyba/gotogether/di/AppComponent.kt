@@ -28,6 +28,8 @@ interface AppComponent {
 
     fun getProfileViewModelFactory(): ProfileViewModelFactory
 
+    fun getDialogsViewModelFactory(): DialogsViewModelFactory
+
     fun getSharedPreferences(): SharedPreferences
 
     fun getStartAnimation(): StartAppAnimation

@@ -29,6 +29,15 @@ class Cache {
         }
     }
 
+    fun clearUserCache() {
+        instance.userCache.clear()
+    }
+
+    fun clearAllCache() {
+        instance.eventsCache.clear()
+        instance.userCache.clear()
+    }
+
     companion object {
         val instance = Cache()
     }

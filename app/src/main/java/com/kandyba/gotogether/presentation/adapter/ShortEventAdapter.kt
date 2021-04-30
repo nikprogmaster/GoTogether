@@ -17,21 +17,23 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 class ShortEventAdapter(
-    private var events: List<EventModel>,
-    private val listener: OnEventClickListener
+    private var events: MutableList<EventModel>,
+    private val listener: OnEventClickListener,
+    private val showLikes: Boolean
 ) : RecyclerView.Adapter<ShortEventAdapter.ShortEventViewHolder>() {
 
     fun setEvents(newEvents: List<EventModel>) {
-        events = newEvents
+        events = newEvents.toMutableList()
         notifyDataSetChanged()
     }
 
     fun changeButtonState(eventId: String) {
-        for (i in events.indices) {
-            if (events[i].id == eventId) {
-                events[i].activated = !events[i].activated
-            }
-        }
+        events.map { if (it.id == eventId) it.activated = !it.activated }
+    }
+
+    fun removeEvent(eventId: String) {
+        events.map { if (it.id == eventId) events.remove(it) }
+        notifyDataSetChanged()
     }
 
     fun changeUserLikedProperty(eventId: String) {
@@ -98,9 +100,10 @@ class ShortEventAdapter(
             }
             likeButton.setOnClickListener {
                 event.likedByUser = !event.likedByUser
-                listener.onLikeButtonClick(
-                    event.id
-                )
+                listener.onLikeButtonClick(event.id)
+            }
+            if (!showLikes) {
+                likeButton.visibility = View.GONE
             }
         }
 

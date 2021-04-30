@@ -1,4 +1,4 @@
-package com.kandyba.gotogether.models.general
+package com.kandyba.gotogether.models.general.requests
 
 
 class UserInterestsRequestBody(

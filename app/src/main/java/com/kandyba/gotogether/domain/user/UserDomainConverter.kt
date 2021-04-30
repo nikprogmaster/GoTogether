@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.domain.user
 
+import com.kandyba.gotogether.domain.events.EventsDomainConverter
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
 import com.kandyba.gotogether.models.general.BaseConverter
 import com.kandyba.gotogether.models.presentation.UserInfoModel
@@ -8,7 +9,9 @@ import com.kandyba.gotogether.models.presentation.UserInfoModel
  * @author Кандыба Никита
  * @since 06.02.2021
  */
-class UserDomainConverter : BaseConverter<UserInfoDomainModel, UserInfoModel>() {
+class UserDomainConverter(
+    val eventsDomainConverter: EventsDomainConverter
+) : BaseConverter<UserInfoDomainModel, UserInfoModel>() {
 
     override fun convert(from: UserInfoDomainModel): UserInfoModel {
         return UserInfoModel(
@@ -23,7 +26,10 @@ class UserDomainConverter : BaseConverter<UserInfoDomainModel, UserInfoModel>() 
             from.info,
             from.isLoyal,
             from.avatar,
-            from.interests
+            from.interests,
+            eventsDomainConverter.convert(from.likedEvents),
+            from.currentUserInBlackList,
+            from.inCurrentUserBlackList
         )
     }
 

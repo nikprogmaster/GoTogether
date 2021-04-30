@@ -4,11 +4,11 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class DateDataModel(
-    @SerializedName("start_unix")
+    @SerializedName("start")
     @Expose
-    val startUnix: String,
+    val startUnix: Long,
 
-    @SerializedName("end_unix")
+    @SerializedName("end")
     @Expose
-    val endUnix: String
+    val endUnix: Long
 )

@@ -2,6 +2,7 @@ package com.kandyba.gotogether.models.data.user
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.kandyba.gotogether.models.data.events.EventDetailsDataModel
 
 
 data class UserInfoDataModel(
@@ -51,5 +52,17 @@ data class UserInfoDataModel(
 
     @SerializedName("interests")
     @Expose
-    val interests: Map<String, Int>
+    val interests: Map<String, Int>,
+
+    @SerializedName("likedEvents")
+    @Expose
+    val likedEvents: List<EventDetailsDataModel>,
+
+    @SerializedName("currentUserInBlackList")
+    @Expose
+    val currentUserInBlackList: Boolean? = null,
+
+    @SerializedName("inCurrentUserBlackList")
+    @Expose
+    val inCurrentUserBlackList: Boolean? = null
 )

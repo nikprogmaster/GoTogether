@@ -68,6 +68,7 @@ class SearchViewModel(
             .subscribe(
                 {
                     eventInfoMLD.postValue(it)
+                    eventInfoMLD = MutableLiveData()
                     showProgressMLD.postValue(false)
                 },
                 {

@@ -6,7 +6,7 @@ import java.util.*
 
 fun getAnchorDate(): Calendar {
     val calendarInstance = Calendar.getInstance(TimeZone.getDefault())
-    calendarInstance.set(1970, 1, 0, 0, 0, 0)
+    calendarInstance.set(1970, 0, 0, 0, 0, 0)
     calendarInstance.set(Calendar.MILLISECOND, 0)
     calendarInstance.add(Calendar.MILLISECOND, TimeZone.getDefault().rawOffset)
     return calendarInstance
@@ -14,7 +14,7 @@ fun getAnchorDate(): Calendar {
 
 fun getCalendarDate(unixTime: Long): Calendar {
     val date = getAnchorDate()
-    date.timeInMillis = date.timeInMillis + unixTime * 1000
+    date.timeInMillis = date.timeInMillis + unixTime
     return date
 }
 
@@ -31,6 +31,23 @@ fun getFormattedTime(unixTime: Long): String {
     return result
 }
 
+fun getTodayTimeOrDate(unixTime: Long): String {
+    val date = Calendar.getInstance()
+    date.timeInMillis = unixTime
+    return if (isToday(date)) {
+        getFormattedTime(unixTime)
+    } else {
+        getShortDate(unixTime)
+    }
+}
+
+private fun isToday(date: Calendar): Boolean {
+    val today = Calendar.getInstance()
+    return today[Calendar.YEAR] == date[Calendar.YEAR]
+            && today[Calendar.MONTH] == date[Calendar.MONTH]
+            && today[Calendar.DAY_OF_MONTH] == date[Calendar.DAY_OF_MONTH]
+}
+
 private fun getMinutes(date: Calendar): String {
     val minute = date.get(Calendar.MINUTE)
     return if (minute > 9) {
@@ -41,10 +58,11 @@ private fun getMinutes(date: Calendar): String {
 }
 
 fun getAge(unixTime: Long): String {
-    val date = getCalendarDate(unixTime)
+    val date = Calendar.getInstance()
+    date.timeInMillis = unixTime
     val birthDate = LocalDate.of(
         date.get(Calendar.YEAR),
-        date.get(Calendar.MONTH),
+        date.get(Calendar.MONTH) + 1,
         date.get(Calendar.DAY_OF_MONTH)
     )
     val now = LocalDate.now()
@@ -70,6 +88,17 @@ fun getDayOfWeek(unixTime: Long): String? {
         Calendar.SHORT,
         Locale.getDefault()
     )?.toUpperCase(Locale.getDefault())
+}
+
+private fun getShortDate(unixTime: Long): String {
+    val date = getCalendarDate(unixTime)
+    return "${date[Calendar.DAY_OF_MONTH]} ${
+        date.getDisplayName(
+            Calendar.MONTH,
+            Calendar.SHORT_STANDALONE,
+            Locale.getDefault()
+        )
+    }"
 }
 
 fun getMonth(unixTime: Long): String =

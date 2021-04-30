@@ -15,7 +15,7 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.general.UserInfoRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
@@ -76,6 +76,11 @@ class DescriptionFragment : Fragment() {
     private fun createUserRequest(): UserInfoRequestBody {
         val info = aboutYou.text.toString()
         return UserInfoRequestBody(info)
+    }
+
+    override fun onDestroy() {
+        viewModel.updateAdditionalUserInfo.removeObservers(requireActivity())
+        super.onDestroy()
     }
 
     companion object {

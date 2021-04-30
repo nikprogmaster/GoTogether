@@ -15,8 +15,8 @@ data class EventModel(
 ): Serializable
 
 data class Date(
-    val startUnix: String,
-    val endUnix: String
+    val startUnix: Long,
+    val endUnix: Long
 ) : Serializable
 
 class Events(val events: List<EventModel>): Serializable

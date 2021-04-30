@@ -1,4 +1,4 @@
-package com.kandyba.gotogether.models.general
+package com.kandyba.gotogether.models.general.requests
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

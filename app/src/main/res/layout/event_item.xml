@@ -92,6 +92,7 @@
             android:id="@+id/categories_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:focusableInTouchMode="false"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
@@ -125,20 +126,25 @@
 
         <TextView
             android:id="@+id/price"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
+            android:layout_marginEnd="12dp"
             android:fontFamily="@font/exo"
             android:textColor="@color/black"
             android:textFontWeight="700"
             android:textSize="16sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="@+id/rouble"
             app:layout_constraintStart_toEndOf="@id/rouble"
             app:layout_constraintTop_toTopOf="@+id/rouble"
+            app:layout_constraintEnd_toStartOf="@+id/upload_image"
             tools:targetApi="p"
             tools:text="Бесплатно" />
 
         <ImageView
+            android:id="@+id/upload_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"

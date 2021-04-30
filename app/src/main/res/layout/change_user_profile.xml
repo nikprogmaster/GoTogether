@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/change_user_profile_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,6 +13,8 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_arrow_back_36"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,153 +43,185 @@
         android:background="@color/gray2"
         app:layout_constraintTop_toBottomOf="@+id/profile_title" />
 
-    <ImageView
-        android:id="@+id/profile_avatar"
-        android:layout_width="116dp"
-        android:layout_height="116dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
-
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="16dp"
-        android:fontFamily="@font/arimo_bold"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_avatar"
-        tools:text="Никита Кандыба" />
-
-    <TextView
-        android:id="@+id/change_fio_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/arimo_bold"
-        android:text="@string/change"
-        android:textColor="@color/selected_tint"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/user_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/user_name"
-        app:layout_constraintTop_toTopOf="@+id/user_name" />
-
-    <TextView
-        android:id="@+id/user_age_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="12dp"
-        android:fontFamily="@font/arimo_bold"
-        android:text="@string/age_"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_name" />
-
-    <TextView
-        android:id="@+id/user_age_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:fontFamily="@font/arimo"
-        tools:text="18 лет"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        app:layout_constraintTop_toTopOf="@id/user_age_title"
-        app:layout_constraintStart_toEndOf="@+id/user_age_title"
-        app:layout_constraintBottom_toBottomOf="@id/user_age_title" />
-
-    <TextView
-        android:id="@+id/change_fio_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/arimo_bold"
-        android:text="@string/change"
-        android:textColor="@color/selected_tint"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/user_age_value"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/user_age_value"
-        app:layout_constraintTop_toTopOf="@+id/user_age_value" />
-
-    <TextView
-        android:id="@+id/about_me_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="16dp"
-        android:fontFamily="@font/arimo_bold"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_age_title"
-        android:text="@string/about_me" />
-
-    <TextView
-        android:id="@+id/change_about_me"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/arimo_bold"
-        android:text="@string/change"
-        android:textColor="@color/selected_tint"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/about_me_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/about_me_title"
-        app:layout_constraintTop_toTopOf="@+id/about_me_title" />
-
-    <TextView
-        android:id="@+id/user_description"
-        android:layout_width="0dp"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:ellipsize="end"
-        android:fontFamily="@font/arimo"
-        android:maxLines="5"
-        android:textColor="@color/black"
-        android:textFontWeight="400"
-        android:textSize="14sp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
-        android:background="@drawable/date_background"
-        android:elevation="16dp"
-        android:padding="4dp"
-        android:translationZ="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/my_interests"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/about_me_title" />
-
-    <TextView
-        android:id="@+id/my_interests"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/arimo_bold"
-        android:text="@string/interests"
-        android:textColor="@color/selected_tint"
-        android:textSize="22sp"
-        app:layout_constraintTop_toBottomOf="@+id/user_description"
         app:layout_constraintBottom_toTopOf="@+id/logout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/divider">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_avatar"
+                android:layout_width="116dp"
+                android:layout_height="116dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/arimo_bold"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_avatar"
+                tools:text="Никита Кандыба" />
+
+            <TextView
+                android:id="@+id/change_fio_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/arimo_bold"
+                android:text="@string/change"
+                android:textColor="@color/selected_tint"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/user_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/user_name"
+                app:layout_constraintTop_toTopOf="@+id/user_name" />
+
+            <TextView
+                android:id="@+id/user_age_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="12dp"
+                android:fontFamily="@font/arimo_bold"
+                android:text="@string/age_"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_name" />
+
+            <TextView
+                android:id="@+id/user_age_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:fontFamily="@font/arimo"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                app:layout_constraintBottom_toBottomOf="@id/user_age_title"
+                app:layout_constraintStart_toEndOf="@+id/user_age_title"
+                app:layout_constraintTop_toTopOf="@id/user_age_title"
+                tools:text="18 лет" />
+
+            <TextView
+                android:id="@+id/change_age_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/arimo_bold"
+                android:text="@string/change"
+                android:textColor="@color/selected_tint"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/user_age_value"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/user_age_value"
+                app:layout_constraintTop_toTopOf="@+id/user_age_value" />
+
+            <TextView
+                android:id="@+id/about_me_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/arimo_bold"
+                android:text="@string/about_me"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_age_title" />
+
+            <TextView
+                android:id="@+id/change_about_me"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/arimo_bold"
+                android:text="@string/change"
+                android:textColor="@color/selected_tint"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/about_me_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/about_me_title"
+                app:layout_constraintTop_toTopOf="@+id/about_me_title" />
+
+            <LinearLayout
+                android:id="@+id/user_description_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/date_background"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="4dp"
+                android:translationZ="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/about_me_title">
+
+                <TextView
+                    android:id="@+id/user_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/arimo"
+                    android:maxLines="5"
+                    android:textColor="@color/black"
+                    android:textFontWeight="400"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/show_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/arimo"
+                    android:text="@string/show_all"
+                    android:textColor="@color/colorPrimary"
+                    android:textFontWeight="400"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/my_interests"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/arimo_bold"
+                android:text="@string/interests"
+                android:textColor="@color/selected_tint"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_description_layout" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/logout"
@@ -206,7 +241,6 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tell_about_error" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

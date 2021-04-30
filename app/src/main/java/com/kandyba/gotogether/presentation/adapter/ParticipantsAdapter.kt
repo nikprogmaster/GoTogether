@@ -13,7 +13,8 @@ import com.squareup.picasso.Picasso
 
 
 class ParticipantsAdapter(
-    val participants: List<Participant>
+    private val participants: List<Participant>,
+    private val listener: OnProfileButtonClickListener
 ) : RecyclerView.Adapter<ParticipantsAdapter.ParticipantViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParticipantViewHolder {
@@ -30,7 +31,7 @@ class ParticipantsAdapter(
         return participants.size
     }
 
-    class ParticipantViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ParticipantViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val name: TextView = itemView.findViewById(R.id.person_name)
         private val textAvatar: TextView = itemView.findViewById(R.id.text_avatar)
@@ -49,6 +50,14 @@ class ParticipantsAdapter(
                     .error(R.drawable.error_placeholder)
                     .into(imageAvatar)
             }
+            goToProfile.setOnClickListener {
+                listener.onProfileClick(participant.id)
+            }
         }
     }
+
+}
+
+interface OnProfileButtonClickListener {
+    fun onProfileClick(userId: String)
 }

@@ -2,7 +2,7 @@ package com.kandyba.gotogether.models.domain.events
 
 import java.io.Serializable
 
-class EventDetailsDomainModel(
+data class EventDetailsDomainModel(
     val id: String,
     val likedByUser: Boolean,
     val title: String,
@@ -11,7 +11,7 @@ class EventDetailsDomainModel(
     val description: String?,
     val bodyText: String?,
     val kudagoUrl: String?,
-    val placeId: String?,
+    val place: Place?,
     val latitude: String?,
     val longitude: String?,
     val language: String?,
@@ -25,11 +25,26 @@ class EventDetailsDomainModel(
     val amountOfParticipants: Int?
 ) : Serializable
 
-class Participant(
+data class Participant(
     val id: String,
     val firstName: String?,
     var avatar: String? = null
 ) : Serializable
+
+data class Place(
+    val title: String,
+    val slug: String? = null,
+    val address: String? = null,
+    val siteUrl: String? = null,
+    var timetable: String? = null,
+    val phone: String? = null,
+    val bodyText: String? = null,
+    val description: String? = null,
+    val foreignUrl: String? = null,
+    val longitude: String? = null,
+    val latitude: String? = null,
+    val subway: String? = null
+)
 
 class ParticipantsList(
     val participants: List<Participant>

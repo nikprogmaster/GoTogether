@@ -12,3 +12,4 @@ class AnimationModule {
         return StartAppAnimation()
     }
 }
+

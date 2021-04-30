@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
-import com.kandyba.gotogether.models.general.SignupRequestBody
+import com.kandyba.gotogether.models.general.requests.SignupRequestBody
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
@@ -101,7 +101,21 @@ class RegistrationFragment : Fragment() {
             confirmPassword.error = resources.getString(R.string.passwords_must_be_equal)
             isCorrect = false
         }
+        if (password.text.toString().length < 8) {
+            password.error = resources.getString(R.string.passwords_must_be_more_than_eight_symbols)
+            isCorrect = false
+        }
+        if (confirmPassword.text.toString().length < 8) {
+            confirmPassword.error =
+                resources.getString(R.string.passwords_must_be_more_than_eight_symbols)
+            isCorrect = false
+        }
         return isCorrect
+    }
+
+    override fun onDestroy() {
+        viewModel.loginResponse.removeObservers(requireActivity())
+        super.onDestroy()
     }
 
     companion object {
