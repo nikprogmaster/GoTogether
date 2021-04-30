@@ -1,10 +1,12 @@
 package com.kandyba.gotogether.data.api
 
 import com.kandyba.gotogether.models.data.user.UserInfoDataModel
-import com.kandyba.gotogether.models.general.UserInfoRequestBody
-import com.kandyba.gotogether.models.general.UserInterestsRequestBody
-import com.kandyba.gotogether.models.general.UserMainRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInterestsRequestBody
+import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
+import io.reactivex.Completable
 import io.reactivex.Single
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface UserApiMapper {
@@ -33,8 +35,17 @@ interface UserApiMapper {
         @Path(UUID_VALUE) userId: String
     ): Single<UserInfoDataModel>
 
+    @Multipart
+    @POST(USER_AVATAR_ENDPOINT)
+    fun uploadUserAvatar(
+        @Header(AUTHORIZATION_VALUE) token: String,
+        @Part filePart: MultipartBody.Part/*,
+        @Part("type") type: RequestBody*/
+    ): Completable
+
     companion object {
         private const val USER_INFO_ENDPOINT = "users"
+        private const val USER_AVATAR_ENDPOINT = "/api/users/avatar"
         private const val UUID_VALUE = "id"
         private const val AUTHORIZATION_VALUE = "ssid"
     }

@@ -24,8 +24,10 @@
     <string name="dialogs">Диалоги</string>
     <string name="profile">Профиль</string>
     <string name="free">Бесплатно</string>
+    <string name="not_mentioned">Не указано</string>
     <string name="error_message">Это поле не должно быть пустым!</string>
     <string name="passwords_must_be_equal">Пароли должны совпадать</string>
+    <string name="passwords_must_be_more_than_eight_symbols">Длина пароля должна быть не менее 8 символов</string>
     <string name="are_you_sure">Вы уверены?</string>
     <string name="need_to_fill_form">Необходимо будет ввести \n учетные данные</string>
     <string name="cancel">Отмена</string>
@@ -55,11 +57,14 @@
     <string name="apply">Применить</string>
     <string name="clear">Очистить</string>
     <string name="user_profile">Страница пользователя</string>
-    <string name="about_me">Обо мне:</string>
+    <string name="about_me">Обо мне</string>
     <string name="events">Мероприятия</string>
     <string name="change"><u>Изменить</u></string>
     <string name="interests"><u>Интересы</u></string>
-
+    <string name="save">Сохранить</string>
+    <string name="no_description">Вы пока ничего не рассказали другим о себе</string>
+    <string name="edit">Редактировать</string>
+    <string name="type_message">Написать сообщение</string>
 
     <string-array name="interests">
         <item>Бизнес и образование</item>

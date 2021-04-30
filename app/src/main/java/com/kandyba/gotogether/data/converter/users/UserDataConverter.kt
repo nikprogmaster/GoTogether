@@ -1,11 +1,14 @@
 package com.kandyba.gotogether.data.converter.users
 
 
+import com.kandyba.gotogether.data.converter.events.EventDetailsDataConverter
 import com.kandyba.gotogether.models.data.user.UserInfoDataModel
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
 import com.kandyba.gotogether.models.general.BaseConverter
 
-class UserDataConverter: BaseConverter<UserInfoDataModel, UserInfoDomainModel>() {
+class UserDataConverter(
+    private val eventsConverter: EventDetailsDataConverter
+) : BaseConverter<UserInfoDataModel, UserInfoDomainModel>() {
 
     override fun convert(from: UserInfoDataModel): UserInfoDomainModel {
         return UserInfoDomainModel(
@@ -20,7 +23,10 @@ class UserDataConverter: BaseConverter<UserInfoDataModel, UserInfoDomainModel>()
             from.info,
             from.isLoyal,
             from.avatar,
-            from.interests
+            from.interests,
+            from.likedEvents.map { eventsConverter.convertWithId(it, it.id) },
+            from.currentUserInBlackList,
+            from.inCurrentUserBlackList
         )
     }
 }

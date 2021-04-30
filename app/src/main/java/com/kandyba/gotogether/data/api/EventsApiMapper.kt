@@ -1,7 +1,7 @@
 package com.kandyba.gotogether.data.api
 
 import com.kandyba.gotogether.models.data.events.EventDetailsDataModel
-import com.kandyba.gotogether.models.general.EventComplaintRequestBody
+import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.*

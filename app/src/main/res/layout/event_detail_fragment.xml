@@ -144,18 +144,23 @@
 
             <TextView
                 android:id="@+id/price_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
                 android:fontFamily="@font/exo_bold"
                 android:textColor="@color/black"
                 android:textSize="25sp"
+                android:maxLines="4"
+                android:ellipsize="end"
+                android:gravity="center"
                 app:fontFamily="@font/exo_bold"
                 app:layout_constraintEnd_toEndOf="@id/ev_divider"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/price_title"
+                app:layout_constraintBottom_toTopOf="@+id/event_place"
                 tools:text="@string/free" />
 
             <View
@@ -185,7 +190,7 @@
 
             <TextView
                 android:id="@+id/age"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="12dp"
@@ -193,6 +198,7 @@
                 android:fontFamily="@font/exo_bold"
                 android:textColor="@color/black"
                 android:textSize="25sp"
+                android:gravity="center"
                 app:fontFamily="@font/exo_bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/ev_divider"
@@ -266,12 +272,28 @@
                 android:id="@+id/schedule_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:visibility="gone"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/when_to_go" />
+
+            <TextView
+                android:id="@+id/timetable"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/exo"
+                android:visibility="gone"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/schedule_list" />
 
             <TextView
                 android:id="@+id/who_will_go"
@@ -288,20 +310,23 @@
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/schedule_list" />
+                app:layout_constraintTop_toBottomOf="@+id/timetable" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/people_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
+                android:layout_marginBottom="20dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?android:selectableItemBackground"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/who_will_go">
+                app:layout_constraintTop_toBottomOf="@id/who_will_go"
+                app:layout_constraintBottom_toTopOf="@+id/complain_btn">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/person1"
@@ -381,10 +406,10 @@
                 android:textColor="@color/black"
                 android:textFontWeight="400"
                 android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/people_group"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/people_group" />
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

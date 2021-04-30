@@ -15,7 +15,7 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.general.UserInterestsRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInterestsRequestBody
 import com.kandyba.gotogether.models.presentation.LevelInterest
 import com.kandyba.gotogether.models.presentation.getListOfCategories
 import com.kandyba.gotogether.presentation.adapter.InterestsAdapter

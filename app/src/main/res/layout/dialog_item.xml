@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/avatar_placeholder"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/name_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:fontFamily="@font/arimo_bold"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        tools:text="Кандыба Никита"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintEnd_toStartOf="@+id/last_message_time" />
+
+    <TextView
+        android:id="@+id/last_message_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:fontFamily="@font/arimo"
+        android:textColor="@color/secondary"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/name_title"
+        app:layout_constraintBottom_toBottomOf="@id/name_title"
+        tools:text="12:15" />
+
+    <TextView
+        android:id="@+id/last_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="12dp"
+        android:fontFamily="@font/exo"
+        android:textColor="@color/secondary"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/messages_amount"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintTop_toBottomOf="@id/name_title"
+        tools:text="Пошли гулять" />
+
+    <TextView
+        android:id="@+id/messages_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        android:minWidth="14dp"
+        android:paddingBottom="1dp"
+        tools:text="1"
+        android:visibility="invisible"
+        android:fontFamily="@font/arimo"
+        android:textSize="10sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/last_message"
+        app:layout_constraintBottom_toBottomOf="@id/last_message"
+        android:background="@drawable/my_message_background" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="18dp"
+        android:background="@color/gray2"
+        app:layout_constraintTop_toBottomOf="@id/last_message"
+        app:layout_constraintStart_toStartOf="@+id/last_message"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

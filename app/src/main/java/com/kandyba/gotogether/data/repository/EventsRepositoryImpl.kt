@@ -4,7 +4,7 @@ import com.kandyba.gotogether.data.api.EventsApiMapper
 import com.kandyba.gotogether.data.converter.events.EventDetailsDataConverter
 import com.kandyba.gotogether.data.converter.events.EventsDataConverter
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
-import com.kandyba.gotogether.models.general.EventComplaintRequestBody
+import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
 

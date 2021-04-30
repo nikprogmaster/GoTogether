@@ -12,8 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
-import com.kandyba.gotogether.models.general.EventComplaintRequestBody
 import com.kandyba.gotogether.models.general.TOKEN
+import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
 import com.kandyba.gotogether.presentation.viewmodel.EventDetailsViewModel
 import com.kandyba.gotogether.presentation.viewmodel.factory.EventDetailsViewModelFactory
 

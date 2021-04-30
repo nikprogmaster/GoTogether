@@ -3,6 +3,7 @@ package com.kandyba.gotogether.di
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.kandyba.gotogether.data.api.AuthApiMapper
 import com.kandyba.gotogether.data.api.EventsApiMapper
+import com.kandyba.gotogether.data.api.MessagesApiMapper
 import com.kandyba.gotogether.data.api.UserApiMapper
 import dagger.Module
 import dagger.Provides
@@ -60,6 +61,11 @@ class NetworkModule {
     @Provides
     fun provideUserMapper(retrofit: Retrofit): UserApiMapper {
         return retrofit.create(UserApiMapper::class.java)
+    }
+
+    @Provides
+    fun provideMessagesMapper(retrofit: Retrofit): MessagesApiMapper {
+        return retrofit.create(MessagesApiMapper::class.java)
     }
 
     companion object {

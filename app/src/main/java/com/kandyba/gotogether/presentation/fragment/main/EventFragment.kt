@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,8 +62,11 @@ class EventFragment : Fragment() {
     private lateinit var person2: CircleImageView
     private lateinit var person3: CircleImageView
     private lateinit var person4: CircleImageView
-    private lateinit var tellError: TextView
+    private lateinit var morePeople: CircleImageView
     private lateinit var complainButton: Button
+    private lateinit var whenToGoTitle: TextView
+    private lateinit var timetable: TextView
+    private lateinit var whoWillGoTitle: TextView
 
     private lateinit var participantsList: List<CircleImageView>
     private lateinit var viewModel: EventDetailsViewModel
@@ -137,10 +141,13 @@ class EventFragment : Fragment() {
         person2 = root.findViewById(R.id.person2)
         person3 = root.findViewById(R.id.person3)
         person4 = root.findViewById(R.id.person4)
-        tellError = root.findViewById(R.id.tell_about_error)
         complainButton = root.findViewById(R.id.complain_btn)
+        whenToGoTitle = root.findViewById(R.id.when_to_go)
+        timetable = root.findViewById(R.id.timetable)
+        morePeople = root.findViewById(R.id.more_people)
+        whoWillGoTitle = root.findViewById(R.id.who_will_go)
 
-        participantsList = listOf(person1, person2, person3, person4)
+        participantsList = listOf(person1, person2, person3, person4, morePeople)
     }
 
     private fun setValues(event: EventDetailsDomainModel) {
@@ -153,25 +160,38 @@ class EventFragment : Fragment() {
         age.text = event.ageRestriction
         likeButton.isChecked = event.likedByUser
 
-        //set
+        //set who will go section
         val hideViewsList = defineHideViewList(event)
         hideViews(hideViewsList)
         participantsList = participantsList.minus(hideViewsList)
         if (event.amountOfParticipants != null && event.amountOfParticipants > 0) {
             for (i in 0 until event.amountOfParticipants) {
                 event.participants?.get(i)?.avatar?.let {
-                    setImageWithPicasso(
-                        it,
-                        participantsList[i]
-                    )
+                    setImageWithPicasso(it, participantsList[i])
                 }
             }
+        } else {
+            whoWillGoTitle.visibility = View.GONE
+            peopleGroup.visibility = View.GONE
+        }
+
+        //set when to go section
+        if (event.dates != null && event.dates.isNotEmpty()) {
+            Log.i("1", "тута")
+            scheduleRecyclerView.visibility = View.VISIBLE
+        } else if (event.place?.timetable != null && event.place.timetable != EMPTY_STRING) {
+            timetable.visibility = View.VISIBLE
+            val time = event.place.timetable?.capitalize()
+            timetable.text = time
+            Log.i("2", "тута")
+        } else {
+            whenToGoTitle.visibility = View.GONE
         }
 
         //set categoriesAdapter
         val categoriesAdapter = CategoriesAdapter()
         event.categories?.let { categoriesAdapter.setCategories(it) }
-        val manager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val manager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         categoriesRecycler.adapter = categoriesAdapter
         categoriesRecycler.layoutManager = manager
 
@@ -187,7 +207,9 @@ class EventFragment : Fragment() {
     private fun setClickListeners(event: EventDetailsDomainModel) {
         complainButton.setOnClickListener {
             val complaintDialogFragment =
-                ComplaintDialogFragment.newInstance("d83b5792-4273-40d2-babd-6e2a05865894")
+                ComplaintDialogFragment.newInstance(
+                    (requireArguments().getSerializable(EVENT_KEY) as EventDetailsDomainModel).id
+                )
             mainViewModel.showDialogFragment(complaintDialogFragment)
         }
 
@@ -250,8 +272,8 @@ class EventFragment : Fragment() {
     }
 
     private fun configureMap(event: EventDetailsDomainModel) {
-        if (event.latitude != null && event.longitude != null) {
-            val point = Point(event.latitude.toDouble(), event.longitude.toDouble())
+        if (event.place?.latitude != null && event.place.longitude != null) {
+            val point = Point(event.place.latitude.toDouble(), event.place.longitude.toDouble())
             mapView.map.move(
                 CameraPosition(point, 16.0f, 0.0f, 0.0f),
                 Animation(Animation.Type.SMOOTH, 5f),
@@ -261,7 +283,8 @@ class EventFragment : Fragment() {
             val searchManager =
                 SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
             val geometryPoint = Geometry.fromPoint(point)
-            val searchSession = searchManager.submit(point, 16, SearchOptions(),
+            val searchSession = searchManager.submit(
+                point, 16, SearchOptions(),
                 object : Session.SearchListener {
                     override fun onSearchError(p0: Error) {}
                     override fun onSearchResponse(p0: Response) {
@@ -280,7 +303,7 @@ class EventFragment : Fragment() {
 
     private fun defineHideViewList(event: EventDetailsDomainModel): List<CircleImageView> {
         return when (event.amountOfParticipants) {
-            0 -> listOf(person1, person2, person3, person4)
+            0 -> listOf(person1, person2, person3, person4, morePeople)
             1 -> listOf(person2, person3, person4)
             2 -> listOf(person3, person4)
             3 -> listOf(person4)

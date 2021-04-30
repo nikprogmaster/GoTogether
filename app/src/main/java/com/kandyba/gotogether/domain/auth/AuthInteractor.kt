@@ -2,8 +2,8 @@ package com.kandyba.gotogether.domain.auth
 
 import com.kandyba.gotogether.models.domain.auth.LoginDomainResponse
 import com.kandyba.gotogether.models.domain.auth.SignupDomainResponse
-import com.kandyba.gotogether.models.general.LoginRequestBody
-import com.kandyba.gotogether.models.general.SignupRequestBody
+import com.kandyba.gotogether.models.general.requests.LoginRequestBody
+import com.kandyba.gotogether.models.general.requests.SignupRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
 

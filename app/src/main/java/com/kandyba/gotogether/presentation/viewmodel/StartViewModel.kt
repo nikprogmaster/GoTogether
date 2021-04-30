@@ -9,7 +9,11 @@ import com.kandyba.gotogether.domain.events.EventsInteractor
 import com.kandyba.gotogether.domain.user.UserInteractor
 import com.kandyba.gotogether.models.domain.auth.LoginDomainResponse
 import com.kandyba.gotogether.models.domain.auth.SignupDomainResponse
-import com.kandyba.gotogether.models.general.*
+import com.kandyba.gotogether.models.general.EMPTY_STRING
+import com.kandyba.gotogether.models.general.ServerExceptionEntity
+import com.kandyba.gotogether.models.general.TOKEN
+import com.kandyba.gotogether.models.general.USER_ID
+import com.kandyba.gotogether.models.general.requests.*
 import com.kandyba.gotogether.models.presentation.SnackbarMessage
 import com.kandyba.gotogether.models.presentation.UserInfoModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,14 +30,14 @@ class StartViewModel(
     private val gsonConverter: Converter<ResponseBody, *>?
 ) : BaseViewModel() {
 
-    private val loginResponseMLD = MutableLiveData<LoginDomainResponse>()
+    private var loginResponseMLD = MutableLiveData<LoginDomainResponse>()
     private val showProgressMLD = MutableLiveData<Boolean>()
     private val showStartFragmentMLD = MutableLiveData<Unit>()
     private val showHeadpieceMLD = MutableLiveData<Boolean>()
     private val showMainActivityMLD = MutableLiveData<Unit>()
     private val signupResponseMLD = MutableLiveData<SignupDomainResponse>()
-    private val updateMainUserInfoMLD = MutableLiveData<UserInfoModel>()
-    private val updateAdditionalUserInfoMLD = MutableLiveData<UserInfoModel>()
+    private var updateMainUserInfoMLD = MutableLiveData<UserInfoModel>()
+    private var updateAdditionalUserInfoMLD = MutableLiveData<UserInfoModel>()
     private val updateUserInterestsMLD = MutableLiveData<UserInfoModel>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
 
@@ -49,10 +53,10 @@ class StartViewModel(
         get() = showMainActivityMLD
     val signupResponse: LiveData<SignupDomainResponse>
         get() = signupResponseMLD
-    val updateMainUserInfo: LiveData<UserInfoModel>
-        get() = updateMainUserInfoMLD
     val showSnackbar: LiveData<SnackbarMessage>
         get() = showSnackbarMLD
+    val updateMainUserInfo: LiveData<UserInfoModel>
+        get() = updateMainUserInfoMLD
     val updateAdditionalUserInfo: LiveData<UserInfoModel>
         get() = updateAdditionalUserInfoMLD
     val updateUserInterests: LiveData<UserInfoModel>
@@ -87,7 +91,7 @@ class StartViewModel(
     }
 
     fun loadUserInfo(token: String, userId: String) {
-        userInteractor.getUserInfo(token, userId, true)
+        userInteractor.getUserInfo(token, userId, true, false)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -133,6 +137,7 @@ class StartViewModel(
             .subscribe(
                 { userInfo ->
                     updateMainUserInfoMLD.postValue(userInfo)
+                    updateMainUserInfoMLD = MutableLiveData()
                     showProgressMLD.postValue(false)
                 },
                 {
@@ -156,6 +161,7 @@ class StartViewModel(
             .subscribe(
                 { userInfo ->
                     updateAdditionalUserInfoMLD.postValue(userInfo)
+                    updateAdditionalUserInfoMLD = MutableLiveData()
                     showProgressMLD.postValue(false)
                 },
                 {
@@ -227,6 +233,7 @@ class StartViewModel(
             .subscribe(
                 { response ->
                     loginResponseMLD.postValue(response)
+                    loginResponseMLD = MutableLiveData()
                     showProgressMLD.postValue(false)
                 },
                 {

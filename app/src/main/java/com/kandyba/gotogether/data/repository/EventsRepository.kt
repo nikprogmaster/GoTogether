@@ -1,7 +1,7 @@
 package com.kandyba.gotogether.data.repository
 
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
-import com.kandyba.gotogether.models.general.EventComplaintRequestBody
+import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
 

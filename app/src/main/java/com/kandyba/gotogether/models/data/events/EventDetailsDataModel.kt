@@ -36,9 +36,9 @@ data class EventDetailsDataModel(
     @Expose
     val kudagoUrl: String? = null,
 
-    @SerializedName("placeId")
+    @SerializedName("place")
     @Expose
-    val placeId: String? = null,
+    val place: Place? = null,
 
     @SerializedName("latitude")
     @Expose
@@ -97,4 +97,54 @@ data class Participant(
     @SerializedName("avatar")
     @Expose
     var avatar: String? = null
+)
+
+data class Place(
+    @SerializedName("title")
+    @Expose
+    val title: String,
+
+    @SerializedName("slug")
+    @Expose
+    val slug: String? = null,
+
+    @SerializedName("address")
+    @Expose
+    val address: String? = null,
+
+    @SerializedName("siteUrl")
+    @Expose
+    val siteUrl: String? = null,
+
+    @SerializedName("timetable")
+    @Expose
+    val timetable: String? = null,
+
+    @SerializedName("phone")
+    @Expose
+    val phone: String? = null,
+
+    @SerializedName("bodyText")
+    @Expose
+    val bodyText: String? = null,
+
+    @SerializedName("description")
+    @Expose
+    val description: String? = null,
+
+    @SerializedName("foreignUrl")
+    @Expose
+    val foreignUrl: String? = null,
+
+    @SerializedName("longitude")
+    @Expose
+    val longitude: String? = null,
+
+    @SerializedName("latitude")
+    @Expose
+    val latitude: String? = null,
+
+    @SerializedName("subway")
+    @Expose
+    val subway: String? = null
 )

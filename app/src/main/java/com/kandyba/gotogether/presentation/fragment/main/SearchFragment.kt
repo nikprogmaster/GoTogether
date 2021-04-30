@@ -19,6 +19,7 @@ import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.presentation.adapter.ShortEventAdapter
+import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import com.kandyba.gotogether.presentation.viewmodel.SearchViewModel
 
 
@@ -31,6 +32,7 @@ class SearchFragment : Fragment() {
 
     private lateinit var eventsAdapter: ShortEventAdapter
     private lateinit var viewModel: SearchViewModel
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
 
     private var bottomSheet: SearchSettingsBottomSheetDialogFragment? = null
@@ -60,27 +62,33 @@ class SearchFragment : Fragment() {
         val factory =
             (requireActivity().application as App).appComponent.getSearchViewModelFactory()
         viewModel = ViewModelProvider(requireActivity(), factory)[SearchViewModel::class.java]
+        val mainFactory =
+            (requireActivity().application as App).appComponent.getMainViewModelFactory()
+        mainViewModel = ViewModelProvider(requireActivity(), mainFactory)[MainViewModel::class.java]
         settings = (requireActivity().application as App).appComponent.getSharedPreferences()
     }
 
     private fun initObservers() {
         viewModel.eventsRecommendations.observe(requireActivity(), Observer { events ->
             eventsAdapter =
-                ShortEventAdapter(events, object : ShortEventAdapter.OnEventClickListener {
-                    override fun onClick(eventId: String) {
-                        viewModel.loadEventInfo(
-                            settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
-                            eventId
-                        )
-                    }
+                ShortEventAdapter(
+                    events.toMutableList(), object : ShortEventAdapter.OnEventClickListener {
+                        override fun onClick(eventId: String) {
+                            viewModel.loadEventInfo(
+                                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
+                                eventId
+                            )
+                        }
 
-                    override fun onLikeButtonClick(eventId: String) {
-                        viewModel.likeEvent(
-                            settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
-                            eventId
-                        )
-                    }
-                })
+                        override fun onLikeButtonClick(eventId: String) {
+                            viewModel.likeEvent(
+                                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
+                                eventId
+                            )
+                        }
+                    },
+                    true
+                )
             eventsRecyclerView.adapter = eventsAdapter
         })
         viewModel.closeBottomSheet.observe(requireActivity(), Observer {
@@ -94,6 +102,9 @@ class SearchFragment : Fragment() {
         })
         viewModel.eventNotLiked.observe(requireActivity(), Observer {
             eventsAdapter.changeUserLikedProperty(it)
+        })
+        viewModel.eventInfo.observe(requireActivity(), Observer {
+            mainViewModel.openFragment(EventFragment.newInstance(it))
         })
     }
 
@@ -122,6 +133,11 @@ class SearchFragment : Fragment() {
             }
             clearSearchFocus()
         }
+    }
+
+    override fun onDestroy() {
+        viewModel.eventInfo.removeObservers(requireActivity())
+        super.onDestroy()
     }
 
     private fun clearSearchFocus() {

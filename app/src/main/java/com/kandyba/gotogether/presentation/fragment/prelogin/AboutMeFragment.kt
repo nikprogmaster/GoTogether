@@ -17,7 +17,7 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.general.UserMainRequestBody
+import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 import java.util.*
@@ -70,7 +70,7 @@ class AboutMeFragment : Fragment() {
 
     private fun initObservers() {
         viewModel.updateMainUserInfo.observe(requireActivity(), Observer {
-            (activity as FragmentManager).openFragment(DescriptionFragment.newInstance())
+            (requireActivity() as FragmentManager).openFragment(DescriptionFragment.newInstance())
             Log.d("AboutMeFragment", "initObservers() called")
         })
     }
@@ -125,6 +125,11 @@ class AboutMeFragment : Fragment() {
             birthday.setText(result)
 
         }
+
+    override fun onDestroy() {
+        viewModel.updateMainUserInfo.removeObservers(requireActivity())
+        super.onDestroy()
+    }
 
     companion object {
         private const val MILLISECOND_DIVISOR = 1000

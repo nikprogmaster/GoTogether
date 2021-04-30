@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.domain.auth.LoginDomainResponse
+import com.kandyba.gotogether.models.general.Cache
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.models.general.USER_ID
 import com.kandyba.gotogether.presentation.animation.StartAppAnimation
@@ -97,6 +98,12 @@ class StartActivity : AppCompatActivity(), FragmentManager {
 
     private fun showProgress(show: Boolean) {
         progress.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    private fun clearPrefs() {
+        val editor = prefs.edit()
+        editor.clear().apply()
+        Cache.instance.clearAllCache()
     }
 
     private fun saveUserInfo(authResponse: LoginDomainResponse) {

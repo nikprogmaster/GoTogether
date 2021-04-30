@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.kandyba.gotogether.R
+import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.presentation.EventModel
 import com.kandyba.gotogether.models.presentation.getCalendarDay
 import com.kandyba.gotogether.models.presentation.getMonth
@@ -77,7 +78,7 @@ class EventsAdapter(
         private val categoriesAdapter: CategoriesAdapter = CategoriesAdapter()
 
         fun bindViews(event: EventModel) {
-            title.text = event.title
+            title.text = event.title.capitalize()
             event.dates?.let {
                 if (it.isNotEmpty()) {
                     dayOfMonth.text = getCalendarDay(it[0].startUnix.toLong())
@@ -90,12 +91,15 @@ class EventsAdapter(
                 price.text = itemView.resources.getText(R.string.free)
             } else {
                 price.text = event.price
+                if (event.price == EMPTY_STRING) {
+                    price.text = itemView.resources.getText(R.string.not_mentioned)
+                }
             }
             likeButton.isEnabled = event.activated
             likeButton.isChecked = event.likedByUser
             event.categories?.let { categoriesAdapter.setCategories(it) }
             val layoutManager =
-                LinearLayoutManager(itemView.context, LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
             categories.layoutManager = layoutManager
             categories.adapter = categoriesAdapter
             if (event.photoLinks.isNotEmpty() && event.photoLinks[0].isNotEmpty()) {

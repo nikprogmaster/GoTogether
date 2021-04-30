@@ -3,10 +3,13 @@ package com.kandyba.gotogether.data.repository
 import com.kandyba.gotogether.data.api.UserApiMapper
 import com.kandyba.gotogether.data.converter.users.UserDataConverter
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
-import com.kandyba.gotogether.models.general.UserInfoRequestBody
-import com.kandyba.gotogether.models.general.UserInterestsRequestBody
-import com.kandyba.gotogether.models.general.UserMainRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInterestsRequestBody
+import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
+import io.reactivex.Completable
 import io.reactivex.Single
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 class UserRepositoryImpl(
     private val apiMapper: UserApiMapper,
@@ -36,5 +39,10 @@ class UserRepositoryImpl(
         body: UserInterestsRequestBody
     ): Single<UserInfoDomainModel> {
         return apiMapper.updateUserInterests(token, body).map { converter.convert(it) }
+    }
+
+    override fun uploadUserAvatar(token: String, filePart: MultipartBody.Part): Completable {
+        val type = RequestBody.create(MultipartBody.FORM, "image/jpeg")
+        return apiMapper.uploadUserAvatar(token, filePart)
     }
 }

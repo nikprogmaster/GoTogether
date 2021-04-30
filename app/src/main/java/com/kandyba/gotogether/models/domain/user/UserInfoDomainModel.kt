@@ -1,5 +1,7 @@
 package com.kandyba.gotogether.models.domain.user
 
+import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
+
 data class UserInfoDomainModel(
     var id: String,
     var email: String,
@@ -12,5 +14,8 @@ data class UserInfoDomainModel(
     var info: String? = null,
     var isLoyal: Boolean,
     val avatar: String? = null,
-    val interests: Map<String, Int>
+    val interests: Map<String, Int>,
+    val likedEvents: List<EventDetailsDomainModel>,
+    val currentUserInBlackList: Boolean? = null,
+    val inCurrentUserBlackList: Boolean? = null
 )

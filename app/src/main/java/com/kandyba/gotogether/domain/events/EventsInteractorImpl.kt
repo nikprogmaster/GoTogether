@@ -3,7 +3,7 @@ package com.kandyba.gotogether.domain.events
 import com.kandyba.gotogether.data.repository.EventsRepository
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.general.Cache
-import com.kandyba.gotogether.models.general.EventComplaintRequestBody
+import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
 import com.kandyba.gotogether.models.presentation.EventModel
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -40,6 +40,7 @@ class EventsInteractorImpl(
         eventId: String
     ): Completable {
         return eventsRepository.participateInEvent(token, eventId)
+            .doOnComplete { Cache.instance.clearUserCache() }
     }
 
     override fun searchEventsByInterests(

@@ -17,7 +17,6 @@ class ForYouViewModel(
 ) : BaseViewModel() {
 
     private val showProgressMLD = MutableLiveData<Boolean>()
-    private val logoutCompletedMLD = MutableLiveData<Unit>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
     private var eventInfoMLD = MutableLiveData<EventDetailsDomainModel>()
     private val enableLikeButtonMLD = MutableLiveData<String>()
@@ -26,8 +25,6 @@ class ForYouViewModel(
 
     val showProgress: LiveData<Boolean>
         get() = showProgressMLD
-    val logoutCompleted: LiveData<Unit>
-        get() = logoutCompletedMLD
     val showSnackbar: LiveData<SnackbarMessage>
         get() = showSnackbarMLD
     val eventInfo: LiveData<EventDetailsDomainModel>
@@ -58,25 +55,6 @@ class ForYouViewModel(
                     if (it is ConnectException) {
                         showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
                     }
-                }
-            ).addTo(rxCompositeDisposable)
-    }
-
-    fun logout(token: String) {
-        showProgressMLD.postValue(true)
-        authInteractor.logout(token)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    logoutCompletedMLD.postValue(Unit)
-                    showProgressMLD.postValue(false)
-                },
-                {
-                    if (it is ConnectException) {
-                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
-                    }
-                    showProgressMLD.postValue(false)
                 }
             ).addTo(rxCompositeDisposable)
     }

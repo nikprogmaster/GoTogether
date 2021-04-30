@@ -2,11 +2,13 @@ package com.kandyba.gotogether.domain.user
 
 import com.kandyba.gotogether.data.repository.UserRepository
 import com.kandyba.gotogether.models.general.Cache
-import com.kandyba.gotogether.models.general.UserInfoRequestBody
-import com.kandyba.gotogether.models.general.UserInterestsRequestBody
-import com.kandyba.gotogether.models.general.UserMainRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
+import com.kandyba.gotogether.models.general.requests.UserInterestsRequestBody
+import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
 import com.kandyba.gotogether.models.presentation.UserInfoModel
+import io.reactivex.Completable
 import io.reactivex.Single
+import okhttp3.MultipartBody
 
 class UserInteractorImpl(
     val repository: UserRepository,
@@ -37,14 +39,19 @@ class UserInteractorImpl(
     override fun getUserInfo(
         token: String,
         uid: String,
-        updateCache: Boolean
+        updateCache: Boolean,
+        anotherUser: Boolean
     ): Single<UserInfoModel> {
-        return if (Cache.instance.getCachedUserInfo() == null || updateCache) {
+        return if (Cache.instance.getCachedUserInfo() == null || updateCache || anotherUser) {
             repository.getUserInfo(token, uid)
                 .map { converter.convert(it) }
-                .doAfterSuccess { Cache.instance.setUserInfo(it) }
+                .doAfterSuccess { if (!anotherUser) Cache.instance.setUserInfo(it) }
         } else {
             Single.just(Cache.instance.getCachedUserInfo())
         }
+    }
+
+    override fun uploadUserAvatar(token: String, filePart: MultipartBody.Part): Completable {
+        return repository.uploadUserAvatar(token, filePart)
     }
 }
