@@ -29,6 +29,11 @@ interface UserRepository {
     ): Single<UserInfoDomainModel>
 
     fun uploadUserAvatar(token: String, filePart: MultipartBody.Part): Completable
+
+    fun getParticipantsRecommendations(
+        token: String,
+        amount: Int
+    ): Single<List<com.kandyba.gotogether.models.domain.events.Participant>>
 }
 
 

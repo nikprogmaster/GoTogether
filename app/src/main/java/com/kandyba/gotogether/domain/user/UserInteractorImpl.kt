@@ -1,6 +1,7 @@
 package com.kandyba.gotogether.domain.user
 
 import com.kandyba.gotogether.data.repository.UserRepository
+import com.kandyba.gotogether.models.domain.events.Participant
 import com.kandyba.gotogether.models.general.Cache
 import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
 import com.kandyba.gotogether.models.general.requests.UserInterestsRequestBody
@@ -53,5 +54,12 @@ class UserInteractorImpl(
 
     override fun uploadUserAvatar(token: String, filePart: MultipartBody.Part): Completable {
         return repository.uploadUserAvatar(token, filePart)
+    }
+
+    override fun getParticipantsRecommendations(
+        token: String,
+        amount: Int
+    ): Single<List<Participant>> {
+        return repository.getParticipantsRecommendations(token, amount)
     }
 }

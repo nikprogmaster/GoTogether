@@ -144,6 +144,6 @@ class SearchViewModel(
     }
 
     companion object {
-        private const val DEFAULT_EVENTS_AMOUNT = 50
+        private const val DEFAULT_EVENTS_AMOUNT = 100
     }
 }
