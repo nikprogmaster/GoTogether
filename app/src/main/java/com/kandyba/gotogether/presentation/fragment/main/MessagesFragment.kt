@@ -48,6 +48,7 @@ class MessagesFragment : Fragment() {
             val userId = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
             if (socketMessage != null) {
                 if (socketMessage.userId == userId) {
+                    Log.i("socketMessage", "is not null")
                     socketMessage.time?.let { adapter?.changeMessageStatus(it) }
                     adapter = messagesRecycler.adapter as? MessagesAdapter
                     messagesRecycler.adapter = null

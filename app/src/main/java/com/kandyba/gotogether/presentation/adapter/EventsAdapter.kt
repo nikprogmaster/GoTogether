@@ -105,8 +105,8 @@ class EventsAdapter(
             if (event.photoLinks.isNotEmpty() && event.photoLinks[0].isNotEmpty()) {
                 Picasso.get()
                     .load(event.photoLinks[0])
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.error_placeholder)
+                    .placeholder(R.drawable.ill_placeholder_300dp)
+                    .error(R.drawable.ill_error_placeholder_300dp)
                     .into(picture)
             }
             card.setOnClickListener {

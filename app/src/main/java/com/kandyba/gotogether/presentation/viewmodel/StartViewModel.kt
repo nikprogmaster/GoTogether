@@ -10,7 +10,7 @@ import com.kandyba.gotogether.domain.user.UserInteractor
 import com.kandyba.gotogether.models.domain.auth.LoginDomainResponse
 import com.kandyba.gotogether.models.domain.auth.SignupDomainResponse
 import com.kandyba.gotogether.models.general.EMPTY_STRING
-import com.kandyba.gotogether.models.general.ServerExceptionEntity
+import com.kandyba.gotogether.models.general.NetworkError
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.models.general.USER_ID
 import com.kandyba.gotogether.models.general.requests.*
@@ -35,7 +35,7 @@ class StartViewModel(
     private val showStartFragmentMLD = MutableLiveData<Unit>()
     private val showHeadpieceMLD = MutableLiveData<Boolean>()
     private val showMainActivityMLD = MutableLiveData<Unit>()
-    private val signupResponseMLD = MutableLiveData<SignupDomainResponse>()
+    private var signupResponseMLD = MutableLiveData<SignupDomainResponse>()
     private var updateMainUserInfoMLD = MutableLiveData<UserInfoModel>()
     private var updateAdditionalUserInfoMLD = MutableLiveData<UserInfoModel>()
     private val updateUserInterestsMLD = MutableLiveData<UserInfoModel>()
@@ -78,7 +78,14 @@ class StartViewModel(
                         loadUserInfo(token, userId)
                     },
                     {
-
+                        if (it is HttpException) {
+                            val error = handleError(it)
+                            if (error.detail != null) {
+                                showHeadpieceMLD.postValue(false)
+                                showStartFragmentMLD.postValue(Unit)
+                            }
+                            showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
+                        }
                         if (it is ConnectException) {
                             showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
                         }
@@ -208,6 +215,7 @@ class StartViewModel(
             .subscribe(
                 { response ->
                     signupResponseMLD.postValue(response)
+                    signupResponseMLD = MutableLiveData()
                     showProgressMLD.postValue(false)
                 },
                 {
@@ -249,11 +257,11 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
-    private fun handleError(e: HttpException): ServerExceptionEntity {
+    private fun handleError(e: HttpException): NetworkError {
         val errorBody = e.response().errorBody()
-        var error = ServerExceptionEntity()
+        var error = NetworkError()
         if (gsonConverter != null && errorBody != null) {
-            error = gsonConverter.convert(errorBody) as ServerExceptionEntity
+            error = gsonConverter.convert(errorBody) as NetworkError
         }
         return error
     }

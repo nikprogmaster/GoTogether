@@ -52,7 +52,7 @@ interface UserApiMapper {
 
     companion object {
         private const val USER_INFO_ENDPOINT = "users"
-        private const val USER_AVATAR_ENDPOINT = "/api/users/avatar"
+        private const val USER_AVATAR_ENDPOINT = "users/avatar"
         private const val USER_PARTICIPATIONS_ENDPOINT = "recommendations/users/"
         private const val USER_AMOUNT_VALUE = "amount"
         private const val UUID_VALUE = "id"

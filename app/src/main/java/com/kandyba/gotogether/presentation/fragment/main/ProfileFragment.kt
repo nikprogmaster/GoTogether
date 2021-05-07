@@ -160,8 +160,8 @@ class ProfileFragment : Fragment() {
             if (userInfo.info != EMPTY_STRING) userInfo.info else ABOUT_ME_PLACEHOLDER
         Picasso.get()
             .load(userInfo.avatar)
-            .placeholder(R.drawable.placeholder)
-            .error(R.drawable.error_placeholder)
+            .placeholder(R.drawable.ill_placeholder_300dp)
+            .error(R.drawable.ill_error_placeholder_300dp)
             .into(profileAvatar)
         userAge.text = userInfo.birthDate?.toLong()?.let { getAge(it) }
         if (description.lineCount < FIRST_VISIBLE_LINES_NUMBER) {

@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.ToggleButton
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +41,7 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
+import com.yandex.runtime.ui_view.ViewProvider
 import de.hdodenhof.circleimageview.CircleImageView
 
 
@@ -279,7 +281,12 @@ class EventFragment : Fragment() {
                 Animation(Animation.Type.SMOOTH, 5f),
                 null
             )
-            SearchFactory.initialize(requireContext());
+            val placemark = View(requireContext()).apply {
+                background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.mc_baseline_place_36dp)
+            }
+            mapView.map.mapObjects.addPlacemark(point, ViewProvider(placemark))
+            SearchFactory.initialize(requireContext())
             val searchManager =
                 SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
             val geometryPoint = Geometry.fromPoint(point)
@@ -297,6 +304,7 @@ class EventFragment : Fragment() {
                     }
                 }
             )
+            mapView.setNoninteractive(true)
         }
 
     }
@@ -314,8 +322,8 @@ class EventFragment : Fragment() {
     private fun setImageWithPicasso(from: String, where: ImageView) {
         Picasso.get()
             .load(from)
-            .placeholder(R.drawable.placeholder)
-            .error(R.drawable.error_placeholder)
+            .placeholder(R.drawable.ill_placeholder_300dp)
+            .error(R.drawable.ill_error_placeholder_300dp)
             .into(where)
     }
 

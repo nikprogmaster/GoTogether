@@ -27,8 +27,7 @@
                     android:id="@+id/cover"
                     android:layout_width="match_parent"
                     android:layout_height="295dp"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/test_event" />
+                    android:scaleType="centerCrop" />
 
                 <ImageView
                     android:id="@+id/back_arrow"
@@ -333,7 +332,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/user_placeholder"
+                    android:src="@drawable/mc_user_placeholder_50dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:civ_border_color="@color/white"
@@ -345,7 +344,7 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="36dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/user_placeholder"
+                    android:src="@drawable/mc_user_placeholder_50dp"
                     app:layout_constraintStart_toStartOf="@+id/person1"
                     app:layout_constraintTop_toTopOf="parent"
                     app:civ_border_color="@color/white"
@@ -357,7 +356,7 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="36dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/user_placeholder"
+                    android:src="@drawable/mc_user_placeholder_50dp"
                     app:layout_constraintStart_toStartOf="@id/person2"
                     app:layout_constraintTop_toTopOf="parent"
                     app:civ_border_color="@color/white"
@@ -369,7 +368,7 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="36dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/user_placeholder"
+                    android:src="@drawable/mc_user_placeholder_50dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/person3"
                     app:civ_border_color="@color/white"
