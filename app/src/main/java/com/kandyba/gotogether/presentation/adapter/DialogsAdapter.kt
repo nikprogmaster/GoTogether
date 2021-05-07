@@ -45,8 +45,8 @@ class DialogsAdapter(
             if (dialog.companion.avatar != null) {
                 Picasso.get()
                     .load(dialog.companion.avatar)
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.error_placeholder)
+                    .placeholder(R.drawable.ill_placeholder_300dp)
+                    .error(R.drawable.ill_error_placeholder_300dp)
                     .into(avatar)
             }
             dialogLayout.setOnClickListener {

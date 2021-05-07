@@ -46,8 +46,8 @@ class ParticipantsAdapter(
             } else {
                 Picasso.get()
                     .load(participant.avatar)
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.error_placeholder)
+                    .placeholder(R.drawable.ill_placeholder_300dp)
+                    .error(R.drawable.ill_error_placeholder_300dp)
                     .into(imageAvatar)
             }
             goToProfile.setOnClickListener {

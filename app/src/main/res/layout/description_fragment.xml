@@ -12,7 +12,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_arrow_back_36"
+        android:src="@drawable/mc_back_button_36dp"
         app:layout_constraintBottom_toTopOf="@+id/title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,23 +25,22 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/exit_btn"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_circle_black_10" />
+            android:src="@drawable/mc_circle_black_10dp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_circle_black_10" />
+            android:src="@drawable/mc_circle_black_10dp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_circle_black_10" />
+            android:src="@drawable/mc_circle_black_10dp" />
 
         <ImageView
             android:layout_width="wrap_content"

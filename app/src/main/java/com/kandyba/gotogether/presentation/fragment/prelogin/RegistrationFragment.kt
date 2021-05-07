@@ -115,6 +115,7 @@ class RegistrationFragment : Fragment() {
 
     override fun onDestroy() {
         viewModel.loginResponse.removeObservers(requireActivity())
+        viewModel.signupResponse.removeObservers(requireActivity())
         super.onDestroy()
     }
 

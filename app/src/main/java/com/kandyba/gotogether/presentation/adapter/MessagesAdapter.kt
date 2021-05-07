@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.presentation.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ class MessagesAdapter(
 
     fun changeMessageStatus(mesTime: Long) {
         val changedMessage = messages.find { it.createdAt == mesTime }
+        changedMessage?.text?.let { Log.i("Message", it) }
         changedMessage?.delivered = true
         notifyDataSetChanged()
     }
@@ -78,14 +80,14 @@ class MessagesAdapter(
                 view.setImageDrawable(
                     ContextCompat.getDrawable(
                         itemView.context,
-                        R.drawable.ic_baseline_check_24
+                        R.drawable.mc_baseline_check_16dp
                     )
                 )
             } else {
                 view.setImageDrawable(
                     ContextCompat.getDrawable(
                         itemView.context,
-                        R.drawable.ic_baseline_watch_later_24
+                        R.drawable.mc_baseline_watch_later_16dp
                     )
                 )
             }

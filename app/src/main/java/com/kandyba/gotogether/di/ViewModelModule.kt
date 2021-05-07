@@ -27,7 +27,7 @@ import com.kandyba.gotogether.domain.message.MessagesInteractorImpl
 import com.kandyba.gotogether.domain.user.UserDomainConverter
 import com.kandyba.gotogether.domain.user.UserInteractor
 import com.kandyba.gotogether.domain.user.UserInteractorImpl
-import com.kandyba.gotogether.models.general.ServerExceptionEntity
+import com.kandyba.gotogether.models.general.NetworkError
 import com.kandyba.gotogether.presentation.viewmodel.*
 import com.kandyba.gotogether.presentation.viewmodel.factory.*
 import dagger.Module
@@ -48,7 +48,7 @@ class ViewModelModule {
         authInteractor: AuthInteractor
     ): StartViewModelFactory {
         val gsonConverter = GsonConverterFactory.create().responseBodyConverter(
-            ServerExceptionEntity::class.java, null, null
+            NetworkError::class.java, null, null
         )
 
         return StartViewModelFactory {
