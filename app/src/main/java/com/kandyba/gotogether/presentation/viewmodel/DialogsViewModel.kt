@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kandyba.gotogether.domain.message.MessagesInteractor
@@ -19,17 +20,22 @@ class DialogsViewModel(
     private val userInteractor: UserInteractor
 ) : BaseViewModel() {
 
-    private val showProgressMLD = MutableLiveData<Boolean>()
+    private var showProgressMLD = MutableLiveData<Boolean>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
+    private val showMessagesProgressMLD = MutableLiveData<Boolean>()
     private var userDialogsMLD = MutableLiveData<List<DialogDomainModel>>()
     private val dialogMessagesMLD = MutableLiveData<List<Message>>()
     private var dialogCreatedMLD = MutableLiveData<DialogResponse>()
     private var companionNameMLD = MutableLiveData<String>()
 
+    private var wereLoadedYet = false
+
     val showSnackbar: LiveData<SnackbarMessage>
         get() = showSnackbarMLD
     val showProgress: LiveData<Boolean>
         get() = showProgressMLD
+    val showMessagesProgress: LiveData<Boolean>
+        get() = showMessagesProgressMLD
     val userDialogs: LiveData<List<DialogDomainModel>>
         get() = userDialogsMLD
     val dialogMessages: LiveData<List<Message>>
@@ -40,7 +46,11 @@ class DialogsViewModel(
         get() = companionNameMLD
 
     fun getUserDialogs(token: String) {
-        showProgressMLD.postValue(true)
+        if (!wereLoadedYet) {
+            showProgressMLD.postValue(true)
+            Log.i("DialogsViewModel", "true")
+            wereLoadedYet = true
+        }
         messagesInteractor.getUserDialogs(token)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -48,7 +58,7 @@ class DialogsViewModel(
                 { dialogs ->
                     showProgressMLD.postValue(false)
                     userDialogsMLD.postValue(dialogs)
-                    userDialogsMLD = MutableLiveData()
+                    //userDialogsMLD = MutableLiveData()
                 },
                 {
                     if (it is ConnectException) {
@@ -60,20 +70,20 @@ class DialogsViewModel(
     }
 
     fun getDialogMessages(token: String, dialogId: String, userId: String) {
-        showProgressMLD.postValue(true)
+        showMessagesProgressMLD.postValue(true)
         messagesInteractor.getDialogMessages(token, dialogId, userId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { dialogs ->
-                    showProgressMLD.postValue(false)
+                    showMessagesProgressMLD.postValue(false)
                     dialogMessagesMLD.postValue(dialogs)
                 },
                 {
                     if (it is ConnectException) {
                         showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
                     }
-                    showProgressMLD.postValue(false)
+                    showMessagesProgressMLD.postValue(false)
                 })
             .addTo(rxCompositeDisposable)
     }

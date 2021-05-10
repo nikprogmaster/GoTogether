@@ -161,7 +161,7 @@ class EventFragment : Fragment() {
 
     private fun setValues(event: EventDetailsDomainModel) {
         event.images.let { if (it.isNotEmpty()) setImageWithPicasso(it[0], cover) }
-        title.text = event.title
+        title.text = event.title.capitalize()
         description.movementMethod = LinkMovementMethod.getInstance()
         description.text = Html.fromHtml(event.bodyText)
         price.text =

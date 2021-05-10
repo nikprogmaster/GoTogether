@@ -81,8 +81,8 @@ class EventsAdapter(
             title.text = event.title.capitalize()
             event.dates?.let {
                 if (it.isNotEmpty()) {
-                    dayOfMonth.text = getCalendarDay(it[0].startUnix.toLong())
-                    month.text = getMonth(it[0].startUnix.toLong())
+                    dayOfMonth.text = getCalendarDay(it[0].startUnix)
+                    month.text = getMonth(it[0].startUnix)
                 } else {
                     date.visibility = View.INVISIBLE
                 }

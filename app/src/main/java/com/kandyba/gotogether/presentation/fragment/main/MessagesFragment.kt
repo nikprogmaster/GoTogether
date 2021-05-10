@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -33,6 +34,7 @@ class MessagesFragment : Fragment() {
     private lateinit var typeMessage: EditText
     private lateinit var sendMessage: ImageView
     private lateinit var messagesRecycler: RecyclerView
+    private lateinit var messagesLoadingBar: ProgressBar
 
     private var viewModel: DialogsViewModel? = null
     private var mainViewModel: MainViewModel? = null
@@ -81,6 +83,7 @@ class MessagesFragment : Fragment() {
         typeMessage = root.findViewById(R.id.type_message_field)
         sendMessage = root.findViewById(R.id.send_button)
         messagesRecycler = root.findViewById(R.id.messages_recycler)
+        messagesLoadingBar = root.findViewById(R.id.message_loading)
         return root
     }
 
@@ -127,6 +130,9 @@ class MessagesFragment : Fragment() {
         })
         viewModel?.companionName?.observe(requireActivity(), Observer {
             mainViewModel?.setAppbarTitle(it)
+        })
+        viewModel?.showMessagesProgress?.observe(requireActivity(), Observer {
+            showMessagesLoading(it)
         })
     }
 
@@ -175,6 +181,11 @@ class MessagesFragment : Fragment() {
             true,
             delivered = false
         )
+    }
+
+    private fun showMessagesLoading(loading: Boolean) {
+        if (loading) messagesLoadingBar.visibility =
+            View.VISIBLE else messagesLoadingBar.visibility = View.GONE
     }
 
     override fun onDestroy() {

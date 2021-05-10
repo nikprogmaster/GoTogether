@@ -150,7 +150,6 @@ class MainActivity : AppCompatActivity() {
         })
         profileViewModel.showProgress.observe(this, Observer { show -> showProgress(show) })
         profileViewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
-        dialogsViewModel.showProgress.observe(this, Observer { show -> showProgress(show) })
         dialogsViewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
         searchViewModel.showProgress.observe(this, Observer { showProgress(it) })
         searchViewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })

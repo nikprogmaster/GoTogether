@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -25,6 +26,7 @@ class DialogsFragment : Fragment() {
 
     private lateinit var dialogsRecyclerView: RecyclerView
     private lateinit var adapter: DialogsAdapter
+    private lateinit var dialogsLoadingBar: ProgressBar
 
     private var viewModel: DialogsViewModel? = null
     private lateinit var mainViewModel: MainViewModel
@@ -40,6 +42,7 @@ class DialogsFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.dialogs_fragment, container, false)
         dialogsRecyclerView = root.findViewById(R.id.dialogs_recycler)
+        dialogsLoadingBar = root.findViewById(R.id.dialogs_loading)
         return root
     }
 
@@ -73,6 +76,10 @@ class DialogsFragment : Fragment() {
                 )
             )
             wasOpenedWithMessage = true
+        })
+        viewModel?.showProgress?.observe(requireActivity(), Observer {
+            Log.i("DialogsFragment", it.toString())
+            showDialogsLoading(it)
         })
     }
 
@@ -117,11 +124,16 @@ class DialogsFragment : Fragment() {
         dialogsRecyclerView.adapter = adapter
     }
 
+    private fun showDialogsLoading(loading: Boolean) {
+        if (loading) dialogsLoadingBar.visibility = View.VISIBLE else dialogsLoadingBar.visibility =
+            View.GONE
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel?.dialogCreated?.removeObservers(requireActivity())
         viewModel?.userDialogs?.removeObservers(requireActivity())
+        viewModel?.showProgress?.removeObservers(requireActivity())
     }
 
     companion object {

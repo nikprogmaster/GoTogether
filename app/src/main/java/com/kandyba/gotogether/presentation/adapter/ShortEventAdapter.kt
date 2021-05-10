@@ -73,7 +73,7 @@ class ShortEventAdapter(
         private val card: MaterialCardView = itemView.findViewById(R.id.short_event_card)
 
         fun bindViews(event: EventModel) {
-            title.text = event.title
+            title.text = event.title.capitalize()
             if (event.isFree == true) {
                 price.text = itemView.resources.getText(R.string.free)
             } else {
