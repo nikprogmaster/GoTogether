@@ -13,7 +13,7 @@ class UserInfoModel(
     var info: String? = null,
     var isLoyal: Boolean,
     val avatar: String? = null,
-    val interests: Map<String, Int>,
+    val interests: List<Map<String, Int>>,
     val likedEvents: List<EventModel>,
     val currentUserInBlackList: Boolean? = null,
     val inCurrentUserBlackList: Boolean? = null

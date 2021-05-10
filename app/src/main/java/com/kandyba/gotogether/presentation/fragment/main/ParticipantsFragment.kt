@@ -25,7 +25,7 @@ class ParticipantsFragment : Fragment() {
     private lateinit var participantsRecyclerView: RecyclerView
     private lateinit var recommendedParticipantsRecyclerView: RecyclerView
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var eventDetailsViewModel: EventDetailsViewModel
+    private var eventDetailsViewModel: EventDetailsViewModel? = null
     private lateinit var settings: SharedPreferences
 
     override fun onCreateView(
@@ -62,13 +62,13 @@ class ParticipantsFragment : Fragment() {
         participantsRecyclerView.adapter = adapter
         participantsRecyclerView.layoutManager = manager
         initObservers()
-        eventDetailsViewModel.getParticipantsRecommendations(
+        eventDetailsViewModel?.getParticipantsRecommendations(
             settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
         )
     }
 
     private fun initObservers() {
-        eventDetailsViewModel.recommendedParticipants.observe(requireActivity(), Observer {
+        eventDetailsViewModel?.recommendedParticipants?.observe(requireActivity(), Observer {
             val adapter = ParticipantsAdapter(it, object : OnProfileButtonClickListener {
                 override fun onProfileClick(userId: String) {
                     mainViewModel.openFragment(ProfileFragment.newInstance(userId))
@@ -81,7 +81,7 @@ class ParticipantsFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        eventDetailsViewModel.recommendedParticipants.removeObservers(requireActivity())
+        eventDetailsViewModel?.recommendedParticipants?.removeObservers(requireActivity())
         super.onDestroy()
     }
 

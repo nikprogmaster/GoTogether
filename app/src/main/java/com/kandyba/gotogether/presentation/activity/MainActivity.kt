@@ -2,6 +2,7 @@ package com.kandyba.gotogether.presentation.activity
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -20,11 +21,9 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.Cache
 import com.kandyba.gotogether.models.general.EMPTY_STRING
+import com.kandyba.gotogether.models.general.READ_STORAGE_PERMISSION
 import com.kandyba.gotogether.models.general.USER_ID
-import com.kandyba.gotogether.presentation.fragment.main.DialogsFragment
-import com.kandyba.gotogether.presentation.fragment.main.ForYouFragment
-import com.kandyba.gotogether.presentation.fragment.main.ProfileFragment
-import com.kandyba.gotogether.presentation.fragment.main.SearchFragment
+import com.kandyba.gotogether.presentation.fragment.main.*
 import com.kandyba.gotogether.presentation.viewmodel.*
 
 
@@ -43,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchViewModel: SearchViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var dialogsViewModel: DialogsViewModel
     private lateinit var settings: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +77,9 @@ class MainActivity : AppCompatActivity() {
         val profileViewModelFactory = component.getProfileViewModelFactory()
         profileViewModel = ViewModelProvider(this, profileViewModelFactory)
             .get(ProfileViewModel::class.java)
+        val dialogsFactory = component.getDialogsViewModelFactory()
+        dialogsViewModel = ViewModelProvider(this, dialogsFactory)
+            .get(DialogsViewModel::class.java)
     }
 
     private fun initViews() {
@@ -147,6 +150,8 @@ class MainActivity : AppCompatActivity() {
         })
         profileViewModel.showProgress.observe(this, Observer { show -> showProgress(show) })
         profileViewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
+        dialogsViewModel.showProgress.observe(this, Observer { show -> showProgress(show) })
+        dialogsViewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
         searchViewModel.showProgress.observe(this, Observer { showProgress(it) })
         searchViewModel.showSnackbar.observe(this, Observer { mes -> showSnackbar(mes.message) })
         eventDetailsViewModel.showProgress.observe(this, Observer { showProgress(it) })
@@ -160,10 +165,35 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.showToolbar.observe(this, Observer { showToolbar(it) })
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissionsList: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            READ_STORAGE_PERMISSION -> {
+                if (grantResults.isNotEmpty()) {
+                    var permissionsDenied = ""
+                    for (per in permissionsList) {
+                        if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                            permissionsDenied += per.trimIndent()
+                        }
+                    }
+                    if (permissionsDenied == "") {
+                        if (supportFragmentManager.fragments[0] is ChangeProfileInfoFragment) {
+                            (supportFragmentManager.fragments[0] as ChangeProfileInfoFragment).startImagePickActivity()
+                        }
+                    }
+                }
+                return
+            }
+        }
+    }
+
+
     private fun clearPrefs() {
         val editor = settings.edit()
         editor.clear().apply()
-
         Cache.instance.clearAllCache()
     }
 

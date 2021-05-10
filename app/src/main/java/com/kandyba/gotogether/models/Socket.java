@@ -104,7 +104,7 @@ public class Socket {
     /**
      * Reconnection post delayed handler
      */
-    private static Handler delayedReconnection;
+    //private static Handler delayedReconnection;
 
     /**
      * Websocket state change listener
@@ -113,16 +113,11 @@ public class Socket {
 
     private static UniversalListener universalListener;
 
-    /**
-     * Number of reconnection attempts
-     */
-    private static int reconnectionAttempts;
     private static boolean skipOnFailure;
 
     private Socket(Request request) {
         Socket.request = request;
         state = State.CLOSED;
-        delayedReconnection = new Handler(Looper.getMainLooper());
         skipOnFailure = false;
     }
 
@@ -203,7 +198,10 @@ public class Socket {
      */
     public void close() {
         if (realWebSocket != null) {
-            realWebSocket.close(1000, CLOSE_REASON);
+            Log.i("close socket", "закрыт вроде");
+            Boolean isClosed = realWebSocket.close(1000, CLOSE_REASON);
+            Log.i("isClosed", isClosed.toString());
+            terminate();
         }
     }
 
@@ -268,6 +266,7 @@ public class Socket {
      * @see <a href="https://en.wikipedia.org/wiki/Exponential_backoff"></a>
      */
     private void reconnect() {
+        Log.i("Connect to Socket", "from reconnect");
         if (state != State.CONNECT_ERROR) // connection not closed !!
             return;
 
@@ -275,34 +274,20 @@ public class Socket {
 
         if (realWebSocket != null) {
             // Cancel websocket connection
-            realWebSocket.cancel();
+            close();
             // Clear websocket object
             realWebSocket = null;
         }
 
-        // Calculate delay time
-        int collision = Math.min(reconnectionAttempts, MAX_COLLISION);
-        long delayTime = Math.round((Math.pow(2, collision) - 1) / 2) * 1000;
+        changeState(State.RECONNECTING);
+        connect(); // Establish new connection
 
-        // Remove any pending posts of callbacks
-        delayedReconnection.removeCallbacksAndMessages(null);
-        // Start new post delay
-        delayedReconnection.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                changeState(State.RECONNECTING);
-                reconnectionAttempts++; // Increment connections attempts
-                connect(); // Establish new connection
-            }
-        }, delayTime);
     }
 
     private final WebSocketListener webSocketListener = new WebSocketListener() {
         @Override
         public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
             Log.v(TAG, "Socket has been opened successfully.");
-            // reset connections attempts counter
-            reconnectionAttempts = 0;
 
             // fire open event listener
             universalListener.onOpen();
@@ -338,7 +323,7 @@ public class Socket {
 
         @Override
         public void onMessage(@NonNull WebSocket webSocket, @NonNull ByteString bytes) {
-            // TODO: some action
+            Log.i("OnMessage", "ByteString");
         }
 
         @Override
@@ -369,7 +354,6 @@ public class Socket {
             if (!skipOnFailure) {
                 skipOnFailure = false; // reset flag
                 universalListener.onFailure();
-                Log.v(TAG, "Socket connection fail, try to reconnect. (" + reconnectionAttempts + ")");
                 changeState(State.CONNECT_ERROR);
                 reconnect();
             }

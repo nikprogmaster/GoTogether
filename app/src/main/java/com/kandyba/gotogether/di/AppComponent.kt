@@ -6,14 +6,18 @@ import com.kandyba.gotogether.presentation.animation.StartAppAnimation
 import com.kandyba.gotogether.presentation.viewmodel.factory.*
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
-@Component(modules =
-[
-    NetworkModule::class,
-    ViewModelModule::class,
-    SharedPreferencesModule::class,
-    AnimationModule::class
-])
+@Component(
+    modules =
+    [
+        NetworkModule::class,
+        ViewModelModule::class,
+        SharedPreferencesModule::class,
+        AnimationModule::class
+    ]
+)
+@Singleton
 interface AppComponent {
 
     fun getStartViewModelFactory(): StartViewModelFactory

@@ -52,7 +52,7 @@ data class UserInfoDataModel(
 
     @SerializedName("interests")
     @Expose
-    val interests: Map<String, Int>,
+    val interests: List<Map<String, Int>>,
 
     @SerializedName("likedEvents")
     @Expose

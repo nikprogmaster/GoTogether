@@ -15,6 +15,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.Nullable;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.text.DecimalFormat;
@@ -315,6 +317,7 @@ public class FileUtils {
      * @author paulburke
      * @see #getPath(Context, Uri)
      */
+    @Nullable
     public static File getFile(Context context, Uri uri) {
         if (uri != null) {
             String path = getPath(context, uri);

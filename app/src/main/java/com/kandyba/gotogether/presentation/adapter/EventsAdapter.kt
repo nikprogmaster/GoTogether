@@ -110,7 +110,7 @@ class EventsAdapter(
                     .into(picture)
             }
             card.setOnClickListener {
-                listener.onClick(event.id)
+                listener.onClick(event.id, events.indexOf(event))
             }
             likeButton.setOnClickListener {
                 event.likedByUser = !event.likedByUser
@@ -122,7 +122,7 @@ class EventsAdapter(
     }
 
     interface OnEventClickListener {
-        fun onClick(eventId: String)
+        fun onClick(eventId: String, cardPosition: Int)
         fun onLikeButtonClick(eventId: String)
     }
 }

@@ -14,7 +14,7 @@ data class UserInfoDomainModel(
     var info: String? = null,
     var isLoyal: Boolean,
     val avatar: String? = null,
-    val interests: Map<String, Int>,
+    val interests: List<Map<String, Int>>,
     val likedEvents: List<EventDetailsDomainModel>,
     val currentUserInBlackList: Boolean? = null,
     val inCurrentUserBlackList: Boolean? = null

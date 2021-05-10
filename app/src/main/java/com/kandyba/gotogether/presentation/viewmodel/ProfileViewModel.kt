@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
@@ -29,7 +30,7 @@ class ProfileViewModel(
     private val logoutCompletedMLD = MutableLiveData<Unit>()
     private val showProgressMLD = MutableLiveData<Boolean>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
-    private val userInfoMLD = MutableLiveData<UserInfoModel>()
+    private var userInfoMLD = MutableLiveData<UserInfoModel>()
     private val updateMainUserInfoMLD = MutableLiveData<UserInfoModel>()
     private val updateAdditionalUserInfoMLD = MutableLiveData<UserInfoModel>()
     private val userImageUploadedMLD = MutableLiveData<Unit>()
@@ -64,9 +65,12 @@ class ProfileViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { userInfo ->
+                    Log.i("ProfileViewModel", "Отлично")
                     userInfoMLD.postValue(userInfo)
+                    userInfoMLD = MutableLiveData()
                 },
                 {
+                    Log.i("ProfileViewModel", "Плохо")
                     if (it is ConnectException) {
                         showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
                     }

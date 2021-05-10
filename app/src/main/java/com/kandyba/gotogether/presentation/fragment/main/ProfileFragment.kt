@@ -35,7 +35,7 @@ class ProfileFragment : Fragment() {
     private lateinit var myEvents: RecyclerView
     private lateinit var myEventsTitle: TextView
 
-    private lateinit var viewModel: ProfileViewModel
+    private var viewModel: ProfileViewModel? = null
     private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
     private lateinit var adapter: ShortEventAdapter
@@ -57,7 +57,7 @@ class ProfileFragment : Fragment() {
         resolveDependencies()
         initObservers()
         initListeners()
-        viewModel.loadUserInfo(
+        viewModel?.loadUserInfo(
             settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
             requireArguments().getString(CURRENT_USER_ID, EMPTY_STRING) ?: EMPTY_STRING,
             false,
@@ -88,14 +88,14 @@ class ProfileFragment : Fragment() {
         adapter = ShortEventAdapter(
             mutableListOf(), object : ShortEventAdapter.OnEventClickListener {
                 override fun onClick(eventId: String) {
-                    viewModel.loadEventInfo(
+                    viewModel?.loadEventInfo(
                         settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                         eventId
                     )
                 }
 
                 override fun onLikeButtonClick(eventId: String) {
-                    viewModel.likeEvent(
+                    viewModel?.likeEvent(
                         settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                         eventId
                     )
@@ -140,16 +140,16 @@ class ProfileFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.userInfo.observe(requireActivity(), Observer { userInfo ->
+        viewModel?.userInfo?.observe(requireActivity(), Observer { userInfo ->
             setViews(userInfo)
         })
-        viewModel.enableLikeButton.observe(requireActivity(), Observer {
+        viewModel?.enableLikeButton?.observe(requireActivity(), Observer {
             adapter.changeButtonState(it)
         })
-        viewModel.eventNotLiked.observe(requireActivity(), Observer {
+        viewModel?.eventNotLiked?.observe(requireActivity(), Observer {
             adapter.changeUserLikedProperty(it)
         })
-        viewModel.eventInfo.observe(requireActivity(), Observer {
+        viewModel?.eventInfo?.observe(requireActivity(), Observer {
             mainViewModel.openFragment(EventFragment.newInstance(it))
         })
     }
@@ -158,6 +158,8 @@ class ProfileFragment : Fragment() {
         userName.text = userInfo.firstName
         description.text =
             if (userInfo.info != EMPTY_STRING) userInfo.info else ABOUT_ME_PLACEHOLDER
+        /*val uri = Uri.fromFile(File(settings.getString(AVATAR_URI_PATH, EMPTY_STRING) ?: EMPTY_STRING))
+        profileAvatar.setImageURI(uri)*/
         Picasso.get()
             .load(userInfo.avatar)
             .placeholder(R.drawable.ill_placeholder_300dp)
@@ -174,7 +176,7 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        viewModel.eventInfo.removeObservers(requireActivity())
+        viewModel?.eventInfo?.removeObservers(requireActivity())
         super.onDestroy()
     }
 

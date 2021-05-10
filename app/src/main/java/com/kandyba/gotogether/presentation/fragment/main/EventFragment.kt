@@ -4,14 +4,10 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.ToggleButton
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -33,9 +29,10 @@ import com.kandyba.gotogether.presentation.adapter.ScheduleAdapter
 import com.kandyba.gotogether.presentation.viewmodel.EventDetailsViewModel
 import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import com.squareup.picasso.Picasso
+import com.synnapps.carouselview.CarouselView
+import com.synnapps.carouselview.ImageListener
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
@@ -48,6 +45,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 class EventFragment : Fragment() {
 
     private lateinit var cover: ImageView
+    private lateinit var carousel: CarouselView
     private lateinit var back: ImageView
     private lateinit var likeButton: ToggleButton
     private lateinit var categoriesRecycler: RecyclerView
@@ -69,13 +67,14 @@ class EventFragment : Fragment() {
     private lateinit var whenToGoTitle: TextView
     private lateinit var timetable: TextView
     private lateinit var whoWillGoTitle: TextView
-
+    private lateinit var eventPlace: LinearLayout
     private lateinit var participantsList: List<CircleImageView>
-    private lateinit var viewModel: EventDetailsViewModel
+
+    private var viewModel: EventDetailsViewModel? = null
     private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
-
     private var expanded = false
+    private var bottomSheet: MapFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,6 +122,12 @@ class EventFragment : Fragment() {
             .get(MainViewModel::class.java)
         mainViewModel.showToolbar(false)
         settings = appComponent.getSharedPreferences()
+
+        //set carousel images
+        val event = arguments?.get(EVENT_KEY) as EventDetailsDomainModel
+        if (event.images.isNotEmpty()) {
+            viewModel?.loadImages(event.images)
+        }
     }
 
     private fun initViews(root: View) {
@@ -148,6 +153,8 @@ class EventFragment : Fragment() {
         timetable = root.findViewById(R.id.timetable)
         morePeople = root.findViewById(R.id.more_people)
         whoWillGoTitle = root.findViewById(R.id.who_will_go)
+        eventPlace = root.findViewById(R.id.event_place)
+        carousel = root.findViewById(R.id.carousel)
 
         participantsList = listOf(person1, person2, person3, person4, morePeople)
     }
@@ -156,7 +163,7 @@ class EventFragment : Fragment() {
         event.images.let { if (it.isNotEmpty()) setImageWithPicasso(it[0], cover) }
         title.text = event.title
         description.movementMethod = LinkMovementMethod.getInstance()
-        description.text = event.description
+        description.text = Html.fromHtml(event.bodyText)
         price.text =
             if (event.isFree == true) requireContext().getString(R.string.free) else event.price
         age.text = event.ageRestriction
@@ -179,13 +186,11 @@ class EventFragment : Fragment() {
 
         //set when to go section
         if (event.dates != null && event.dates.isNotEmpty()) {
-            Log.i("1", "тута")
             scheduleRecyclerView.visibility = View.VISIBLE
         } else if (event.place?.timetable != null && event.place.timetable != EMPTY_STRING) {
             timetable.visibility = View.VISIBLE
             val time = event.place.timetable?.capitalize()
             timetable.text = time
-            Log.i("2", "тута")
         } else {
             whenToGoTitle.visibility = View.GONE
         }
@@ -202,6 +207,8 @@ class EventFragment : Fragment() {
         val scheduleManager = GridLayoutManager(requireContext(), 2)
         scheduleRecyclerView.adapter = scheduleAdapter
         scheduleRecyclerView.layoutManager = scheduleManager
+
+
 
         configureMap(event)
     }
@@ -236,12 +243,10 @@ class EventFragment : Fragment() {
                 showAllText.text = resources.getText(R.string.show_all)
                 description.maxLines = 5
                 description.text = Html.fromHtml(event.bodyText)
-                description.linksClickable = true
                 description.movementMethod = LinkMovementMethod.getInstance()
             } else {
                 description.maxLines = 10000
                 description.text = Html.fromHtml(event.bodyText)
-                description.linksClickable = true
                 description.movementMethod = LinkMovementMethod.getInstance()
                 showAllText.text = resources.getText(R.string.roll_up)
             }
@@ -249,13 +254,21 @@ class EventFragment : Fragment() {
         }
 
         likeButton.setOnClickListener {
-            viewModel.likeEvent(
+            viewModel?.likeEvent(
                 settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                 event.id
             )
         }
         back.setOnClickListener {
             mainViewModel.closeFragment()
+        }
+
+        eventPlace.setOnClickListener {
+            if (MapFragment.fragment == null) {
+                val ev = requireArguments().get(EVENT_KEY) as? EventDetailsDomainModel
+                bottomSheet = MapFragment.newInstance(ev)
+                bottomSheet?.show(requireActivity().supportFragmentManager, null)
+            }
         }
     }
 
@@ -265,20 +278,29 @@ class EventFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.enableLikeButton.observe(requireActivity(), Observer {
+        viewModel?.enableLikeButton?.observe(requireActivity(), Observer {
             likeButton.isEnabled = it
         })
-        viewModel.changeEventLikeProperty.observe(requireActivity(), Observer {
+        viewModel?.changeEventLikeProperty?.observe(requireActivity(), Observer {
             changeUserParticipation(it)
+        })
+        viewModel?.eventImages?.observe(requireActivity(), Observer { imagesList ->
+            val imageListener = ImageListener { position, imageView ->
+                imageView.setImageBitmap(imagesList[position])
+            }
+            carousel.setImageListener(imageListener);
+            carousel.pageCount = imagesList.size
+            cover.visibility = View.GONE
         })
     }
 
     private fun configureMap(event: EventDetailsDomainModel) {
+        mapView.setNoninteractive(true)
         if (event.place?.latitude != null && event.place.longitude != null) {
             val point = Point(event.place.latitude.toDouble(), event.place.longitude.toDouble())
             mapView.map.move(
                 CameraPosition(point, 16.0f, 0.0f, 0.0f),
-                Animation(Animation.Type.SMOOTH, 5f),
+                Animation(Animation.Type.SMOOTH, 3f),
                 null
             )
             val placemark = View(requireContext()).apply {
@@ -289,8 +311,7 @@ class EventFragment : Fragment() {
             SearchFactory.initialize(requireContext())
             val searchManager =
                 SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
-            val geometryPoint = Geometry.fromPoint(point)
-            val searchSession = searchManager.submit(
+            searchManager.submit(
                 point, 16, SearchOptions(),
                 object : Session.SearchListener {
                     override fun onSearchError(p0: Error) {}
@@ -304,9 +325,9 @@ class EventFragment : Fragment() {
                     }
                 }
             )
-            mapView.setNoninteractive(true)
+        } else {
+            addressTextView.text = resources.getString(R.string.place_not_defined)
         }
-
     }
 
     private fun defineHideViewList(event: EventDetailsDomainModel): List<CircleImageView> {
@@ -331,6 +352,11 @@ class EventFragment : Fragment() {
         for (view in views) {
             view.visibility = View.GONE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel?.eventImages?.removeObservers(requireActivity())
     }
 
     companion object {

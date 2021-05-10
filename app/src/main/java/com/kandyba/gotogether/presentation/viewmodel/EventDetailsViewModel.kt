@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kandyba.gotogether.domain.events.EventsInteractor
@@ -22,6 +23,7 @@ class EventDetailsViewModel(
     private val enableLikeButtonMLD = MutableLiveData<Boolean>()
     private val changeEventLikePropertyMLD = MutableLiveData<String>()
     private val recommendedParticipantsMLD = MutableLiveData<List<Participant>>()
+    private var eventImagesMLD = MutableLiveData<List<Bitmap>>()
 
     val showProgress: LiveData<Boolean>
         get() = showProgressMLD
@@ -33,6 +35,8 @@ class EventDetailsViewModel(
         get() = changeEventLikePropertyMLD
     val recommendedParticipants: LiveData<List<Participant>>
         get() = recommendedParticipantsMLD
+    val eventImages: LiveData<List<Bitmap>>
+        get() = eventImagesMLD
 
     fun complain(token: String, eventId: String, request: EventComplaintRequestBody) {
         showProgressMLD.postValue(true)
@@ -89,6 +93,20 @@ class EventDetailsViewModel(
                     } else {
                         showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
                     }
+                }
+            ).addTo(rxCompositeDisposable)
+    }
+
+    fun loadImages(images: List<String>) {
+        eventsInteractor.loadEventImages(images)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    eventImagesMLD.postValue(it)
+                    eventImagesMLD = MutableLiveData()
+                },
+                {
                 }
             ).addTo(rxCompositeDisposable)
     }
