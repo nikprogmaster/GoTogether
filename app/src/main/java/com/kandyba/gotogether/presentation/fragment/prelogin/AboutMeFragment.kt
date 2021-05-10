@@ -96,7 +96,7 @@ class AboutMeFragment : Fragment() {
             name.text.toString()
         } else null
         val birthDate = if (birthday.text.toString() != EMPTY_STRING) {
-            (dateAndTime.timeInMillis / MILLISECOND_DIVISOR).toLong()
+            dateAndTime.timeInMillis
         } else null
         val sex =
             if (sex.selectedItem.toString() == resources.getStringArray(R.array.sex)[0].toString()) 0 else 1
