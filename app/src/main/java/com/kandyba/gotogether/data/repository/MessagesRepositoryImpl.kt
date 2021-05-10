@@ -11,7 +11,6 @@ import com.kandyba.gotogether.models.domain.messages.MessageDomainModel
 import com.kandyba.gotogether.models.general.SocketMessage
 import io.reactivex.Single
 import org.json.JSONException
-import java.util.concurrent.TimeUnit
 
 
 class MessagesRepositoryImpl(
@@ -60,10 +59,11 @@ class MessagesRepositoryImpl(
             socket = Socket.Builder
                 .with(URL)
                 .addHeader(AUTHORIZATION_KEY, token)
-                .setPingInterval(5, TimeUnit.SECONDS)
+                //.setPingInterval(5, TimeUnit.SECONDS)
                 .build()
             socket?.setUniversalListener(messageListener)
             socket?.connect()
+            Log.i("Connect to Socket", "from start")
         }
     }
 

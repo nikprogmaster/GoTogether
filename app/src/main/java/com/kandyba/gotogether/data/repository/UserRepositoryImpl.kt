@@ -40,7 +40,7 @@ class UserRepositoryImpl(
         token: String,
         body: UserInterestsRequestBody
     ): Single<UserInfoDomainModel> {
-        return apiMapper.updateUserInterests(token, body).map { converter.convert(it) }
+        return apiMapper.updateUserInterests(token, body.interests).map { converter.convert(it) }
     }
 
     override fun uploadUserAvatar(token: String, filePart: MultipartBody.Part): Completable {

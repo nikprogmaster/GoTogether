@@ -31,7 +31,7 @@ class SearchFragment : Fragment() {
     private lateinit var searchButton: ImageView
 
     private lateinit var eventsAdapter: ShortEventAdapter
-    private lateinit var viewModel: SearchViewModel
+    private var viewModel: SearchViewModel? = null
     private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
 
@@ -55,7 +55,7 @@ class SearchFragment : Fragment() {
         resolveDependencies()
         initObservers()
         initListeners()
-        viewModel.getEventsRecommendation(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING)
+        viewModel?.getEventsRecommendation(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING)
     }
 
     private fun resolveDependencies() {
@@ -69,19 +69,19 @@ class SearchFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.eventsRecommendations.observe(requireActivity(), Observer { events ->
+        viewModel?.eventsRecommendations?.observe(requireActivity(), Observer { events ->
             eventsAdapter =
                 ShortEventAdapter(
                     events.toMutableList(), object : ShortEventAdapter.OnEventClickListener {
                         override fun onClick(eventId: String) {
-                            viewModel.loadEventInfo(
+                            viewModel?.loadEventInfo(
                                 settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                                 eventId
                             )
                         }
 
                         override fun onLikeButtonClick(eventId: String) {
-                            viewModel.likeEvent(
+                            viewModel?.likeEvent(
                                 settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                                 eventId
                             )
@@ -91,19 +91,19 @@ class SearchFragment : Fragment() {
                 )
             eventsRecyclerView.adapter = eventsAdapter
         })
-        viewModel.closeBottomSheet.observe(requireActivity(), Observer {
+        viewModel?.closeBottomSheet?.observe(requireActivity(), Observer {
             bottomSheet?.dismiss()
         })
-        viewModel.searchResultEvents.observe(requireActivity(), Observer {
+        viewModel?.searchResultEvents?.observe(requireActivity(), Observer {
             eventsAdapter.setEvents(it)
         })
-        viewModel.enableLikeButton.observe(requireActivity(), Observer {
+        viewModel?.enableLikeButton?.observe(requireActivity(), Observer {
             eventsAdapter.changeButtonState(it)
         })
-        viewModel.eventNotLiked.observe(requireActivity(), Observer {
+        viewModel?.eventNotLiked?.observe(requireActivity(), Observer {
             eventsAdapter.changeUserLikedProperty(it)
         })
-        viewModel.eventInfo.observe(requireActivity(), Observer {
+        viewModel?.eventInfo?.observe(requireActivity(), Observer {
             mainViewModel.openFragment(EventFragment.newInstance(it))
         })
     }
@@ -127,7 +127,7 @@ class SearchFragment : Fragment() {
         }
         searchButton.setOnClickListener {
             if (search.text.toString() != EMPTY_STRING) {
-                viewModel.searchEventsByText(
+                viewModel?.searchEventsByText(
                     settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING, search.text.toString()
                 )
             }
@@ -136,7 +136,7 @@ class SearchFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        viewModel.eventInfo.removeObservers(requireActivity())
+        viewModel?.eventInfo?.removeObservers(requireActivity())
         super.onDestroy()
     }
 

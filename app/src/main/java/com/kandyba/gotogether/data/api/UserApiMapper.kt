@@ -3,7 +3,6 @@ package com.kandyba.gotogether.data.api
 import com.kandyba.gotogether.models.data.events.Participant
 import com.kandyba.gotogether.models.data.user.UserInfoDataModel
 import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
-import com.kandyba.gotogether.models.general.requests.UserInterestsRequestBody
 import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -27,7 +26,7 @@ interface UserApiMapper {
     @POST(USER_INFO_ENDPOINT)
     fun updateUserInterests(
         @Header(AUTHORIZATION_VALUE) token: String,
-        @Body body: UserInterestsRequestBody
+        @Body body: Map<String, Int>
     ): Single<UserInfoDataModel>
 
     @GET("$USER_INFO_ENDPOINT/{${UUID_VALUE}}")

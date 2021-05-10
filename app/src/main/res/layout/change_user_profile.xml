@@ -58,6 +58,9 @@
                 android:layout_width="116dp"
                 android:layout_height="116dp"
                 android:layout_marginTop="24dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:selectableItemBackgroundBorderless"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

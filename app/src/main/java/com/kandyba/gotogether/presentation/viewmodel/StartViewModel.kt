@@ -1,6 +1,7 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
@@ -80,7 +81,7 @@ class StartViewModel(
                     {
                         if (it is HttpException) {
                             val error = handleError(it)
-                            if (error.detail != null) {
+                            if (error?.detail != null) {
                                 showHeadpieceMLD.postValue(false)
                                 showStartFragmentMLD.postValue(Unit)
                             }
@@ -105,8 +106,10 @@ class StartViewModel(
                 {
                     showMainActivityMLD.postValue(Unit)
                     showHeadpieceMLD.postValue(false)
+                    Log.i("StartViewModel", "всё хорошо")
                 },
                 {
+                    Log.i("StartViewModel", "всё плохо")
                     showStartFragmentMLD.postValue(Unit)
                     showHeadpieceMLD.postValue(false)
                     if (it is ConnectException) {
@@ -257,11 +260,11 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
-    private fun handleError(e: HttpException): NetworkError {
+    private fun handleError(e: HttpException): NetworkError? {
         val errorBody = e.response().errorBody()
-        var error = NetworkError()
+        var error: NetworkError? = NetworkError()
         if (gsonConverter != null && errorBody != null) {
-            error = gsonConverter.convert(errorBody) as NetworkError
+            error = gsonConverter.convert(errorBody) as? NetworkError
         }
         return error
     }

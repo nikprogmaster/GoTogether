@@ -66,6 +66,7 @@
     <string name="edit">Редактировать</string>
     <string name="type_message">Написать сообщение</string>
     <string name="recommend_people">Рекомендуем вам пойти с ними</string>
+    <string name="place_not_defined">Место не указано</string>
 
     <string-array name="interests">
         <item>Бизнес и образование</item>

@@ -25,6 +25,7 @@ import com.kandyba.gotogether.models.general.USER_ID
 import com.kandyba.gotogether.models.presentation.Message
 import com.kandyba.gotogether.presentation.adapter.MessagesAdapter
 import com.kandyba.gotogether.presentation.viewmodel.DialogsViewModel
+import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import java.util.*
 
 class MessagesFragment : Fragment() {
@@ -33,7 +34,8 @@ class MessagesFragment : Fragment() {
     private lateinit var sendMessage: ImageView
     private lateinit var messagesRecycler: RecyclerView
 
-    private lateinit var viewModel: DialogsViewModel
+    private var viewModel: DialogsViewModel? = null
+    private var mainViewModel: MainViewModel? = null
     private lateinit var settings: SharedPreferences
     private var adapter: MessagesAdapter? = null
     private var manager: LinearLayoutManager? = null
@@ -46,20 +48,16 @@ class MessagesFragment : Fragment() {
         override fun onMessage(socketMessage: SocketMessage?) {
             Log.i("MessagesFragment", "сюда вот пришел")
             val userId = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
-            if (socketMessage != null) {
-                if (socketMessage.userId == userId) {
-                    Log.i("socketMessage", "is not null")
-                    socketMessage.time?.let { adapter?.changeMessageStatus(it) }
-                    adapter = messagesRecycler.adapter as? MessagesAdapter
-                    messagesRecycler.adapter = null
-                    messagesRecycler.layoutManager = null
-                    messagesRecycler.adapter = adapter
-                    messagesRecycler.layoutManager = manager
-                    adapter?.notifyDataSetChanged()
-                    messagesRecycler.invalidate()
-                    messagesRecycler.postInvalidate()
-                } else {
-                    adapter?.addMessage(Message.convertFromSocketMessage(socketMessage, userId))
+            requireActivity().runOnUiThread {
+                Log.i("runOnUiThread", "здесь")
+                if (socketMessage != null) {
+                    Log.i("socketMessage != null", "здесь")
+                    if (socketMessage.userId == userId) {
+                        Log.i("socketMessage", "is not null")
+                        socketMessage.time?.let { adapter?.changeMessageStatus(it) }
+                    } else {
+                        adapter?.addMessage(Message.convertFromSocketMessage(socketMessage, userId))
+                    }
                 }
             }
         }
@@ -90,11 +88,19 @@ class MessagesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         resolveDependencies()
         initObservers()
-        viewModel.getDialogMessages(
+        viewModel?.getDialogMessages(
             settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
             requireArguments().getString(DIALOG_ID, EMPTY_STRING),
             settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING
         )
+        if (requireArguments().get(INTERLOCUTOR_NAME) == null) {
+            viewModel?.getCompanionName(
+                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
+                requireArguments().getString(COMPANION_ID) as String
+            )
+        } else {
+            mainViewModel?.setAppbarTitle(requireArguments().get(INTERLOCUTOR_NAME) as String)
+        }
         initListeners()
     }
 
@@ -102,6 +108,8 @@ class MessagesFragment : Fragment() {
         val appComponent = (requireActivity().application as App).appComponent
         val factory = appComponent.getDialogsViewModelFactory()
         viewModel = ViewModelProvider(requireActivity(), factory)[DialogsViewModel::class.java]
+        val mainFactory = appComponent.getMainViewModelFactory()
+        mainViewModel = ViewModelProvider(requireActivity(), mainFactory)[MainViewModel::class.java]
         settings = appComponent.getSharedPreferences()
         adapter = MessagesAdapter(mutableListOf())
         manager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
@@ -111,23 +119,26 @@ class MessagesFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.dialogMessages.observe(requireActivity(), Observer { messages ->
+        viewModel?.dialogMessages?.observe(requireActivity(), Observer { messages ->
             adapter?.setMessages(messages)
-            viewModel.startMessaging(
+            viewModel?.startMessaging(
                 settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING, listener
             )
+        })
+        viewModel?.companionName?.observe(requireActivity(), Observer {
+            mainViewModel?.setAppbarTitle(it)
         })
     }
 
     private fun initListeners() {
         sendMessage.setOnClickListener {
             if (typeMessage.text.toString() != EMPTY_STRING) {
-                if (viewModel.getSocketState() == Socket.State.OPEN) {
+                if (viewModel?.getSocketState() == Socket.State.OPEN) {
                     val message = createMessage(typeMessage.text.toString())
                     adapter?.addMessage(message)
                     adapter?.itemCount?.minus(1)
                         ?.let { it1 -> messagesRecycler.smoothScrollToPosition(it1) }
-                    viewModel.sendMessage(
+                    viewModel?.sendMessage(
                         settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                         SocketMessage(
                             userId = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING,
@@ -137,7 +148,7 @@ class MessagesFragment : Fragment() {
                         )
                     )
                 } else {
-                    viewModel.startMessaging(
+                    viewModel?.startMessaging(
                         settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING, listener
                     )
                 }
@@ -167,20 +178,27 @@ class MessagesFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        Log.i("Kandyba", "Устрой Destroy")
-        viewModel.dialogMessages.removeObservers(requireActivity())
+        viewModel?.dialogMessages?.removeObservers(requireActivity())
         super.onDestroy()
     }
 
     companion object {
-        fun newInstance(dialogId: String): MessagesFragment {
+        fun newInstance(
+            dialogId: String,
+            interlocutor: String?,
+            companionId: String?
+        ): MessagesFragment {
             val args = Bundle()
             args.putString(DIALOG_ID, dialogId)
+            args.putString(INTERLOCUTOR_NAME, interlocutor)
+            args.putString(COMPANION_ID, companionId)
             val fragment = MessagesFragment()
             fragment.arguments = args
             return fragment
         }
 
         private const val DIALOG_ID = "dialogId"
+        private const val INTERLOCUTOR_NAME = "interlocutor_name"
+        private const val COMPANION_ID = "companion_id"
     }
 }

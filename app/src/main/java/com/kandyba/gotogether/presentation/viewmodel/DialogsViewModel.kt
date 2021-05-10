@@ -3,6 +3,7 @@ package com.kandyba.gotogether.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kandyba.gotogether.domain.message.MessagesInteractor
+import com.kandyba.gotogether.domain.user.UserInteractor
 import com.kandyba.gotogether.models.DialogResponse
 import com.kandyba.gotogether.models.Socket
 import com.kandyba.gotogether.models.domain.messages.DialogDomainModel
@@ -14,14 +15,16 @@ import io.reactivex.schedulers.Schedulers
 import java.net.ConnectException
 
 class DialogsViewModel(
-    private val messagesInteractor: MessagesInteractor
+    private val messagesInteractor: MessagesInteractor,
+    private val userInteractor: UserInteractor
 ) : BaseViewModel() {
 
     private val showProgressMLD = MutableLiveData<Boolean>()
     private val showSnackbarMLD = MutableLiveData<SnackbarMessage>()
-    private val userDialogsMLD = MutableLiveData<List<DialogDomainModel>>()
+    private var userDialogsMLD = MutableLiveData<List<DialogDomainModel>>()
     private val dialogMessagesMLD = MutableLiveData<List<Message>>()
     private var dialogCreatedMLD = MutableLiveData<DialogResponse>()
+    private var companionNameMLD = MutableLiveData<String>()
 
     val showSnackbar: LiveData<SnackbarMessage>
         get() = showSnackbarMLD
@@ -33,6 +36,8 @@ class DialogsViewModel(
         get() = dialogMessagesMLD
     val dialogCreated: LiveData<DialogResponse>
         get() = dialogCreatedMLD
+    val companionName: LiveData<String>
+        get() = companionNameMLD
 
     fun getUserDialogs(token: String) {
         showProgressMLD.postValue(true)
@@ -43,6 +48,7 @@ class DialogsViewModel(
                 { dialogs ->
                     showProgressMLD.postValue(false)
                     userDialogsMLD.postValue(dialogs)
+                    userDialogsMLD = MutableLiveData()
                 },
                 {
                     if (it is ConnectException) {
@@ -91,6 +97,23 @@ class DialogsViewModel(
                     showProgressMLD.postValue(false)
                 })
             .addTo(rxCompositeDisposable)
+    }
+
+    fun getCompanionName(token: String, userId: String) {
+        userInteractor.getUserInfo(token, userId, false, true)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { userInfo ->
+                    companionNameMLD.postValue(userInfo.firstName)
+                    companionNameMLD = MutableLiveData()
+                },
+                {
+                    if (it is ConnectException) {
+                        showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
+                    }
+                }
+            ).addTo(rxCompositeDisposable)
     }
 
     fun startMessaging(token: String, listener: Socket.UniversalListener) {

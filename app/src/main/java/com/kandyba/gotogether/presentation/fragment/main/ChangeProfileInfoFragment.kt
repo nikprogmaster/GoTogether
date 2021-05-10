@@ -1,8 +1,12 @@
 package com.kandyba.gotogether.presentation.fragment.main
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +19,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,10 +28,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.FileUtils
-import com.kandyba.gotogether.models.general.Cache
-import com.kandyba.gotogether.models.general.EMPTY_STRING
-import com.kandyba.gotogether.models.general.TOKEN
-import com.kandyba.gotogether.models.general.USER_ID
+import com.kandyba.gotogether.models.general.*
 import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
 import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
 import com.kandyba.gotogether.models.presentation.UserInfoModel
@@ -37,6 +40,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 
@@ -58,7 +62,7 @@ class ChangeProfileInfoFragment : Fragment() {
     private lateinit var showAll: TextView
     private lateinit var profileBackButton: ImageView
 
-    private lateinit var viewModel: ProfileViewModel
+    private var viewModel: ProfileViewModel? = null
 
     private lateinit var cancelAlertButton: Button
     private lateinit var confirmAlertButton: Button
@@ -112,7 +116,7 @@ class ChangeProfileInfoFragment : Fragment() {
         resolveDependencies()
         initListeners()
         initObservers()
-        viewModel.loadUserInfo(
+        viewModel?.loadUserInfo(
             settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
             settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING,
             false,
@@ -123,17 +127,24 @@ class ChangeProfileInfoFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_IMAGE_AVATAR) {
             val selectedImage: Uri? = data?.data
-            profileAvatar.setImageURI(selectedImage)
-
             val file = FileUtils.getFile(requireContext(), selectedImage)
+            val original = BitmapFactory.decodeFile(file?.path)
+            val out = ByteArrayOutputStream()
+            original.compress(Bitmap.CompressFormat.JPEG, 50, out)
+
+
+            Log.i("SettedUri", selectedImage?.path.toString())
+            profileAvatar.setImageURI(selectedImage)
+            settings.edit().putString(AVATAR_URI_PATH, file?.path).apply()
+
             val fileBody: RequestBody =
-                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), out.toByteArray())
             val filePart: MultipartBody.Part = MultipartBody.Part.createFormData(
                 "avatar",
-                file.name,
+                file?.name,
                 fileBody
             )
-            viewModel.uploadUserAvatar(
+            viewModel?.uploadUserAvatar(
                 settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                 filePart
             )
@@ -142,13 +153,36 @@ class ChangeProfileInfoFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun littleEndianConversion(bytes: ByteArray): Int {
-        var result = 0
-        for (i in bytes.indices) {
-            result = result or (bytes[i].toInt() shl 8 * i)
+    private fun checkPermissions(): Boolean {
+        var result: Int
+        val listPermissionsNeeded = mutableListOf<String>()
+        for (p in permissions) {
+            result = ContextCompat.checkSelfPermission(requireActivity(), p)
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p)
+            }
         }
-        return result
+        if (listPermissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                listPermissionsNeeded.toTypedArray(),
+                READ_STORAGE_PERMISSION
+            )
+            return false
+        }
+        return true
     }
+
+    fun startImagePickActivity() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_PICK
+        startActivityForResult(
+            Intent.createChooser(intent, "Select Picture"),
+            1
+        )
+    }
+
 
     private fun initViews(root: View) {
         profileAvatar = root.findViewById(R.id.profile_avatar)
@@ -232,13 +266,7 @@ class ChangeProfileInfoFragment : Fragment() {
             mainViewModel.closeFragment()
         }
         profileAvatar.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_PICK
-            startActivityForResult(
-                Intent.createChooser(intent, "Select Picture"),
-                PICK_IMAGE_AVATAR
-            )
+            if (checkPermissions()) startImagePickActivity()
         }
         saveButton.setOnClickListener {
             if (newValue.text.toString() != EMPTY_STRING) {
@@ -246,7 +274,7 @@ class ChangeProfileInfoFragment : Fragment() {
                 when (changedField.text.toString()) {
                     resources.getString(R.string.name) -> {
                         val request = UserMainRequestBody(newValue.text.toString(), null, null)
-                        viewModel.updateMainUserInfo(token, request)
+                        viewModel?.updateMainUserInfo(token, request)
                     }
                     resources.getString(R.string.birthday) -> {
                         val request = UserMainRequestBody(
@@ -254,11 +282,11 @@ class ChangeProfileInfoFragment : Fragment() {
                             dateAndTime.timeInMillis,
                             null
                         )
-                        viewModel.updateMainUserInfo(token, request)
+                        viewModel?.updateMainUserInfo(token, request)
                     }
                     resources.getString(R.string.about_me) -> {
                         val request = UserInfoRequestBody(newValue.text.toString())
-                        viewModel.updateAdditionalUserInfo(token, request)
+                        viewModel?.updateAdditionalUserInfo(token, request)
                     }
                 }
                 changeFieldAlertDialog.dismiss()
@@ -267,7 +295,7 @@ class ChangeProfileInfoFragment : Fragment() {
         logoutButton.setOnClickListener {
             cancelAlertButton.setOnClickListener { exitAlertDialog.dismiss() }
             confirmAlertButton.setOnClickListener {
-                viewModel.logout(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING)
+                viewModel?.logout(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING)
                 exitAlertDialog.dismiss()
                 exitAlertDialog.onDetachedFromWindow()
             }
@@ -275,25 +303,37 @@ class ChangeProfileInfoFragment : Fragment() {
         }
     }
 
+
     private fun saveUserInfoToCache(userInfo: UserInfoModel) {
         Cache.instance.setUserInfo(userInfo)
     }
 
     private fun initObservers() {
-        viewModel.userInfo.observe(requireActivity(), Observer { userInfo ->
+        viewModel?.userInfo?.observe(requireActivity(), Observer { userInfo ->
             setViews(userInfo)
         })
-        viewModel.updateAdditionalUserInfo.observe(requireActivity(), Observer {
+        viewModel?.updateAdditionalUserInfo?.observe(requireActivity(), Observer {
             saveUserInfoToCache(it)
             setViews(it)
         })
-        viewModel.updateMainUserInfo.observe(requireActivity(), Observer {
+        viewModel?.updateMainUserInfo?.observe(requireActivity(), Observer {
             saveUserInfoToCache(it)
             setViews(it)
         })
-        viewModel.userImageUploaded.observe(requireActivity(), Observer {
+        viewModel?.userImageUploaded?.observe(requireActivity(), Observer {
             Log.i("Всё хорошо", "dfgfd")
+            viewModel?.loadUserInfo(
+                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
+                settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING,
+                updateCache = true,
+                anotherUser = false
+            )
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel?.userInfo?.removeObservers(requireActivity())
     }
 
     private fun setViews(userInfo: UserInfoModel) {
@@ -313,9 +353,9 @@ class ChangeProfileInfoFragment : Fragment() {
 
     companion object {
         private const val FIRST_VISIBLE_LINES_NUMBER = 5
-        private const val MILLISECOND_DIVISOR = 1000000
         private const val ABOUT_ME_PLACEHOLDER = "Вы пока ничего не рассказали другим о себе"
         private const val PICK_IMAGE_AVATAR = 1
+        private val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
 
         fun newInstance(): ChangeProfileInfoFragment {
             val args = Bundle()

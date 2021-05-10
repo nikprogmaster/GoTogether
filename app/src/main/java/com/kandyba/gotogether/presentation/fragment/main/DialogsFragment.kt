@@ -2,6 +2,7 @@ package com.kandyba.gotogether.presentation.fragment.main
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +26,12 @@ class DialogsFragment : Fragment() {
     private lateinit var dialogsRecyclerView: RecyclerView
     private lateinit var adapter: DialogsAdapter
 
-    private lateinit var viewModel: DialogsViewModel
+    private var viewModel: DialogsViewModel? = null
     private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
+
+    private var wasOpenedWithMessage: Boolean = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,13 +49,7 @@ class DialogsFragment : Fragment() {
         initObservers()
         mainViewModel.showToolbar(true)
         mainViewModel.setAppbarTitle(requireContext().getString(R.string.dialogs))
-        viewModel.getUserDialogs(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING)
-        if (requireArguments().getString(COMPANION_ID) != null) {
-            viewModel.createDialog(
-                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
-                requireArguments().getString(COMPANION_ID, EMPTY_STRING)
-            )
-        }
+        viewModel?.getUserDialogs(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING)
     }
 
     private fun resolveDependencies() {
@@ -65,10 +63,16 @@ class DialogsFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.userDialogs.observe(requireActivity(), Observer { initAdapterOrDoElse(it) })
-        viewModel.dialogCreated.observe(requireActivity(), Observer {
-            mainViewModel.openFragment(MessagesFragment.newInstance(it.id))
-            viewModel.getUserDialogs(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING)
+        viewModel?.userDialogs?.observe(requireActivity(), Observer { initAdapterOrDoElse(it) })
+        viewModel?.dialogCreated?.observe(requireActivity(), Observer {
+            mainViewModel.openFragment(
+                MessagesFragment.newInstance(
+                    it.id,
+                    null,
+                    requireArguments().getString(COMPANION_ID)
+                )
+            )
+            wasOpenedWithMessage = true
         })
     }
 
@@ -77,26 +81,47 @@ class DialogsFragment : Fragment() {
             val dialog =
                 dialogs.find { it.companion.id == requireArguments().getString(COMPANION_ID) }
             if (dialog == null) {
-                viewModel.createDialog(
+                Log.i("DialogsFragment", "viewModel?.createDialog2")
+                viewModel?.createDialog(
                     settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                     requireArguments().getString(COMPANION_ID, EMPTY_STRING)
                 )
+            } else {
+                if (!wasOpenedWithMessage) {
+                    wasOpenedWithMessage = true
+                    Log.i("DialogsFragment", "viewModel?.createDialog3")
+                    mainViewModel.openFragment(
+                        MessagesFragment.newInstance(
+                            dialog.id,
+                            dialog.companion.firstName,
+                            null
+                        )
+                    )
+                }
             }
         }
         adapter = DialogsAdapter(
             dialogs,
             object : OnDialogClickListener {
-                override fun onDialogClick(dialogId: String) {
-                    mainViewModel.openFragment(MessagesFragment.newInstance(dialogId))
+                override fun onDialogClick(dialogId: String, interlocutor: String?) {
+                    mainViewModel.openFragment(
+                        MessagesFragment.newInstance(
+                            dialogId,
+                            interlocutor,
+                            null
+                        )
+                    )
                 }
             }
         )
         dialogsRecyclerView.adapter = adapter
     }
 
-    override fun onDestroy() {
-        viewModel.dialogCreated.removeObservers(requireActivity())
-        super.onDestroy()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel?.dialogCreated?.removeObservers(requireActivity())
+        viewModel?.userDialogs?.removeObservers(requireActivity())
     }
 
     companion object {

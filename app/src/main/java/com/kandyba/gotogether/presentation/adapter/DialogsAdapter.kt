@@ -50,7 +50,7 @@ class DialogsAdapter(
                     .into(avatar)
             }
             dialogLayout.setOnClickListener {
-                onDialogClickListener.onDialogClick(dialog.id)
+                onDialogClickListener.onDialogClick(dialog.id, dialog.companion.firstName)
             }
         }
     }
@@ -58,5 +58,5 @@ class DialogsAdapter(
 }
 
 interface OnDialogClickListener {
-    fun onDialogClick(dialogId: String)
+    fun onDialogClick(dialogId: String, interlocutor: String?)
 }

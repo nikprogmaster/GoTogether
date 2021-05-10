@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.domain.events
 
+import android.graphics.Bitmap
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
 import com.kandyba.gotogether.models.presentation.EventModel
@@ -23,5 +24,6 @@ interface EventsInteractor {
 
     fun searchEventsByTextQuery(token: String, text: String): Single<List<EventModel>>
 
+    fun loadEventImages(urls: List<String>): Single<List<Bitmap>>
 
 }

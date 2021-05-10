@@ -37,6 +37,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
 @Module
 class ViewModelModule {
@@ -105,14 +106,16 @@ class ViewModelModule {
 
     @Provides
     fun provideDialogsViewModelFactory(
-        messagesInteractor: MessagesInteractor
+        messagesInteractor: MessagesInteractor,
+        userInteractor: UserInteractor
     ): DialogsViewModelFactory {
         return DialogsViewModelFactory {
-            DialogsViewModel(messagesInteractor)
+            DialogsViewModel(messagesInteractor, userInteractor)
         }
     }
 
     @Provides
+    @Singleton
     fun provideAuthInteractor(authMapper: AuthApiMapper): AuthInteractor {
         return AuthInteractorImpl(
             AuthRepositoryImpl(
@@ -124,6 +127,7 @@ class ViewModelModule {
     }
 
     @Provides
+    @Singleton
     fun provideUserInteractor(userMapper: UserApiMapper): UserInteractor {
         return UserInteractorImpl(
             UserRepositoryImpl(
@@ -136,6 +140,7 @@ class ViewModelModule {
     }
 
     @Provides
+    @Singleton
     fun provideEventsInteractor(eventsMapper: EventsApiMapper): EventsInteractor {
         val eventDetailsDataConverter = EventDetailsDataConverter()
         return EventsInteractorImpl(
@@ -149,6 +154,7 @@ class ViewModelModule {
     }
 
     @Provides
+    @Singleton
     fun provideMessageInteractor(messagesApiMapper: MessagesApiMapper): MessagesInteractor {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
