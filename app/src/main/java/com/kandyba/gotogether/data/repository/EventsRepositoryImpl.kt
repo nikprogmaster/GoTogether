@@ -1,11 +1,14 @@
 package com.kandyba.gotogether.data.repository
 
+import android.graphics.Bitmap
 import com.kandyba.gotogether.data.api.EventsApiMapper
 import com.kandyba.gotogether.data.converter.events.EventDetailsDataConverter
 import com.kandyba.gotogether.data.converter.events.EventsDataConverter
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
+import com.squareup.picasso.Picasso
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class EventsRepositoryImpl(
@@ -56,5 +59,15 @@ class EventsRepositoryImpl(
     ): Single<List<EventDetailsDomainModel>> {
         return eventsApiMapper.searchEventsByTextQuery(token, text)
             .map { eventsDataConverter.convert(it) }
+    }
+
+    override fun loadImage(url: String, placeholder: Int, error: Int): Observable<Bitmap> {
+        return Observable.just(
+            Picasso.get()
+                .load(url)
+                .placeholder(placeholder)
+                .error(error)
+                .get()
+        )
     }
 }

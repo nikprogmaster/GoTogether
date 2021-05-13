@@ -44,7 +44,6 @@ class InterestsAdapter(
                     levelInterest.level = progress
                     level.text = seekBar?.progress.toString()
                 }
-
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 

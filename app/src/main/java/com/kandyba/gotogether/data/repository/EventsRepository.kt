@@ -1,8 +1,11 @@
 package com.kandyba.gotogether.data.repository
 
+import android.graphics.Bitmap
+import androidx.annotation.DrawableRes
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 interface EventsRepository {
@@ -21,4 +24,10 @@ interface EventsRepository {
     ): Single<List<EventDetailsDomainModel>>
 
     fun searchEventsByTextQuery(token: String, text: String): Single<List<EventDetailsDomainModel>>
+
+    fun loadImage(
+        url: String,
+        @DrawableRes placeholder: Int,
+        @DrawableRes error: Int
+    ): Observable<Bitmap>
 }

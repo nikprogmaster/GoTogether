@@ -1,6 +1,5 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
@@ -65,12 +64,10 @@ class ProfileViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { userInfo ->
-                    Log.i("ProfileViewModel", "Отлично")
                     userInfoMLD.postValue(userInfo)
                     userInfoMLD = MutableLiveData()
                 },
                 {
-                    Log.i("ProfileViewModel", "Плохо")
                     if (it is ConnectException) {
                         showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
                     }

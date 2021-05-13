@@ -5,7 +5,6 @@ import android.app.DatePickerDialog.OnDateSetListener
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +34,15 @@ class AboutMeFragment : Fragment() {
     private lateinit var viewModel: StartViewModel
     private lateinit var settings: SharedPreferences
 
-    var dateAndTime: Calendar = Calendar.getInstance()
+    private var dateAndTime: Calendar = Calendar.getInstance()
+    private var dateSetListener =
+        OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            dateAndTime.set(Calendar.YEAR, year)
+            dateAndTime.set(Calendar.MONTH, monthOfYear)
+            dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            val result = "${dayOfMonth}.${monthOfYear + 1}.${year}"
+            birthday.setText(result)
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,7 +78,6 @@ class AboutMeFragment : Fragment() {
     private fun initObservers() {
         viewModel.updateMainUserInfo.observe(requireActivity(), Observer {
             (requireActivity() as FragmentManager).openFragment(DescriptionFragment.newInstance())
-            Log.d("AboutMeFragment", "initObservers() called")
         })
     }
 
@@ -80,14 +86,9 @@ class AboutMeFragment : Fragment() {
             val request = createUserUpdateRequest()
             val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
             viewModel.updateMainUserInfo(token, request)
-
         }
         backButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
-        birthday.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
-                setDate(birthday)
-            }
-        }
+        birthday.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) setDate() }
         policy.movementMethod = LinkMovementMethod.getInstance()
     }
 
@@ -96,44 +97,30 @@ class AboutMeFragment : Fragment() {
             name.text.toString()
         } else null
         val birthDate = if (birthday.text.toString() != EMPTY_STRING) {
-            (dateAndTime.timeInMillis / MILLISECOND_DIVISOR).toLong()
+            dateAndTime.timeInMillis
         } else null
         val sex =
-            if (sex.selectedItem.toString() == resources.getStringArray(R.array.sex)[0].toString()) 0 else 1
+            if (sex.selectedItem.toString() == resources.getStringArray(R.array.sex)[0].toString()) MAN_SEX else WOMAN_SEX
         return UserMainRequestBody(name, birthDate, sex)
     }
 
     // отображаем диалоговое окно для выбора даты
-    fun setDate(v: View?) {
+    private fun setDate() {
         DatePickerDialog(
             requireContext(),
-            d,
+            dateSetListener,
             dateAndTime.get(Calendar.YEAR),
             dateAndTime.get(Calendar.MONTH),
             dateAndTime.get(Calendar.DAY_OF_MONTH)
         ).show()
     }
 
-
-    // установка обработчика выбора даты
-    var d =
-        OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            dateAndTime.set(Calendar.YEAR, year)
-            dateAndTime.set(Calendar.MONTH, monthOfYear)
-            dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            val result = "${dayOfMonth}.${monthOfYear + 1}.${year}"
-            birthday.setText(result)
-
-        }
-
-    override fun onDestroy() {
+    override fun onDestroyView() {
         viewModel.updateMainUserInfo.removeObservers(requireActivity())
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     companion object {
-        private const val MILLISECOND_DIVISOR = 1000
-
         fun newInstance(): AboutMeFragment {
             val args = Bundle()
 
@@ -141,5 +128,8 @@ class AboutMeFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
+
+        private const val MAN_SEX = 0
+        private const val WOMAN_SEX = 1
     }
 }

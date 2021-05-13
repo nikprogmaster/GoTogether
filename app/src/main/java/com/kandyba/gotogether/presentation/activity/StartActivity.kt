@@ -8,7 +8,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -92,10 +91,6 @@ class StartActivity : AppCompatActivity(), FragmentManager {
         finish()
     }
 
-    override fun showDialogFragment(dialog: DialogFragment) {
-        TODO("Not yet implemented")
-    }
-
     private fun showProgress(show: Boolean) {
         progress.visibility = if (show) View.VISIBLE else View.GONE
     }
@@ -115,8 +110,8 @@ class StartActivity : AppCompatActivity(), FragmentManager {
 
     private fun showHeadPiece(show: Boolean) {
         if (show) {
-            animationLayout.visibility = View.VISIBLE
             animation.setAndStartAnimation(animatedLogo)
+            animationLayout.visibility = View.VISIBLE
         } else {
             animationLayout.visibility = View.GONE
             animation.finishAnimation()
@@ -124,8 +119,7 @@ class StartActivity : AppCompatActivity(), FragmentManager {
     }
 
     private fun showSnackbar(message: String) {
-        val snackbar = Snackbar.make(root, message, Snackbar.LENGTH_SHORT)
-        snackbar.show()
+        Snackbar.make(root, message, Snackbar.LENGTH_SHORT).show()
     }
 
 }

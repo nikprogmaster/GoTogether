@@ -32,10 +32,6 @@ import com.kandyba.gotogether.presentation.viewmodel.*
 import com.kandyba.gotogether.presentation.viewmodel.factory.*
 import dagger.Module
 import dagger.Provides
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Response
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
@@ -156,21 +152,6 @@ class ViewModelModule {
     @Provides
     @Singleton
     fun provideMessageInteractor(messagesApiMapper: MessagesApiMapper): MessagesInteractor {
-        val httpLoggingInterceptor = HttpLoggingInterceptor()
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-
-        val okHttpClient: OkHttpClient = OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
-            .addNetworkInterceptor(object : Interceptor {
-                override fun intercept(chain: Interceptor.Chain): Response {
-                    val request = chain.request()
-                        .newBuilder()
-                        .addHeader("Connection", "close")
-                        .build()
-                    return chain.proceed(request)
-                }
-            })
-            .build()
         return MessagesInteractorImpl(
             MessagesRepositoryImpl(
                 messagesApiMapper,

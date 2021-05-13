@@ -4,23 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/search"
+    <include
+        layout="@layout/stub_image_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search" />
+
+    <LinearLayout
+        android:id="@+id/search_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/search_background"
-        android:fontFamily="@font/arimo"
-        android:hint="@string/events_search"
-        android:textSize="16sp"
-        android:inputType="text"
-        android:padding="@dimen/padding"
-        app:defaultQueryHint="Поиск мероприятий"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toStartOf="@+id/search_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/arimo"
+            android:hint="@string/events_search"
+            android:inputType="text"
+            android:background="@drawable/search_background"
+            android:padding="@dimen/padding"
+            android:textSize="16sp"
+            app:defaultQueryHint="Поиск мероприятий" />
+
+        <ImageView
+            android:id="@+id/clear_query"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:src="@drawable/clear_button" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/search_button"
@@ -34,19 +65,17 @@
         android:focusable="true"
         android:src="@drawable/search_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/search"
+        app:layout_constraintStart_toEndOf="@+id/search_layout"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/events_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/search"
+        app:layout_constraintTop_toBottomOf="@+id/search_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

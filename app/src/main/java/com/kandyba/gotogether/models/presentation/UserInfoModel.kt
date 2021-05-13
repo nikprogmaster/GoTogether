@@ -1,7 +1,7 @@
 package com.kandyba.gotogether.models.presentation
 
 
-class UserInfoModel(
+data class UserInfoModel(
     var id: String,
     var email: String,
     var firstName: String? = null,

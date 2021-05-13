@@ -9,7 +9,7 @@ class StartAppAnimation {
     private var animators: MutableList<Animator> = mutableListOf()
 
     fun setAndStartAnimation(logo: ImageView) {
-        animators = mutableListOf<Animator>()
+        animators = mutableListOf()
         // alpha
         val alphaAnimator = ValueAnimator.ofFloat(1f, 0.6f)
         alphaAnimator.duration = 800

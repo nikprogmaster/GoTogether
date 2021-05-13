@@ -25,8 +25,3 @@ interface MessagesRepository {
 
     fun getState(): Socket.State
 }
-
-interface MessageListener {
-    fun onMessage(socketMessage: SocketMessage)
-    fun onFailure()
-}

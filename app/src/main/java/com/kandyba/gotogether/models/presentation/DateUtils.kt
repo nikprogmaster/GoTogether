@@ -1,20 +1,18 @@
 package com.kandyba.gotogether.models.presentation
 
-import java.time.LocalDate
-import java.time.Period
 import java.util.*
 
-fun getAnchorDate(): Calendar {
+/*fun getAnchorDate(): Calendar {
     val calendarInstance = Calendar.getInstance(TimeZone.getDefault())
     calendarInstance.set(1970, 0, 0, 0, 0, 0)
     calendarInstance.set(Calendar.MILLISECOND, 0)
     calendarInstance.add(Calendar.MILLISECOND, TimeZone.getDefault().rawOffset)
     return calendarInstance
-}
+}*/
 
 fun getCalendarDate(unixTime: Long): Calendar {
-    val date = getAnchorDate()
-    date.timeInMillis = date.timeInMillis + unixTime
+    val date = Calendar.getInstance()
+    date.timeInMillis = unixTime
     return date
 }
 
@@ -58,24 +56,54 @@ private fun getMinutes(date: Calendar): String {
 }
 
 fun getAge(unixTime: Long): String {
-    val date = Calendar.getInstance()
-    date.timeInMillis = unixTime
-    val birthDate = LocalDate.of(
-        date.get(Calendar.YEAR),
-        date.get(Calendar.MONTH) + 1,
-        date.get(Calendar.DAY_OF_MONTH)
-    )
-    val now = LocalDate.now()
-    val delta = Period.between(birthDate, now)
-    var str = when (delta.years % 10) {
+    val now = Calendar.getInstance().setStartDayValues()
+    val birthday = Calendar.getInstance()
+    birthday.timeInMillis = unixTime
+    birthday.setStartDayValues()
+    val delta = now.timeInMillis - birthday.timeInMillis
+    var days = convertInDays(delta)
+    val leapYearsAmount = countLeapYears(now[Calendar.YEAR], birthday[Calendar.YEAR])
+    days -= (leapYearsAmount + 1)
+    val yearResult: Int = (days / 365).toInt()
+
+    var str = when (yearResult % 10) {
         1 -> "год"
         2, 3, 4 -> "года"
         else -> "лет"
     }
-    if (delta.years == 11 || delta.years == 12 || delta.years == 13 || delta.years == 14) {
+    if (yearResult == 11 || yearResult == 12 || yearResult == 13 || yearResult == 14) {
         str = "лет"
     }
-    return "${delta.years} $str"
+    return "$yearResult $str"
+}
+
+private fun Calendar.setStartDayValues(): Calendar {
+    this.set(Calendar.HOUR, 0)
+    this.set(Calendar.MINUTE, 0)
+    this.set(Calendar.SECOND, 0)
+    this.set(Calendar.MILLISECOND, 0)
+    return this
+}
+
+private fun convertInDays(timeInMillis: Long): Double {
+    return (timeInMillis / 1000 / 60 / 60 / 24).toDouble()
+}
+
+private fun countLeapYears(startYear: Int, endYear: Int): Int {
+    var counter = 0
+    if (startYear != endYear) {
+        for (year in startYear..endYear) {
+            if (isLeapYear(year)) counter++
+        }
+    } else {
+        return 1
+    }
+    return counter
+}
+
+private fun isLeapYear(year: Int): Boolean {
+    val divider = if (year % 100 == 0) year % 400 else year % 4
+    return divider == 0
 }
 
 fun getCalendarDay(unixTime: Long): String {

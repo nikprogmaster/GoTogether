@@ -42,6 +42,19 @@ class ProfileFragment : Fragment() {
 
     private var expanded = false
 
+    private val eventClickListener = object : ShortEventAdapter.OnEventClickListener {
+        override fun onClick(eventId: String) {
+            viewModel?.loadEventInfo(
+                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING, eventId
+            )
+        }
+
+        override fun onLikeButtonClick(eventId: String) {
+            viewModel?.likeEvent(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING, eventId)
+            adapter.removeEvent(eventId)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -85,25 +98,7 @@ class ProfileFragment : Fragment() {
         mainViewModel = ViewModelProvider(requireActivity(), mainFactory)
             .get(MainViewModel::class.java)
         settings = component.getSharedPreferences()
-        adapter = ShortEventAdapter(
-            mutableListOf(), object : ShortEventAdapter.OnEventClickListener {
-                override fun onClick(eventId: String) {
-                    viewModel?.loadEventInfo(
-                        settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
-                        eventId
-                    )
-                }
-
-                override fun onLikeButtonClick(eventId: String) {
-                    viewModel?.likeEvent(
-                        settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
-                        eventId
-                    )
-                    adapter.removeEvent(eventId)
-                }
-            },
-            false
-        )
+        adapter = ShortEventAdapter(mutableListOf(), eventClickListener, false)
         myEvents.adapter = adapter
         mainViewModel.makeForYouEventsToolbar()
         mainViewModel.showToolbar(false)
@@ -113,9 +108,9 @@ class ProfileFragment : Fragment() {
         showAllButton.setOnClickListener {
             if (expanded) {
                 showAllButton.text = resources.getText(R.string.show_all)
-                description.maxLines = 5
+                description.maxLines = COLLAPSED_LINES_COUNT
             } else {
-                description.maxLines = 10000
+                description.maxLines = EXPANDED_LINES_COUNT
                 showAllButton.text = resources.getText(R.string.roll_up)
             }
             expanded = !expanded
@@ -123,17 +118,13 @@ class ProfileFragment : Fragment() {
         if (checkIsItMyProfile()) {
             editOrWriteMessageButton.text = resources.getString(R.string.edit)
             editOrWriteMessageButton.setOnClickListener {
-                mainViewModel.openFragment(
-                    ChangeProfileInfoFragment.newInstance()
-                )
+                mainViewModel.openFragment(ChangeProfileInfoFragment.newInstance())
             }
         } else {
             editOrWriteMessageButton.text = resources.getString(R.string.type_message)
             editOrWriteMessageButton.setOnClickListener {
                 mainViewModel.openFragment(
-                    DialogsFragment.newInstance(
-                        requireArguments().getString(CURRENT_USER_ID)
-                    )
+                    DialogsFragment.newInstance(requireArguments().getString(CURRENT_USER_ID))
                 )
             }
         }
@@ -157,13 +148,13 @@ class ProfileFragment : Fragment() {
     private fun setViews(userInfo: UserInfoModel) {
         userName.text = userInfo.firstName
         description.text =
-            if (userInfo.info != EMPTY_STRING) userInfo.info else ABOUT_ME_PLACEHOLDER
-        /*val uri = Uri.fromFile(File(settings.getString(AVATAR_URI_PATH, EMPTY_STRING) ?: EMPTY_STRING))
-        profileAvatar.setImageURI(uri)*/
+            if (userInfo.info != EMPTY_STRING) userInfo.info else resources.getString(R.string.about_me_placeholder)
+        val placeholder =
+            if (userInfo.sex == MAN_SEX) R.drawable.man_stub else R.drawable.woman_stub
         Picasso.get()
             .load(userInfo.avatar)
-            .placeholder(R.drawable.ill_placeholder_300dp)
-            .error(R.drawable.ill_error_placeholder_300dp)
+            .placeholder(placeholder)
+            .error(placeholder)
             .into(profileAvatar)
         userAge.text = userInfo.birthDate?.toLong()?.let { getAge(it) }
         if (description.lineCount < FIRST_VISIBLE_LINES_NUMBER) {
@@ -175,9 +166,12 @@ class ProfileFragment : Fragment() {
         adapter.setEvents(userInfo.likedEvents)
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel?.eventInfo?.removeObservers(requireActivity())
-        super.onDestroy()
+        viewModel?.userInfo?.removeObservers(requireActivity())
+        viewModel?.enableLikeButton?.removeObservers(requireActivity())
+        viewModel?.eventNotLiked?.removeObservers(requireActivity())
     }
 
     private fun checkIsItMyProfile() =
@@ -185,8 +179,11 @@ class ProfileFragment : Fragment() {
 
     companion object {
         private const val FIRST_VISIBLE_LINES_NUMBER = 5
-        private const val ABOUT_ME_PLACEHOLDER = "Вы пока ничего не рассказали другим о себе"
         private const val CURRENT_USER_ID = "current_user"
+        private const val COLLAPSED_LINES_COUNT = 5
+        private const val EXPANDED_LINES_COUNT = 10000
+        private const val MAN_SEX = "0"
+
         fun newInstance(userId: String): ProfileFragment {
             val args = Bundle()
             args.putString(CURRENT_USER_ID, userId)

@@ -2,11 +2,13 @@ package com.kandyba.gotogether.presentation.fragment.main
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,13 +29,22 @@ class DialogsFragment : Fragment() {
     private lateinit var dialogsRecyclerView: RecyclerView
     private lateinit var adapter: DialogsAdapter
     private lateinit var dialogsLoadingBar: ProgressBar
+    private lateinit var stubLayout: ConstraintLayout
+    private lateinit var stubImage: ImageView
+    private lateinit var stubTitle: TextView
+    private lateinit var stubSubtitle: TextView
 
     private var viewModel: DialogsViewModel? = null
     private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
-
     private var wasOpenedWithMessage: Boolean = false
-
+    private val dialogListener = object : OnDialogClickListener {
+        override fun onDialogClick(dialogId: String, interlocutor: String?) {
+            mainViewModel.openFragment(
+                MessagesFragment.newInstance(dialogId, interlocutor, null)
+            )
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +54,10 @@ class DialogsFragment : Fragment() {
         val root = inflater.inflate(R.layout.dialogs_fragment, container, false)
         dialogsRecyclerView = root.findViewById(R.id.dialogs_recycler)
         dialogsLoadingBar = root.findViewById(R.id.dialogs_loading)
+        stubLayout = root.findViewById(R.id.stub_layout)
+        stubImage = root.findViewById(R.id.image_stub)
+        stubTitle = root.findViewById(R.id.stub_title)
+        stubSubtitle = root.findViewById(R.id.stub_subtitle)
         return root
     }
 
@@ -50,6 +65,7 @@ class DialogsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         resolveDependencies()
         initObservers()
+        configureStub()
         mainViewModel.showToolbar(true)
         mainViewModel.setAppbarTitle(requireContext().getString(R.string.dialogs))
         viewModel?.getUserDialogs(settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING)
@@ -78,9 +94,14 @@ class DialogsFragment : Fragment() {
             wasOpenedWithMessage = true
         })
         viewModel?.showProgress?.observe(requireActivity(), Observer {
-            Log.i("DialogsFragment", it.toString())
             showDialogsLoading(it)
         })
+    }
+
+    private fun configureStub() {
+        stubImage.setImageResource(R.drawable.dialogs_stub)
+        stubTitle.text = resources.getString(R.string.dialogs_stub_title)
+        stubSubtitle.text = resources.getString(R.string.dialogs_stub_subtitle)
     }
 
     private fun initAdapterOrDoElse(dialogs: List<DialogDomainModel>) {
@@ -88,45 +109,28 @@ class DialogsFragment : Fragment() {
             val dialog =
                 dialogs.find { it.companion.id == requireArguments().getString(COMPANION_ID) }
             if (dialog == null) {
-                Log.i("DialogsFragment", "viewModel?.createDialog2")
                 viewModel?.createDialog(
                     settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                     requireArguments().getString(COMPANION_ID, EMPTY_STRING)
                 )
-            } else {
-                if (!wasOpenedWithMessage) {
-                    wasOpenedWithMessage = true
-                    Log.i("DialogsFragment", "viewModel?.createDialog3")
-                    mainViewModel.openFragment(
-                        MessagesFragment.newInstance(
-                            dialog.id,
-                            dialog.companion.firstName,
-                            null
-                        )
-                    )
-                }
+            } else if (!wasOpenedWithMessage) {
+                wasOpenedWithMessage = true
+                mainViewModel.openFragment(
+                    MessagesFragment.newInstance(dialog.id, dialog.companion.firstName, null)
+                )
             }
         }
-        adapter = DialogsAdapter(
-            dialogs,
-            object : OnDialogClickListener {
-                override fun onDialogClick(dialogId: String, interlocutor: String?) {
-                    mainViewModel.openFragment(
-                        MessagesFragment.newInstance(
-                            dialogId,
-                            interlocutor,
-                            null
-                        )
-                    )
-                }
-            }
-        )
-        dialogsRecyclerView.adapter = adapter
+        if (dialogs.isEmpty()) {
+            stubLayout.visibility = View.VISIBLE
+        } else {
+            stubLayout.visibility = View.GONE
+            adapter = DialogsAdapter(dialogs, dialogListener)
+            dialogsRecyclerView.adapter = adapter
+        }
     }
 
     private fun showDialogsLoading(loading: Boolean) {
-        if (loading) dialogsLoadingBar.visibility = View.VISIBLE else dialogsLoadingBar.visibility =
-            View.GONE
+        dialogsLoadingBar.visibility = if (loading) View.VISIBLE else View.GONE
     }
 
     override fun onDestroyView() {

@@ -23,7 +23,6 @@ import com.kandyba.gotogether.models.presentation.getListOfCategories
 import com.kandyba.gotogether.presentation.adapter.SelectableCategoriesAdapter
 import com.kandyba.gotogether.presentation.viewmodel.SearchViewModel
 
-
 class SearchSettingsBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var applyButton: Button
@@ -101,18 +100,20 @@ class SearchSettingsBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        fragment = null
+        isFragmentExist = false
     }
 
     companion object {
         fun newInstance(): SearchSettingsBottomSheetDialogFragment? {
-            if (fragment == null) {
+            var fragment: SearchSettingsBottomSheetDialogFragment? = null
+            if (!isFragmentExist) {
                 fragment = SearchSettingsBottomSheetDialogFragment()
             }
             return fragment
         }
 
-        var fragment: SearchSettingsBottomSheetDialogFragment? = null
+        var isFragmentExist = false
             private set
+
     }
 }

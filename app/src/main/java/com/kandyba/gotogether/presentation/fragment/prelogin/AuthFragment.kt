@@ -93,7 +93,6 @@ class AuthFragment : Fragment() {
     }
 
     companion object {
-
         fun newInstance(): AuthFragment {
             val args = Bundle()
 

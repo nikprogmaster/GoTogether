@@ -27,7 +27,6 @@ class MessagesRepositoryImpl(
 
     override fun sendMessage(token: String, socketMessage: SocketMessage): Boolean {
         try {
-            Log.v(SOCKET_TAG, "Try to send data")
             return socket?.send(socketMessage) ?: false
         } catch (e: JSONException) {
             Log.e(SOCKET_TAG, "Try to send data with wrong JSON format, data: $socketMessage")
@@ -43,7 +42,8 @@ class MessagesRepositoryImpl(
         token: String,
         dialogId: String
     ): Single<List<MessageDomainModel>> {
-        return apiMapper.getDialogMessages(token, dialogId).map { messageConverter.convert(it) }
+        return apiMapper.getDialogMessages(token, dialogId)
+            .map { messageConverter.convert(it) }
     }
 
     override fun createDialog(token: String, companionId: String): Single<DialogResponse> {
@@ -59,11 +59,9 @@ class MessagesRepositoryImpl(
             socket = Socket.Builder
                 .with(URL)
                 .addHeader(AUTHORIZATION_KEY, token)
-                //.setPingInterval(5, TimeUnit.SECONDS)
                 .build()
             socket?.setUniversalListener(messageListener)
             socket?.connect()
-            Log.i("Connect to Socket", "from start")
         }
     }
 

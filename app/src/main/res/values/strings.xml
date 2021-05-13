@@ -20,6 +20,7 @@
     <string name="point_your_interests">Укажи свои интересы</string>
     <string name="this_will_help_us">Данная информация поможет нам\n подобрать мероприятие\n специально для вас</string>
     <string name="search">Поиск</string>
+    <string name="find_interesting_event">Найдите интересующие мероприятия с помощью поиска</string>
     <string name="for_you">Для вас</string>
     <string name="dialogs">Диалоги</string>
     <string name="profile">Профиль</string>
@@ -67,6 +68,11 @@
     <string name="type_message">Написать сообщение</string>
     <string name="recommend_people">Рекомендуем вам пойти с ними</string>
     <string name="place_not_defined">Место не указано</string>
+    <string name="dialogs_stub_title">Вы никому не писали</string>
+    <string name="dialogs_stub_subtitle">Найдите интересующее мероприятие и напишите другому пользователю</string>
+    <string name="search_stub_title">Ничего не найдено</string>
+    <string name="search_stub_subtitle">Попробуйте искать по-другому</string>
+    <string name="about_me_placeholder">Вы пока ничего не рассказали другим о себе</string>
 
     <string-array name="interests">
         <item>Бизнес и образование</item>

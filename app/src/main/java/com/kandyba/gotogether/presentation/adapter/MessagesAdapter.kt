@@ -1,6 +1,5 @@
 package com.kandyba.gotogether.presentation.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +28,6 @@ class MessagesAdapter(
 
     fun changeMessageStatus(mesTime: Long) {
         val changedMessage = messages.find { it.createdAt == mesTime }
-        changedMessage?.text?.let { Log.i("Message", it) }
         changedMessage?.delivered = true
         notifyDataSetChanged()
     }

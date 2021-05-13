@@ -23,6 +23,4 @@ class AuthInteractorImpl(
     override fun logout(token: String): Completable {
         return repository.logout(token)
     }
-
-
 }

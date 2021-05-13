@@ -3,6 +3,7 @@ package com.kandyba.gotogether.presentation.viewmodel
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.kandyba.gotogether.R
 import com.kandyba.gotogether.domain.events.EventsInteractor
 import com.kandyba.gotogether.domain.user.UserInteractor
 import com.kandyba.gotogether.models.domain.events.Participant
@@ -73,7 +74,6 @@ class EventDetailsViewModel(
                     } else {
                         showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
                     }
-                    //eventLikedMLD.postValue(eventId)
                     enableLikeButtonMLD.postValue(true)
                 }
             ).addTo(rxCompositeDisposable)
@@ -98,7 +98,11 @@ class EventDetailsViewModel(
     }
 
     fun loadImages(images: List<String>) {
-        eventsInteractor.loadEventImages(images)
+        eventsInteractor.loadEventImages(
+            images,
+            R.drawable.ill_placeholder_300dp,
+            R.drawable.ill_error_placeholder_300dp
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(

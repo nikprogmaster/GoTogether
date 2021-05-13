@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import java.net.ProtocolException;
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,7 +32,6 @@ public class Socket {
 
     private final static String TAG = Socket.class.getSimpleName();
     private final static String CLOSE_REASON = "End of session";
-    private final static int MAX_COLLISION = 7;
 
     private final static String HASH_KEY = "hash";
     private final static String USER_ID_KEY = "userId";
@@ -60,30 +58,30 @@ public class Socket {
 
     public static class Builder {
 
-        private Request.Builder request;
+        private final Request.Builder request;
 
         private Builder(Request.Builder request) {
             this.request = request;
         }
 
+        /**
+         * Создать {@link Builder} с определенным URL
+         */
         public static Builder with(@NonNull String url) {
-            // Silently replace web socket URLs with HTTP URLs.
-            if (!url.regionMatches(true, 0, "ws:", 0, 3) && !url.regionMatches(true, 0, "wss:", 0, 4))
+            if (!url.regionMatches(true, 0, "ws:", 0, 3)
+                    && !url.regionMatches(true, 0, "wss:", 0, 4))
                 throw new IllegalArgumentException("web socket url must start with ws or wss, passed url is " + url);
 
             return new Builder(new Request.Builder().url(url));
         }
 
-        public Builder setPingInterval(long interval, @NonNull TimeUnit unit) {
-            httpClient.pingInterval(interval, unit);
-            return this;
-        }
-
+        /** Добавление заголовка в запрос на открытие сокета */
         public Builder addHeader(@NonNull String name, @NonNull String value) {
             request.addHeader(name, value);
             return this;
         }
 
+        /** Создать {@link Socket} */
         public Socket build() {
             return new Socket(request.build());
         }
@@ -201,7 +199,7 @@ public class Socket {
             Log.i("close socket", "закрыт вроде");
             Boolean isClosed = realWebSocket.close(1000, CLOSE_REASON);
             Log.i("isClosed", isClosed.toString());
-            terminate();
+            //terminate();
         }
     }
 
@@ -288,8 +286,6 @@ public class Socket {
         @Override
         public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
             Log.v(TAG, "Socket has been opened successfully.");
-
-            // fire open event listener
             universalListener.onOpen();
             changeState(State.OPEN);
         }
@@ -300,11 +296,9 @@ public class Socket {
          */
         @Override
         public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
-            // print received message in log
-            Log.v(TAG, "New Message received " + text);
+            Log.v(TAG, "Получено новое сообщение" + text);
 
             try {
-                // Parse message text
                 JSONObject response = new JSONObject(text);
                 String id = response.getString(ID_KEY);
                 String hash = response.getString(HASH_KEY);
@@ -316,8 +310,7 @@ public class Socket {
                 SocketMessage socketMessage = new SocketMessage(id, hash, userId, dialogId, messageText, time, delivered);
                 universalListener.onMessage(socketMessage);
             } catch (JSONException e) {
-                // Message text not in JSON format or don't have {event}|{data} object
-                Log.e(TAG, "Unknown message format.");
+                Log.e(TAG, "Неизвестный формат сообщения");
             }
         }
 
@@ -369,7 +362,6 @@ public class Socket {
 
         public abstract void onFailure();
     }
-
     public abstract static class OnStateChangeListener {
         /**
          * Method need to override in listener usage

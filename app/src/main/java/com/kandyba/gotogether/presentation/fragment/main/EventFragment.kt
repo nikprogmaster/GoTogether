@@ -75,6 +75,17 @@ class EventFragment : Fragment() {
     private lateinit var settings: SharedPreferences
     private var expanded = false
     private var bottomSheet: MapFragment? = null
+    private val searchListener = object : Session.SearchListener {
+        override fun onSearchError(p0: Error) {}
+        override fun onSearchResponse(p0: Response) {
+            val address = p0.collection.children.firstOrNull()?.obj
+                ?.metadataContainer
+                ?.getItem(ToponymObjectMetadata::class.java)
+                ?.address
+                ?.formattedAddress
+            addressTextView.text = address
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -169,7 +180,14 @@ class EventFragment : Fragment() {
         age.text = event.ageRestriction
         likeButton.isChecked = event.likedByUser
 
-        //set who will go section
+        setWhoWillGoSection(event)
+        setWhenToGoSection(event)
+        setCategoriesAdapter(event)
+        setScheduleAdapter(event)
+        configureMap(event)
+    }
+
+    private fun setWhoWillGoSection(event: EventDetailsDomainModel) {
         val hideViewsList = defineHideViewList(event)
         hideViews(hideViewsList)
         participantsList = participantsList.minus(hideViewsList)
@@ -183,8 +201,9 @@ class EventFragment : Fragment() {
             whoWillGoTitle.visibility = View.GONE
             peopleGroup.visibility = View.GONE
         }
+    }
 
-        //set when to go section
+    private fun setWhenToGoSection(event: EventDetailsDomainModel) {
         if (event.dates != null && event.dates.isNotEmpty()) {
             scheduleRecyclerView.visibility = View.VISIBLE
         } else if (event.place?.timetable != null && event.place.timetable != EMPTY_STRING) {
@@ -194,23 +213,21 @@ class EventFragment : Fragment() {
         } else {
             whenToGoTitle.visibility = View.GONE
         }
+    }
 
-        //set categoriesAdapter
+    private fun setCategoriesAdapter(event: EventDetailsDomainModel) {
         val categoriesAdapter = CategoriesAdapter()
         event.categories?.let { categoriesAdapter.setCategories(it) }
         val manager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         categoriesRecycler.adapter = categoriesAdapter
         categoriesRecycler.layoutManager = manager
+    }
 
-        //set scheduleAdapter
+    private fun setScheduleAdapter(event: EventDetailsDomainModel) {
         val scheduleAdapter = event.dates?.let { ScheduleAdapter(it) }
-        val scheduleManager = GridLayoutManager(requireContext(), 2)
+        val scheduleManager = GridLayoutManager(requireContext(), SPAN_COUNT)
         scheduleRecyclerView.adapter = scheduleAdapter
         scheduleRecyclerView.layoutManager = scheduleManager
-
-
-
-        configureMap(event)
     }
 
     private fun setClickListeners(event: EventDetailsDomainModel) {
@@ -227,11 +244,7 @@ class EventFragment : Fragment() {
                 (requireArguments().getSerializable(EVENT_KEY) as EventDetailsDomainModel).participants
             if (participants != null) {
                 mainViewModel.openFragment(
-                    ParticipantsFragment.newInstance(
-                        ParticipantsList(
-                            participants
-                        )
-                    )
+                    ParticipantsFragment.newInstance(ParticipantsList(participants))
                 )
                 mainViewModel.showToolbar(true)
                 mainViewModel.makeParticipantsToolbar()
@@ -241,13 +254,9 @@ class EventFragment : Fragment() {
         showAllText.setOnClickListener {
             if (expanded) {
                 showAllText.text = resources.getText(R.string.show_all)
-                description.maxLines = 5
-                description.text = Html.fromHtml(event.bodyText)
-                description.movementMethod = LinkMovementMethod.getInstance()
+                description.maxLines = COLLAPSED_LINES_COUNT
             } else {
-                description.maxLines = 10000
-                description.text = Html.fromHtml(event.bodyText)
-                description.movementMethod = LinkMovementMethod.getInstance()
+                description.maxLines = EXPANDED_LINES_COUNT
                 showAllText.text = resources.getText(R.string.roll_up)
             }
             expanded = !expanded
@@ -262,9 +271,8 @@ class EventFragment : Fragment() {
         back.setOnClickListener {
             mainViewModel.closeFragment()
         }
-
         eventPlace.setOnClickListener {
-            if (MapFragment.fragment == null) {
+            if (!MapFragment.isFragmentExist) {
                 val ev = requireArguments().get(EVENT_KEY) as? EventDetailsDomainModel
                 bottomSheet = MapFragment.newInstance(ev)
                 bottomSheet?.show(requireActivity().supportFragmentManager, null)
@@ -288,7 +296,7 @@ class EventFragment : Fragment() {
             val imageListener = ImageListener { position, imageView ->
                 imageView.setImageBitmap(imagesList[position])
             }
-            carousel.setImageListener(imageListener);
+            carousel.setImageListener(imageListener)
             carousel.pageCount = imagesList.size
             cover.visibility = View.GONE
         })
@@ -299,32 +307,19 @@ class EventFragment : Fragment() {
         if (event.place?.latitude != null && event.place.longitude != null) {
             val point = Point(event.place.latitude.toDouble(), event.place.longitude.toDouble())
             mapView.map.move(
-                CameraPosition(point, 16.0f, 0.0f, 0.0f),
-                Animation(Animation.Type.SMOOTH, 3f),
+                CameraPosition(point, ZOOM_FACTOR, AZIMUTH_FACTOR, TILT_FACTOR),
+                Animation(Animation.Type.SMOOTH, DURATION),
                 null
             )
-            val placemark = View(requireContext()).apply {
+            val placeMark = View(requireContext()).apply {
                 background =
                     ContextCompat.getDrawable(requireContext(), R.drawable.mc_baseline_place_36dp)
             }
-            mapView.map.mapObjects.addPlacemark(point, ViewProvider(placemark))
+            mapView.map.mapObjects.addPlacemark(point, ViewProvider(placeMark))
             SearchFactory.initialize(requireContext())
             val searchManager =
-                SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
-            searchManager.submit(
-                point, 16, SearchOptions(),
-                object : Session.SearchListener {
-                    override fun onSearchError(p0: Error) {}
-                    override fun onSearchResponse(p0: Response) {
-                        val address = p0.collection.children.firstOrNull()?.obj
-                            ?.metadataContainer
-                            ?.getItem(ToponymObjectMetadata::class.java)
-                            ?.address
-                            ?.formattedAddress
-                        addressTextView.text = address
-                    }
-                }
-            )
+                SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+            searchManager.submit(point, ZOOM_FACTOR.toInt(), SearchOptions(), searchListener)
         } else {
             addressTextView.text = resources.getString(R.string.place_not_defined)
         }
@@ -344,7 +339,7 @@ class EventFragment : Fragment() {
         Picasso.get()
             .load(from)
             .placeholder(R.drawable.ill_placeholder_300dp)
-            .error(R.drawable.ill_error_placeholder_300dp)
+            .error(R.drawable.ill_placeholder_300dp)
             .into(where)
     }
 
@@ -354,9 +349,11 @@ class EventFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel?.eventImages?.removeObservers(requireActivity())
+        viewModel?.changeEventLikeProperty?.removeObservers(requireActivity())
+        viewModel?.enableLikeButton?.removeObservers(requireActivity())
     }
 
     companion object {
@@ -367,6 +364,14 @@ class EventFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
+
+        private const val COLLAPSED_LINES_COUNT = 5
+        private const val EXPANDED_LINES_COUNT = 10000
+        private const val SPAN_COUNT = 2
+        private const val ZOOM_FACTOR = 16.0f
+        private const val AZIMUTH_FACTOR = 0.0f
+        private const val TILT_FACTOR = 0.0f
+        private const val DURATION = 3.0f
     }
 
 }

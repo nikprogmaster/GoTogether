@@ -1,6 +1,7 @@
 package com.kandyba.gotogether.domain.events
 
 import android.graphics.Bitmap
+import androidx.annotation.DrawableRes
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.data.repository.EventsRepository
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
@@ -39,10 +40,7 @@ class EventsInteractorImpl(
         return eventsRepository.complainEvent(token, eventId, body)
     }
 
-    override fun participateInEvent(
-        token: String,
-        eventId: String
-    ): Completable {
+    override fun participateInEvent(token: String, eventId: String): Completable {
         return eventsRepository.participateInEvent(token, eventId)
             .doOnComplete { Cache.instance.clearUserCache() }
     }
@@ -55,17 +53,18 @@ class EventsInteractorImpl(
             .map { eventsDomainConverter.convert(it) }
     }
 
-    override fun searchEventsByTextQuery(
-        token: String,
-        text: String
-    ): Single<List<EventModel>> {
+    override fun searchEventsByTextQuery(token: String, text: String): Single<List<EventModel>> {
         return eventsRepository.searchEventsByTextQuery(token, text)
             .map { eventsDomainConverter.convert(it) }
     }
 
-    override fun loadEventImages(urls: List<String>): Single<List<Bitmap>> {
+    override fun loadEventImages(
+        urls: List<String>,
+        @DrawableRes placeholder: Int,
+        @DrawableRes error: Int
+    ): Single<List<Bitmap>> {
         return Observable.fromIterable(urls)
-            .flatMap { loadImage(it) }
+            .flatMap { eventsRepository.loadImage(it, placeholder, error) }
             .toList()
     }
 

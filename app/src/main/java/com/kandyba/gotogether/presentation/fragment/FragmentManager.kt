@@ -1,6 +1,5 @@
 package com.kandyba.gotogether.presentation.fragment
 
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 
 interface FragmentManager {
@@ -10,11 +9,4 @@ interface FragmentManager {
     fun closeFragment()
 
     fun openMainActivity()
-
-    fun showDialogFragment(dialog: DialogFragment)
-
-
-    fun showDialogFragment(dialog: DialogFragment)
-
-
 }

@@ -44,16 +44,13 @@ class DescriptionFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         resolveDependencies()
         initListeners()
-        initObservsers()
+        initObservers()
     }
-
 
     private fun resolveDependencies() {
         val component = (requireActivity().application as App).appComponent
-        viewModel = ViewModelProvider(
-            requireActivity(),
-            component.getStartViewModelFactory()
-        )[StartViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(), component.getStartViewModelFactory())
+            .get(StartViewModel::class.java)
         settings = component.getSharedPreferences()
     }
 
@@ -65,7 +62,7 @@ class DescriptionFragment : Fragment() {
         }
     }
 
-    private fun initObservsers() {
+    private fun initObservers() {
         viewModel.updateAdditionalUserInfo.observe(requireActivity(), Observer {
             if (it != null) {
                 (activity as FragmentManager).openFragment(InterestsFragment.newInstance())
@@ -78,14 +75,12 @@ class DescriptionFragment : Fragment() {
         return UserInfoRequestBody(info)
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel.updateAdditionalUserInfo.removeObservers(requireActivity())
-        super.onDestroy()
     }
 
     companion object {
-        private const val INFO_KEY = "info"
-
         fun newInstance(): DescriptionFragment {
             val args = Bundle()
 

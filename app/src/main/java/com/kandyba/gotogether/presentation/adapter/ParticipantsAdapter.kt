@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.domain.events.Participant
+import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.squareup.picasso.Picasso
 
 
@@ -40,7 +41,7 @@ class ParticipantsAdapter(
 
         fun binViews(participant: Participant) {
             name.text = participant.firstName
-            if (participant.avatar == "") {
+            if (participant.avatar == EMPTY_STRING) {
                 textAvatar.text = participant.firstName?.substring(0, 1)
                 imageAvatar.visibility = View.GONE
             } else {

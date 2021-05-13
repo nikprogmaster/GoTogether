@@ -9,7 +9,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
-import com.kandyba.gotogether.models.FileUtils
 import com.kandyba.gotogether.models.general.*
 import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
 import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
@@ -41,6 +39,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.InputStream
 import java.util.*
 
 
@@ -61,44 +61,28 @@ class ChangeProfileInfoFragment : Fragment() {
     private lateinit var changeAboutMeInfo: TextView
     private lateinit var showAll: TextView
     private lateinit var profileBackButton: ImageView
-
-    private var viewModel: ProfileViewModel? = null
-
     private lateinit var cancelAlertButton: Button
     private lateinit var confirmAlertButton: Button
     private lateinit var exitAlertDialog: AlertDialog
-
     private lateinit var changeFieldAlertDialog: AlertDialog
     private lateinit var changedField: TextView
     private lateinit var newValue: EditText
     private lateinit var saveButton: Button
 
-    private lateinit var mainViewModel: MainViewModel
     private lateinit var settings: SharedPreferences
+    private lateinit var mainViewModel: MainViewModel
+    private var viewModel: ProfileViewModel? = null
 
     private var expanded = false
-    var dateAndTime: Calendar = Calendar.getInstance()
+    private var dateAndTime: Calendar = Calendar.getInstance()
 
-    private fun setDate(v: View?) {
-        DatePickerDialog(
-            requireContext(),
-            d,
-            dateAndTime.get(Calendar.YEAR),
-            dateAndTime.get(Calendar.MONTH),
-            dateAndTime.get(Calendar.DAY_OF_MONTH)
-        ).show()
-    }
-
-
-    // установка обработчика выбора даты
-    var d =
-        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+    private var dateSetListener =
+        DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             dateAndTime.set(Calendar.YEAR, year)
             dateAndTime.set(Calendar.MONTH, monthOfYear)
             dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             val result = "${dayOfMonth}.${monthOfYear + 1}.${year}"
             newValue.setText(result)
-
         }
 
     override fun onCreateView(
@@ -127,37 +111,50 @@ class ChangeProfileInfoFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_IMAGE_AVATAR) {
             val selectedImage: Uri? = data?.data
-            val file = FileUtils.getFile(requireContext(), selectedImage)
-            val original = BitmapFactory.decodeFile(file?.path)
-            val out = ByteArrayOutputStream()
-            original.compress(Bitmap.CompressFormat.JPEG, 50, out)
-
-
-            Log.i("SettedUri", selectedImage?.path.toString())
-            profileAvatar.setImageURI(selectedImage)
-            settings.edit().putString(AVATAR_URI_PATH, file?.path).apply()
-
-            val fileBody: RequestBody =
-                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), out.toByteArray())
-            val filePart: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "avatar",
-                file?.name,
-                fileBody
-            )
-            viewModel?.uploadUserAvatar(
-                settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
-                filePart
-            )
-
+            if (selectedImage != null) {
+                profileAvatar.setImageURI(selectedImage)
+                viewModel?.uploadUserAvatar(
+                    settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
+                    createImageFilePart(selectedImage)
+                )
+            }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    private fun createImageFilePart(imageUri: Uri): MultipartBody.Part {
+        val file = File(imageUri.path ?: EMPTY_STRING)
+        val inputStream: InputStream? =
+            requireActivity().contentResolver.openInputStream(imageUri)
+        val original = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+        val outputStream = ByteArrayOutputStream()
+        val quality = calculateCompressQuality((original.width * original.height).toLong())
+        original?.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        val fileBody: RequestBody =
+            RequestBody.create(
+                MEDIA_TYPE.toMediaTypeOrNull(),
+                outputStream.toByteArray()
+            )
+        return MultipartBody.Part.createFormData(
+            MULTIPART_NAME,
+            file.name,
+            fileBody
+        )
+    }
+
+    private fun calculateCompressQuality(originalPixelCount: Long): Int {
+        return if (SENDED_IMAGE_PIXELS_COUNT >= originalPixelCount) {
+            ORIGINAL_IMAGE_QUALITY
+        } else {
+            ((SENDED_IMAGE_PIXELS_COUNT.toDouble() / originalPixelCount.toDouble()) * 100).toInt()
+        }
+    }
+
     private fun checkPermissions(): Boolean {
-        var result: Int
         val listPermissionsNeeded = mutableListOf<String>()
         for (p in permissions) {
-            result = ContextCompat.checkSelfPermission(requireActivity(), p)
+            val result = ContextCompat.checkSelfPermission(requireActivity(), p)
             if (result != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(p)
             }
@@ -175,10 +172,10 @@ class ChangeProfileInfoFragment : Fragment() {
 
     fun startImagePickActivity() {
         val intent = Intent()
-        intent.type = "image/*"
+        intent.type = IMAGE_TYPE
         intent.action = Intent.ACTION_PICK
         startActivityForResult(
-            Intent.createChooser(intent, "Select Picture"),
+            Intent.createChooser(intent, CHOOSER_TITLE),
             1
         )
     }
@@ -212,11 +209,11 @@ class ChangeProfileInfoFragment : Fragment() {
         changedField = changeFieldAlert.findViewById(R.id.changed_field)
         newValue = changeFieldAlert.findViewById(R.id.new_value)
         saveButton = changeFieldAlert.findViewById(R.id.save_button)
-        val changeBuider = MaterialAlertDialogBuilder(
+        val changeBuilder = MaterialAlertDialogBuilder(
             requireContext(),
             R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog
         ).setView(changeFieldAlert)
-        changeFieldAlertDialog = changeBuider.create()
+        changeFieldAlertDialog = changeBuilder.create()
     }
 
     private fun resolveDependencies() {
@@ -250,11 +247,7 @@ class ChangeProfileInfoFragment : Fragment() {
         changeAge.setOnClickListener {
             newValue.setText(EMPTY_STRING)
             changedField.setText(R.string.birthday)
-            newValue.setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus) {
-                    setDate(newValue)
-                }
-            }
+            newValue.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) setDate() }
             changeFieldAlertDialog.show()
         }
         changeAboutMeInfo.setOnClickListener {
@@ -270,25 +263,7 @@ class ChangeProfileInfoFragment : Fragment() {
         }
         saveButton.setOnClickListener {
             if (newValue.text.toString() != EMPTY_STRING) {
-                val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
-                when (changedField.text.toString()) {
-                    resources.getString(R.string.name) -> {
-                        val request = UserMainRequestBody(newValue.text.toString(), null, null)
-                        viewModel?.updateMainUserInfo(token, request)
-                    }
-                    resources.getString(R.string.birthday) -> {
-                        val request = UserMainRequestBody(
-                            null,
-                            dateAndTime.timeInMillis,
-                            null
-                        )
-                        viewModel?.updateMainUserInfo(token, request)
-                    }
-                    resources.getString(R.string.about_me) -> {
-                        val request = UserInfoRequestBody(newValue.text.toString())
-                        viewModel?.updateAdditionalUserInfo(token, request)
-                    }
-                }
+                changeUserInfo(changedField.text.toString())
                 changeFieldAlertDialog.dismiss()
             }
         }
@@ -303,6 +278,27 @@ class ChangeProfileInfoFragment : Fragment() {
         }
     }
 
+    private fun changeUserInfo(changedFieldText: String) {
+        val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
+        when (changedFieldText) {
+            resources.getString(R.string.name) -> {
+                val request = UserMainRequestBody(newValue.text.toString(), null, null)
+                viewModel?.updateMainUserInfo(token, request)
+            }
+            resources.getString(R.string.birthday) -> {
+                val request = UserMainRequestBody(
+                    null,
+                    dateAndTime.timeInMillis,
+                    null
+                )
+                viewModel?.updateMainUserInfo(token, request)
+            }
+            resources.getString(R.string.about_me) -> {
+                val request = UserInfoRequestBody(newValue.text.toString())
+                viewModel?.updateAdditionalUserInfo(token, request)
+            }
+        }
+    }
 
     private fun saveUserInfoToCache(userInfo: UserInfoModel) {
         Cache.instance.setUserInfo(userInfo)
@@ -321,7 +317,6 @@ class ChangeProfileInfoFragment : Fragment() {
             setViews(it)
         })
         viewModel?.userImageUploaded?.observe(requireActivity(), Observer {
-            Log.i("Всё хорошо", "dfgfd")
             viewModel?.loadUserInfo(
                 settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
                 settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING,
@@ -331,19 +326,24 @@ class ChangeProfileInfoFragment : Fragment() {
         })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel?.userInfo?.removeObservers(requireActivity())
+        viewModel?.updateAdditionalUserInfo?.removeObservers(requireActivity())
+        viewModel?.updateMainUserInfo?.removeObservers(requireActivity())
+        viewModel?.userImageUploaded?.removeObservers(requireActivity())
     }
 
     private fun setViews(userInfo: UserInfoModel) {
         userName.text = userInfo.firstName
         description.text =
-            if (userInfo.info != EMPTY_STRING) userInfo.info else ABOUT_ME_PLACEHOLDER
+            if (userInfo.info != EMPTY_STRING) userInfo.info else resources.getString(R.string.about_me_placeholder)
+        val placeholder =
+            if (userInfo.sex == MAN_SEX) R.drawable.man_stub else R.drawable.woman_stub
         Picasso.get()
             .load(userInfo.avatar)
-            .placeholder(R.drawable.ill_placeholder_300dp)
-            .error(R.drawable.ill_error_placeholder_300dp)
+            .placeholder(placeholder)
+            .error(placeholder)
             .into(profileAvatar)
         userAge.text = userInfo.birthDate?.toLong()?.let { getAge(it) }
         if (description.lineCount < FIRST_VISIBLE_LINES_NUMBER) {
@@ -351,18 +351,32 @@ class ChangeProfileInfoFragment : Fragment() {
         }
     }
 
+    private fun setDate() {
+        DatePickerDialog(
+            requireContext(),
+            dateSetListener,
+            dateAndTime.get(Calendar.YEAR),
+            dateAndTime.get(Calendar.MONTH),
+            dateAndTime.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
     companion object {
         private const val FIRST_VISIBLE_LINES_NUMBER = 5
-        private const val ABOUT_ME_PLACEHOLDER = "Вы пока ничего не рассказали другим о себе"
         private const val PICK_IMAGE_AVATAR = 1
+
+        /** Дефолтное разрешение картинки 1024 x 768 */
+        private const val SENDED_IMAGE_PIXELS_COUNT = 786342
+        private const val ORIGINAL_IMAGE_QUALITY = 100
+        private const val IMAGE_TYPE = "image/*"
+        private const val CHOOSER_TITLE = "Выберите изображение"
+        private const val MAN_SEX = "0"
+        private const val MULTIPART_NAME = "avatar"
+        private const val MEDIA_TYPE = "multipart/form-data"
         private val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
 
         fun newInstance(): ChangeProfileInfoFragment {
-            val args = Bundle()
-
-            val fragment = ChangeProfileInfoFragment()
-            fragment.arguments = args
-            return fragment
+            return ChangeProfileInfoFragment()
         }
     }
 }

@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <include layout="@layout/stub_image_layout" />
+
 
     <ProgressBar
         android:id="@+id/dialogs_loading"

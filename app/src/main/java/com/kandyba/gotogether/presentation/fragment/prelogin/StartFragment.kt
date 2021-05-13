@@ -15,8 +15,6 @@ class StartFragment : Fragment() {
     private lateinit var enterButton: Button
     private lateinit var registrationButton: Button
 
-    private val TAG = "StartFragment: "
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,18 +25,6 @@ class StartFragment : Fragment() {
         registrationButton = root.findViewById(R.id.registration_btn)
         return root
     }
-
-    /*override fun onStop() {
-        super.onStop()
-        mapview.onStop();
-        MapKitFactory.getInstance().onStop();
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mapview.onStart();
-        MapKitFactory.getInstance().onStart();
-    }*/
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

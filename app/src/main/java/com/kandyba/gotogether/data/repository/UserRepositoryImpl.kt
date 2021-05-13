@@ -10,7 +10,6 @@ import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 
 class UserRepositoryImpl(
     private val apiMapper: UserApiMapper,
@@ -44,7 +43,6 @@ class UserRepositoryImpl(
     }
 
     override fun uploadUserAvatar(token: String, filePart: MultipartBody.Part): Completable {
-        val type = RequestBody.create(MultipartBody.FORM, "image/jpeg")
         return apiMapper.uploadUserAvatar(token, filePart)
     }
 

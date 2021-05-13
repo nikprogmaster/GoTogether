@@ -56,11 +56,7 @@ class RegistrationFragment : Fragment() {
         exitButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
         continueButton.setOnClickListener {
             if (validateFields()) {
-                viewModel.signup(
-                    createRequest(
-                        email.text.toString(), password.text.toString()
-                    )
-                )
+                viewModel.signup(createRequest(email.text.toString(), password.text.toString()))
             }
         }
     }

@@ -39,8 +39,7 @@ interface UserApiMapper {
     @POST(USER_AVATAR_ENDPOINT)
     fun uploadUserAvatar(
         @Header(AUTHORIZATION_VALUE) token: String,
-        @Part filePart: MultipartBody.Part/*,
-        @Part("type") type: RequestBody*/
+        @Part filePart: MultipartBody.Part
     ): Completable
 
     @GET("${USER_PARTICIPATIONS_ENDPOINT}{${USER_AMOUNT_VALUE}}")

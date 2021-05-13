@@ -1,7 +1,6 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
@@ -106,10 +105,8 @@ class StartViewModel(
                 {
                     showMainActivityMLD.postValue(Unit)
                     showHeadpieceMLD.postValue(false)
-                    Log.i("StartViewModel", "всё хорошо")
                 },
                 {
-                    Log.i("StartViewModel", "всё плохо")
                     showStartFragmentMLD.postValue(Unit)
                     showHeadpieceMLD.postValue(false)
                     if (it is ConnectException) {

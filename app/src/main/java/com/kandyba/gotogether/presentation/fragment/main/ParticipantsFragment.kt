@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
+import com.kandyba.gotogether.models.domain.events.Participant
 import com.kandyba.gotogether.models.domain.events.ParticipantsList
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
@@ -49,18 +50,12 @@ class ParticipantsFragment : Fragment() {
         eventDetailsViewModel = ViewModelProvider(requireActivity(), eventFactory)
             .get(EventDetailsViewModel::class.java)
         settings = (requireActivity().application as App).appComponent.getSharedPreferences()
-        val list = (requireArguments().get(PARTICIPANTS_KEY) as ParticipantsList).participants
-        val adapter = ParticipantsAdapter(list, object : OnProfileButtonClickListener {
-            override fun onProfileClick(userId: String) {
-                mainViewModel.openFragment(ProfileFragment.newInstance(userId))
-            }
-        })
         mainViewModel.showToolbar(true)
         mainViewModel.makeParticipantsToolbar()
 
-        val manager = GridLayoutManager(requireContext(), 2)
-        participantsRecyclerView.adapter = adapter
-        participantsRecyclerView.layoutManager = manager
+        val list = (requireArguments().get(PARTICIPANTS_KEY) as ParticipantsList).participants
+        initParticipantsAdapter(list)
+
         initObservers()
         eventDetailsViewModel?.getParticipantsRecommendations(
             settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
@@ -69,20 +64,24 @@ class ParticipantsFragment : Fragment() {
 
     private fun initObservers() {
         eventDetailsViewModel?.recommendedParticipants?.observe(requireActivity(), Observer {
-            val adapter = ParticipantsAdapter(it, object : OnProfileButtonClickListener {
-                override fun onProfileClick(userId: String) {
-                    mainViewModel.openFragment(ProfileFragment.newInstance(userId))
-                }
-            })
-            val manager = GridLayoutManager(requireContext(), 2)
-            recommendedParticipantsRecyclerView.adapter = adapter
-            recommendedParticipantsRecyclerView.layoutManager = manager
+            initParticipantsAdapter(it)
         })
     }
 
-    override fun onDestroy() {
+    private fun initParticipantsAdapter(participants: List<Participant>) {
+        val adapter = ParticipantsAdapter(participants, object : OnProfileButtonClickListener {
+            override fun onProfileClick(userId: String) {
+                mainViewModel.openFragment(ProfileFragment.newInstance(userId))
+            }
+        })
+        val manager = GridLayoutManager(requireContext(), SPAN_COUNT)
+        recommendedParticipantsRecyclerView.adapter = adapter
+        recommendedParticipantsRecyclerView.layoutManager = manager
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         eventDetailsViewModel?.recommendedParticipants?.removeObservers(requireActivity())
-        super.onDestroy()
     }
 
     companion object {
@@ -95,5 +94,6 @@ class ParticipantsFragment : Fragment() {
         }
 
         private const val PARTICIPANTS_KEY = "participants_key"
+        private const val SPAN_COUNT = 2
     }
 }

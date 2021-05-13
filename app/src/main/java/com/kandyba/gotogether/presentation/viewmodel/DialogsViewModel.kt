@@ -1,6 +1,5 @@
 package com.kandyba.gotogether.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kandyba.gotogether.domain.message.MessagesInteractor
@@ -48,7 +47,6 @@ class DialogsViewModel(
     fun getUserDialogs(token: String) {
         if (!wereLoadedYet) {
             showProgressMLD.postValue(true)
-            Log.i("DialogsViewModel", "true")
             wereLoadedYet = true
         }
         messagesInteractor.getUserDialogs(token)
@@ -58,7 +56,6 @@ class DialogsViewModel(
                 { dialogs ->
                     showProgressMLD.postValue(false)
                     userDialogsMLD.postValue(dialogs)
-                    //userDialogsMLD = MutableLiveData()
                 },
                 {
                     if (it is ConnectException) {
@@ -131,7 +128,7 @@ class DialogsViewModel(
     }
 
     fun sendMessage(token: String, socketMessage: SocketMessage) {
-        val sended = messagesInteractor.sendMessage(token, socketMessage)
+        messagesInteractor.sendMessage(token, socketMessage)
     }
 
     fun getSocketState() = messagesInteractor.getState()

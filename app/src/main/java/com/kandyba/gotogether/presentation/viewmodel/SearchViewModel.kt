@@ -23,6 +23,7 @@ class SearchViewModel(
     private val enableLikeButtonMLD = MutableLiveData<String>()
     private val eventNotLikedMLD = MutableLiveData<String>()
     private val searchResultEventsMLD = MutableLiveData<List<EventModel>>()
+    private val searchValueMLD = MutableLiveData<String>()
 
     val showProgress: LiveData<Boolean>
         get() = showProgressMLD
@@ -40,6 +41,8 @@ class SearchViewModel(
         get() = enableLikeButtonMLD
     val eventNotLiked: LiveData<String>
         get() = eventNotLikedMLD
+    val searchValue: LiveData<String>
+        get() = searchValueMLD
 
     fun getEventsRecommendation(token: String) {
         showProgressMLD.postValue(true)
@@ -141,6 +144,10 @@ class SearchViewModel(
                     }
                 }
             ).addTo(rxCompositeDisposable)
+    }
+
+    fun setSearchValue(value: String) {
+        searchValueMLD.postValue(value)
     }
 
     companion object {

@@ -21,7 +21,7 @@ data class Message(
                 socketMessage.userId,
                 socketMessage.dialogId,
                 socketMessage.message,
-                socketMessage.time?.toLong() ?: 0,
+                socketMessage.time ?: 0,
                 socketMessage.userId == userId,
                 true
             )

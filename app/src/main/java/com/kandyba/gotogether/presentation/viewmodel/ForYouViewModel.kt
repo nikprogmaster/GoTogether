@@ -2,7 +2,6 @@ package com.kandyba.gotogether.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.kandyba.gotogether.domain.auth.AuthInteractor
 import com.kandyba.gotogether.domain.events.EventsInteractor
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.presentation.EventModel
@@ -12,7 +11,6 @@ import io.reactivex.schedulers.Schedulers
 import java.net.ConnectException
 
 class ForYouViewModel(
-    private val authInteractor: AuthInteractor,
     private val eventsInteractor: EventsInteractor
 ) : BaseViewModel() {
 

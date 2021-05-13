@@ -44,7 +44,7 @@ data class Place(
     val longitude: String? = null,
     val latitude: String? = null,
     val subway: String? = null
-)
+) : Serializable
 
 class ParticipantsList(
     val participants: List<Participant>

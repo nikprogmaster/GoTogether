@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
 
-class CategoriesAdapter(): RecyclerView.Adapter<CategoriesAdapter.CategoryHolder>() {
+class CategoriesAdapter : RecyclerView.Adapter<CategoriesAdapter.CategoryHolder>() {
 
     private lateinit var categories: List<String>
 
@@ -17,7 +17,8 @@ class CategoriesAdapter(): RecyclerView.Adapter<CategoriesAdapter.CategoryHolder
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.category_item, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.category_item, parent, false)
         return CategoryHolder(view)
     }
 

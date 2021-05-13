@@ -10,7 +10,7 @@ import com.kandyba.gotogether.models.presentation.UserInfoModel
  * @since 06.02.2021
  */
 class UserDomainConverter(
-    val eventsDomainConverter: EventsDomainConverter
+    private val eventsDomainConverter: EventsDomainConverter
 ) : BaseConverter<UserInfoDomainModel, UserInfoModel>() {
 
     override fun convert(from: UserInfoDomainModel): UserInfoModel {
