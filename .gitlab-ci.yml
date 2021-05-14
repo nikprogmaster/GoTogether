@@ -1,5 +1,7 @@
 image: jangrewe/gitlab-ci-android
 
+on: [push]
+
 before_script:
   - export GRADLE_USER_HOME=$(pwd)/.gradle
   - export BUILD_NUMBER=$(git rev-list --count ${CI_BUILD_REF})
