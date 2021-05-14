@@ -22,7 +22,15 @@ import okhttp3.ResponseBody
 import retrofit2.Converter
 import java.net.ConnectException
 
-
+/**
+ * Вьюмодель для регистрации и авторизации пользователя
+ *
+ * @constructor
+ * @property eventsInteractor интерактор для загрузки событий
+ * @property userInteractor интерактор для загрузки информации о пользователях
+ * @property authInteractor интерактор для авторизации и регистрации пользователя
+ * @property gsonConverter конвертер данных из JSON формата
+ */
 class StartViewModel(
     private val authInteractor: AuthInteractor,
     private val eventsInteractor: EventsInteractor,
@@ -65,6 +73,12 @@ class StartViewModel(
     var requestEvents: Boolean = false
         private set
 
+    /**
+     * Инициализация стартового экрана. Если есть токен и он не протух,
+     * то мы сразу переходим на главный экран
+     *
+     * @param settings настройки приложения
+     */
     fun init(settings: SharedPreferences) {
         val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
         if (token != EMPTY_STRING) {
@@ -97,6 +111,12 @@ class StartViewModel(
         }
     }
 
+    /**
+     * Получить информацию о пользователе
+     *
+     * @param token токен сессии пользователя
+     * @param userId id пользователя
+     */
     fun loadUserInfo(token: String, userId: String) {
         userInteractor.getUserInfo(token, userId, true, false)
             .subscribeOn(Schedulers.io())
@@ -116,6 +136,11 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Получить рекомендованные события
+     *
+     * @param token токен сессии пользователя
+     */
     fun getEventsRecommendations(token: String) {
         showProgressMLD.postValue(true)
         eventsInteractor.getEventsRecommendations(token, DEFAULT_EVENTS_AMOUNT)
@@ -136,6 +161,12 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Обновить главную информацию пользователя (имя, дата рождения, пол)
+     *
+     * @param token токен сессии пользователя
+     * @param mainRequest новые значения полей
+     */
     fun updateMainUserInfo(token: String, mainRequest: UserMainRequestBody) {
         showProgressMLD.postValue(true)
         userInteractor.updateMainUserInfo(token, mainRequest)
@@ -160,6 +191,12 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Обновить информацию блока "обо мне"
+     *
+     * @param token токен сессии пользователя
+     * @param request новая информация
+     */
     fun updateAdditionalUserInfo(token: String, request: UserInfoRequestBody) {
         showProgressMLD.postValue(true)
         userInteractor.updateUserInfo(token, request)
@@ -184,6 +221,12 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Обновить интересы пользователя
+     *
+     * @param token токен авторизации
+     * @param requestBody мапа с данными "название интереса" : "уровень" (от 0 до 100)
+     */
     fun updateUserInterests(token: String, requestBody: UserInterestsRequestBody) {
         showProgressMLD.postValue(true)
         userInteractor.updateUserInterests(token, requestBody)
@@ -207,6 +250,11 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Зарегистрироваться в приложении
+     *
+     * @param signupRequest данные регистрации (логин, пароль)
+     */
     fun signup(signupRequest: SignupRequestBody) {
         showProgressMLD.postValue(true)
         authInteractor.signup(signupRequest)
@@ -231,6 +279,13 @@ class StartViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Войти в приложение (открыть сессию)
+     *
+     * @param email почта пользователя
+     * @param password пароль
+     * @param justLogin нужно только залогиниться или нет
+     */
     fun login(email: String, password: String, justLogin: Boolean) {
         requestEvents = !justLogin
         showProgressMLD.postValue(true)

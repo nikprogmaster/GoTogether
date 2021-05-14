@@ -6,8 +6,10 @@ import com.kandyba.gotogether.models.general.BaseConverter
 import com.kandyba.gotogether.models.presentation.UserInfoModel
 
 /**
- * @author Кандыба Никита
- * @since 06.02.2021
+ * Конвертер данных пользователей из domain-слоя в presentation
+ *
+ * @constructor
+ * @property eventsDomainConverter конвертер событий
  */
 class UserDomainConverter(
     private val eventsDomainConverter: EventsDomainConverter

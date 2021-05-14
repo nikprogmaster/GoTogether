@@ -25,7 +25,9 @@ import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 import com.yandex.runtime.ui_view.ViewProvider
 
-
+/**
+ * Фрагмент с картой, где указано местоположение мероприятия
+ */
 class MapFragment : BottomSheetDialogFragment() {
 
     private lateinit var mapView: MapView

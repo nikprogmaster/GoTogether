@@ -41,7 +41,9 @@ import com.yandex.runtime.Error
 import com.yandex.runtime.ui_view.ViewProvider
 import de.hdodenhof.circleimageview.CircleImageView
 
-
+/**
+ * Фрагмент, отображающий подробную информацию о событии
+ */
 class EventFragment : Fragment() {
 
     private lateinit var cover: ImageView

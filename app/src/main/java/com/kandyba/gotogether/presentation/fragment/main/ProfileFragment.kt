@@ -24,6 +24,9 @@ import com.kandyba.gotogether.presentation.viewmodel.ProfileViewModel
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
+/**
+ * Фрагмент профиля пользователя
+ */
 class ProfileFragment : Fragment() {
 
     private lateinit var profileAvatar: CircleImageView

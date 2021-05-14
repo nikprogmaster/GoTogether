@@ -1,5 +1,9 @@
 package com.kandyba.gotogether.models.general
 
+/**
+ * Константы, используемые в приложении
+ */
+
 const val SHARED_PREFERENCES_NAME = "AppPreferences"
 const val EMPTY_STRING = ""
 const val EVENTS_KEY = "events"

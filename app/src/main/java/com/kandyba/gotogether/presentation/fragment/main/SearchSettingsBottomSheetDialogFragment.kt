@@ -23,6 +23,9 @@ import com.kandyba.gotogether.models.presentation.getListOfCategories
 import com.kandyba.gotogether.presentation.adapter.SelectableCategoriesAdapter
 import com.kandyba.gotogether.presentation.viewmodel.SearchViewModel
 
+/**
+ * Нижняя шторка параметров поиска
+ */
 class SearchSettingsBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var applyButton: Button

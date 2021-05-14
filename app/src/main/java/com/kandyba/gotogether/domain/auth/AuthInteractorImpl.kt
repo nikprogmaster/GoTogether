@@ -8,6 +8,12 @@ import com.kandyba.gotogether.models.general.requests.SignupRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
 
+/**
+ * Реализация интерактора для авторизации пользователя
+ *
+ * @constructor
+ * @property repository репозиторий авторизации
+ */
 class AuthInteractorImpl(
     private val repository: AuthRepository
 ): AuthInteractor {

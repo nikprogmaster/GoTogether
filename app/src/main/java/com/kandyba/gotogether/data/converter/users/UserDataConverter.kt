@@ -6,6 +6,12 @@ import com.kandyba.gotogether.models.data.user.UserInfoDataModel
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
 import com.kandyba.gotogether.models.general.BaseConverter
 
+/**
+ * Конвертер информации о пользователе из data слоя в domain
+ *
+ * @constructor
+ * @property eventsConverter конвертер событий
+ */
 class UserDataConverter(
     private val eventsConverter: EventDetailsDataConverter
 ) : BaseConverter<UserInfoDataModel, UserInfoDomainModel>() {

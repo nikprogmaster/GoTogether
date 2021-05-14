@@ -13,7 +13,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.net.ConnectException
 
-
+/**
+ * Вьюмодель для работы с экраном информации о событии
+ *
+ * @constructor
+ * @property eventsInteractor интерактор для загрузки событий
+ * @property userInteractor интерактор для загрузки информации о пользователях
+ */
 class EventDetailsViewModel(
     private val eventsInteractor: EventsInteractor,
     private val userInteractor: UserInteractor
@@ -39,6 +45,13 @@ class EventDetailsViewModel(
     val eventImages: LiveData<List<Bitmap>>
         get() = eventImagesMLD
 
+    /**
+     * Пожаловаться на событие
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id события
+     * @param request текст жалобы
+     */
     fun complain(token: String, eventId: String, request: EventComplaintRequestBody) {
         showProgressMLD.postValue(true)
         eventsInteractor.complainEvent(token, eventId, request)
@@ -58,6 +71,12 @@ class EventDetailsViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Поучаствовать/ отменить участие в событии
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id мероприятия
+     */
     fun likeEvent(token: String, eventId: String) {
         enableLikeButtonMLD.postValue(false)
         eventsInteractor.participateInEvent(token, eventId)
@@ -79,6 +98,11 @@ class EventDetailsViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Получить рекомендации участников мероприятия
+     *
+     * @param token токен сессии пользователя
+     */
     fun getParticipantsRecommendations(token: String) {
         userInteractor.getParticipantsRecommendations(token, DEFAULT_PARTICIPANTS_AMOUNT)
             .subscribeOn(Schedulers.io())
@@ -97,6 +121,11 @@ class EventDetailsViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Загрузить список изображений с заданного URL
+     *
+     * @param images список url-ов изображений
+     */
     fun loadImages(images: List<String>) {
         eventsInteractor.loadEventImages(
             images,

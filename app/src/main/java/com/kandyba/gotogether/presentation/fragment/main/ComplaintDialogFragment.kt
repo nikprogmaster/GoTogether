@@ -19,8 +19,7 @@ import com.kandyba.gotogether.presentation.viewmodel.factory.EventDetailsViewMod
 
 
 /**
- * @author Кандыба Никита
- * @since 26.03.2021
+ * Диалог-фрагмент для жалобы на событие
  */
 class ComplaintDialogFragment : DialogFragment() {
 

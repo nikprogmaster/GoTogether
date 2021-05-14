@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 /**
- * @author Кандыба Никита
- * @since 26.04.2021
+ * Фабрика для создания DialogsViewModel
+ *
+ * @constructor
+ * @property viewModelCreator криэйтор для создания вьюмодели
  */
 class DialogsViewModelFactory(
     private val viewModelCreator: () -> ViewModel

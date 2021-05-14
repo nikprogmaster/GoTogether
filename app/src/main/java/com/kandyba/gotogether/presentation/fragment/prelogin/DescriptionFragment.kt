@@ -19,6 +19,9 @@ import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
+/**
+ * Фрагмент для создания описания пользователя
+ */
 class DescriptionFragment : Fragment() {
 
     private lateinit var continueButton: Button

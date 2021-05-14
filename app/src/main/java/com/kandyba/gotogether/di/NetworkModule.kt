@@ -15,7 +15,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-
+/**
+ * Dagger-модуль, предоставляющий инстансы мапперов и [Retrofit]
+ */
 @Module
 class NetworkModule {
 

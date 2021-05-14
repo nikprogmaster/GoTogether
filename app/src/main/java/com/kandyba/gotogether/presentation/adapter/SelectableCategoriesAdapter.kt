@@ -9,6 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.presentation.SelectableInterest
 
+/**
+ * Адаптер выбираемых категорий
+ *
+ * @constructor
+ * @property categories список категорий
+ */
 class SelectableCategoriesAdapter(
     val categories: List<SelectableInterest>
 ) : RecyclerView.Adapter<SelectableCategoriesAdapter.CategoryHolder>() {

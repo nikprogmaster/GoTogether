@@ -45,8 +45,7 @@ import java.util.*
 
 
 /**
- * @author Кандыба Никита
- * @since 18.04.2021
+ * Фрагмент изменения профиля пользователя
  */
 class ChangeProfileInfoFragment : Fragment() {
 
@@ -365,7 +364,7 @@ class ChangeProfileInfoFragment : Fragment() {
         private const val FIRST_VISIBLE_LINES_NUMBER = 5
         private const val PICK_IMAGE_AVATAR = 1
 
-        /** Дефолтное разрешение картинки 1024 x 768 */
+        /** Дефолтное разрешение изображения 1024 x 768 */
         private const val SENDED_IMAGE_PIXELS_COUNT = 786342
         private const val ORIGINAL_IMAGE_QUALITY = 100
         private const val IMAGE_TYPE = "image/*"

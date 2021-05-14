@@ -3,6 +3,17 @@ package com.kandyba.gotogether.models.general.requests
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Модель тела запроса для регистрации пользователя
+ *
+ * @constructor
+ * @property email почта пользователя
+ * @property password пароль
+ * @property firstName имя пользователя
+ * @property sex пол пользователя
+ * @property birthdate дата рождения
+ * @property info информация из секции
+ */
 data class SignupRequestBody(
     @SerializedName("email")
     @Expose

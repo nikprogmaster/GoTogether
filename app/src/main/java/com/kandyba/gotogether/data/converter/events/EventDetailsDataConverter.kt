@@ -6,6 +6,9 @@ import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.domain.events.Participant
 import com.kandyba.gotogether.models.domain.events.Place
 
+/**
+ * Конвертер детальной информации о мероприятиии из data слоя в domain
+ */
 class EventDetailsDataConverter {
 
     fun convertWithId(from: EventDetailsDataModel, eventId: String): EventDetailsDomainModel {

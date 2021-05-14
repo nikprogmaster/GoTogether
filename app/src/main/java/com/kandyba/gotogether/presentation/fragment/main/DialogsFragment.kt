@@ -23,7 +23,9 @@ import com.kandyba.gotogether.presentation.adapter.OnDialogClickListener
 import com.kandyba.gotogether.presentation.viewmodel.DialogsViewModel
 import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 
-
+/**
+ * Фрагмент, отображающий функционал диалогов
+ */
 class DialogsFragment : Fragment() {
 
     private lateinit var dialogsRecyclerView: RecyclerView

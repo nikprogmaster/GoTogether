@@ -4,6 +4,12 @@ import com.kandyba.gotogether.models.data.events.EventDetailsDataModel
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.general.BaseConverter
 
+/**
+ * Конвертер списка событий из data слоя в domain
+ *
+ * @constructor
+ * @property eventDetailsDataConverter конвертер событий
+ */
 class EventsDataConverter(
     private val eventDetailsDataConverter: EventDetailsDataConverter
 ) : BaseConverter<List<EventDetailsDataModel>, List<EventDetailsDomainModel>>() {

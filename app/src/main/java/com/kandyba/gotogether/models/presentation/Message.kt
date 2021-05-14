@@ -3,8 +3,7 @@ package com.kandyba.gotogether.models.presentation
 import com.kandyba.gotogether.models.general.SocketMessage
 
 /**
- * @author Кандыба Никита
- * @since 30.04.2021
+ * Модель сообщения (presentation-слой)
  */
 data class Message(
     val userId: String,
@@ -16,6 +15,14 @@ data class Message(
 ) {
 
     companion object {
+        /**
+         * Конвертировать сообщения из сущности полученную с бэка
+         * в сущность presentation-слоя приложения
+         *
+         * @param socketMessage сообщение, полученное с бэка
+         * @param userId id пользователя
+         * @return [Message] сконвертированное сообщенме
+         */
         fun convertFromSocketMessage(socketMessage: SocketMessage, userId: String): Message {
             return Message(
                 socketMessage.userId,

@@ -11,6 +11,14 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 
+/**
+ * Реализация репозитория событий
+ *
+ * @constructor
+ * @property eventsApiMapper маппер событий
+ * @property eventsDataConverter конвертер событий из data слоя в domain
+ * @property eventDetailsDataConverter конвертер информации о событии из data слоя в domain
+ */
 class EventsRepositoryImpl(
     private val eventsApiMapper: EventsApiMapper,
     private val eventsDataConverter: EventsDataConverter,

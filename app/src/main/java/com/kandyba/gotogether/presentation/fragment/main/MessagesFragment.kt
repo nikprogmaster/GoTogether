@@ -28,6 +28,9 @@ import com.kandyba.gotogether.presentation.viewmodel.DialogsViewModel
 import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import java.util.*
 
+/**
+ * Фрагмент, отображающий переписку с собеседником
+ */
 class MessagesFragment : Fragment() {
 
     private lateinit var typeMessage: EditText

@@ -11,14 +11,35 @@ import retrofit2.http.DELETE
 import retrofit2.http.Header
 import retrofit2.http.POST
 
+/**
+ * Контракт маппера авторизации
+ */
 interface AuthApiMapper {
 
+    /**
+     * Регистрация пользователя
+     *
+     * @param body данные регистрации
+     * @return [Single] c id пользователя
+     */
     @POST(SIGNUP_ENDPOINT)
     fun signup(@Body body: SignupRequestBody): Single<SignupDataResponse>
 
+    /**
+     * Вход пользователя
+     *
+     * @param body данные входа
+     * @return [Single] с id и токеном существующего пользователя
+     */
     @POST(LOGIN_ENDPOINT)
     fun login(@Body body: LoginRequestBody): Single<LoginDataResponse>
 
+    /**
+     * Завершение сессии, разлогин
+     *
+     * @param token токен сессии пользователя
+     * @return [Completable]
+     */
     @DELETE(LOGOUT_ENDPOINT)
     fun logout(@Header(AUTHORIZATION_VALUE) token: String): Completable
 

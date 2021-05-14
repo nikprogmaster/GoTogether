@@ -2,6 +2,9 @@ package com.kandyba.gotogether.models.domain.user
 
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 
+/**
+ * Модель информации о пользователе (domain-слой)
+ */
 data class UserInfoDomainModel(
     var id: String,
     var email: String,

@@ -35,6 +35,9 @@ import dagger.Provides
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+/**
+ * Dagger-модуль, предоставляющий инстансы фабрик для [ViewModel]
+ */
 @Module
 class ViewModelModule {
 
@@ -55,11 +58,10 @@ class ViewModelModule {
 
     @Provides
     fun provideForYouViewModelFactory(
-        authInteractor: AuthInteractor,
         eventsInteractor: EventsInteractor
     ): ForYouViewModelFactory {
         return ForYouViewModelFactory {
-            ForYouViewModel(authInteractor, eventsInteractor)
+            ForYouViewModel(eventsInteractor)
         }
     }
 

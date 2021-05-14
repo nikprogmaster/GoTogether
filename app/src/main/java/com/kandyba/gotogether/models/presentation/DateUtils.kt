@@ -2,33 +2,47 @@ package com.kandyba.gotogether.models.presentation
 
 import java.util.*
 
-/*fun getAnchorDate(): Calendar {
-    val calendarInstance = Calendar.getInstance(TimeZone.getDefault())
-    calendarInstance.set(1970, 0, 0, 0, 0, 0)
-    calendarInstance.set(Calendar.MILLISECOND, 0)
-    calendarInstance.add(Calendar.MILLISECOND, TimeZone.getDefault().rawOffset)
-    return calendarInstance
-}*/
-
+/**
+ * Получить дату, используя UTC время
+ *
+ * @param unixTime время в миллисекундах
+ * @return [Calendar]
+ */
 fun getCalendarDate(unixTime: Long): Calendar {
     val date = Calendar.getInstance()
     date.timeInMillis = unixTime
     return date
 }
 
+/**
+ * Получить дату в формате dd.mm.yyyy
+ *
+ * @param unixTime время в миллисекундах
+ * @return [String] дата
+ */
 fun getFormattedDate(unixTime: Long): String {
     val date = getCalendarDate(unixTime)
-    val result =
-        "${date.get(Calendar.DAY_OF_MONTH)}.${date.get(Calendar.MONTH)}.${date.get(Calendar.YEAR)}"
-    return result
+    return "${date.get(Calendar.DAY_OF_MONTH)}.${date.get(Calendar.MONTH)}.${date.get(Calendar.YEAR)}"
 }
 
+/**
+ * Получить время в формате hh:mm
+ *
+ * @param unixTime время в миллисекундах
+ * @return [String] время
+ */
 fun getFormattedTime(unixTime: Long): String {
     val date = getCalendarDate(unixTime)
     val result = "${date.get(Calendar.HOUR_OF_DAY)}:${getMinutes(date)}"
     return result
 }
 
+/**
+ * Получить время сегодняшнего дня, либо дату
+ *
+ * @param unixTime время в миллисекундах
+ * @return [String] время, либо дата
+ */
 fun getTodayTimeOrDate(unixTime: Long): String {
     val date = Calendar.getInstance()
     date.timeInMillis = unixTime
@@ -55,6 +69,12 @@ private fun getMinutes(date: Calendar): String {
     }
 }
 
+/**
+ * Посчитать возраст по дате рождения с учетом високосных лет
+ *
+ * @param unixTime время в миллисекундах
+ * @return [String] возраст
+ */
 fun getAge(unixTime: Long): String {
     val now = Calendar.getInstance().setStartDayValues()
     val birthday = Calendar.getInstance()
@@ -106,10 +126,22 @@ private fun isLeapYear(year: Int): Boolean {
     return divider == 0
 }
 
+/**
+ * Получить день по UTC времени
+ *
+ * @param unixTime время в миллисекундах
+ * @return [String] день
+ */
 fun getCalendarDay(unixTime: Long): String {
     return getCalendarDate(unixTime).get(Calendar.DAY_OF_MONTH).toString()
 }
 
+/**
+ * Получить день недели по UTC времени
+ *
+ * @param unixTime время в миллисекундах
+ * @return [String] день недели
+ */
 fun getDayOfWeek(unixTime: Long): String? {
     return getCalendarDate(unixTime).getDisplayName(
         Calendar.DAY_OF_WEEK,
@@ -129,6 +161,12 @@ private fun getShortDate(unixTime: Long): String {
     }"
 }
 
+/**
+ * Получить месяц по UTC времени
+ *
+ * @param unixTime время в миллисекундах
+ * @return [String] месяц
+ */
 fun getMonth(unixTime: Long): String =
     when (getCalendarDate(unixTime).get(Calendar.MONTH)) {
         0 -> "Января"

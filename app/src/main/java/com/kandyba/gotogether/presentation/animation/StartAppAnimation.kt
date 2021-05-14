@@ -4,10 +4,19 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.widget.ImageView
 
+/**
+ * Стартовая анимация приложения
+ */
 class StartAppAnimation {
 
+    /** Список аниматоров */
     private var animators: MutableList<Animator> = mutableListOf()
 
+    /**
+     * Установить и запустить анимацию
+     *
+     * @param logo изображение, которое нужно анимировать
+     */
     fun setAndStartAnimation(logo: ImageView) {
         animators = mutableListOf()
         // alpha
@@ -34,6 +43,9 @@ class StartAppAnimation {
         }
     }
 
+    /**
+     * Завершить анимацию
+     */
     fun finishAnimation() {
         if (animators.isNotEmpty()) {
             for (animator in animators) {

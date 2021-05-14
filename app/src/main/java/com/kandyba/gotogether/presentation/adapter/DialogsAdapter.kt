@@ -12,6 +12,13 @@ import com.kandyba.gotogether.models.domain.messages.DialogDomainModel
 import com.kandyba.gotogether.models.presentation.getTodayTimeOrDate
 import com.squareup.picasso.Picasso
 
+/**
+ * Адаптер диалогов
+ *
+ * @constructor
+ * @property dialogs список диалогов
+ * @property onDialogClickListener слушатель нажатия на диалог
+ */
 class DialogsAdapter(
     private val dialogs: List<DialogDomainModel>,
     private val onDialogClickListener: OnDialogClickListener

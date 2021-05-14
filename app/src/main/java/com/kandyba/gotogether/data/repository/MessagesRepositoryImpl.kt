@@ -12,13 +12,23 @@ import com.kandyba.gotogether.models.general.SocketMessage
 import io.reactivex.Single
 import org.json.JSONException
 
-
+/**
+ * Реализация репозитория сообщений и диалогов
+ *
+ * @constructor
+ * @property apiMapper маппер сообщений
+ * @property messageConverter конвертер сообщений из data слоя в domain
+ * @property dialogConverter конвертер диалогов из data слоя в domain
+ */
 class MessagesRepositoryImpl(
     private val apiMapper: MessagesApiMapper,
     private val messageConverter: MessageDataConverter,
     private val dialogConverter: DialogDataConverter
 ) : MessagesRepository {
 
+    /**
+     * Веб-сокет
+     */
     private var socket: Socket? = null
 
     override fun startMessaging(token: String, messageListener: Socket.UniversalListener) {

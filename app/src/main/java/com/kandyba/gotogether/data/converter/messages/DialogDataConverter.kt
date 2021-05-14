@@ -7,8 +7,10 @@ import com.kandyba.gotogether.models.domain.messages.MessageDomainModel
 import com.kandyba.gotogether.models.general.BaseConverter
 
 /**
- * @author Кандыба Никита
- * @since 25.04.2021
+ * Конвертер списка диалогов из data слоя в domain
+ *
+ * @constructor
+ * @property userConverter конвертер пользователей
  */
 class DialogDataConverter(
     private val userConverter: UserDataConverter

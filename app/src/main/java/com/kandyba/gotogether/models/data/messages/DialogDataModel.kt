@@ -4,6 +4,9 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.kandyba.gotogether.models.data.user.UserInfoDataModel
 
+/**
+ * Модель диалога (data-слой)
+ */
 data class DialogDataModel(
     @SerializedName("id")
     @Expose

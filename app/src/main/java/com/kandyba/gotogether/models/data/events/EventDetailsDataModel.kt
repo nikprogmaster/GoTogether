@@ -3,6 +3,9 @@ package com.kandyba.gotogether.models.data.events
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Модель детальной информации о мероприятии (data-слой)
+ */
 data class EventDetailsDataModel(
     @SerializedName("likedByUser")
     @Expose
@@ -85,6 +88,9 @@ data class EventDetailsDataModel(
     val amountOfParticipants: Int? = null
 )
 
+/**
+ * Модель участника мероприятия (data-слой)
+ */
 data class Participant(
     @SerializedName("id")
     @Expose
@@ -99,6 +105,9 @@ data class Participant(
     var avatar: String? = null
 )
 
+/**
+ * Модель места проведения мероприятия (data-слой)
+ */
 data class Place(
     @SerializedName("title")
     @Expose

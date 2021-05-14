@@ -11,7 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.presentation.Message
 
-
+/**
+ * Адаптер сообщений
+ *
+ * @constructor
+ * @property messages список сообщений
+ */
 class MessagesAdapter(
     private var messages: MutableList<Message>
 ) : RecyclerView.Adapter<MessagesAdapter.MessagesViewHolder>() {
@@ -21,11 +26,21 @@ class MessagesAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * Добавить сообщение
+     *
+     * @param newMessage добавляемое сообщение
+     */
     fun addMessage(newMessage: Message) {
         messages.add(newMessage)
         notifyDataSetChanged()
     }
 
+    /**
+     * Изменить состояние сообщения
+     *
+     * @param mesTime время сообщения
+     */
     fun changeMessageStatus(mesTime: Long) {
         val changedMessage = messages.find { it.createdAt == mesTime }
         changedMessage?.delivered = true

@@ -8,7 +8,12 @@ import com.kandyba.gotogether.models.general.SocketMessage
 import com.kandyba.gotogether.models.presentation.Message
 import io.reactivex.Single
 
-
+/**
+ * Реализация интерактора для сообщений и диалогов
+ *
+ * @property messagesRepository репозиторий сообщений
+ * @property messagesConverter конвертер сообщений
+ */
 class MessagesInteractorImpl(
     private val messagesRepository: MessagesRepository,
     private val messagesConverter: MessageDomainConverter

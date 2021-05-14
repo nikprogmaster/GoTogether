@@ -6,6 +6,9 @@ import com.kandyba.gotogether.models.general.SHARED_PREFERENCES_NAME
 import dagger.Module
 import dagger.Provides
 
+/**
+ * Dagger-модуль, предоставляющий инстанс [SharedPreferences]
+ */
 @Module
 class SharedPreferencesModule {
 

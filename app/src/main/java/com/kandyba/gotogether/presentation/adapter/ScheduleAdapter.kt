@@ -12,11 +12,13 @@ import com.kandyba.gotogether.models.presentation.getFormattedDate
 import com.kandyba.gotogether.models.presentation.getFormattedTime
 
 /**
- * @author Кандыба Никита
- * @since 15.03.2021
+ * Адаптер расписания
+ *
+ * @constructor
+ * @property dates даты, в которые проходит мероприятие
  */
 class ScheduleAdapter(
-    val dates: List<DateDomainModel>
+    private val dates: List<DateDomainModel>
 ) : RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleViewHolder {

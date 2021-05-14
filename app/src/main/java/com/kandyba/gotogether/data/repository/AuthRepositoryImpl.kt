@@ -10,6 +10,14 @@ import com.kandyba.gotogether.models.general.requests.SignupRequestBody
 import io.reactivex.Completable
 import io.reactivex.Single
 
+/**
+ * Реализация репозитория авторизации
+ *
+ * @constructor
+ * @property authApiMapper маппер авторизации
+ * @property loginDataResponseConverter конвертер для авторизации из data слоя в domain
+ * @property signupDataResponseConverter конвертер для решистрации из data слоя в domain
+ */
 class AuthRepositoryImpl(
     private val authApiMapper: AuthApiMapper,
     private val loginDataResponseConverter: LoginDataResponseConverter,

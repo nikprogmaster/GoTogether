@@ -1,6 +1,8 @@
 package com.kandyba.gotogether.models.presentation
 
-
+/**
+ * Модель информации пользователя (presentation-слой)
+ */
 data class UserInfoModel(
     var id: String,
     var email: String,

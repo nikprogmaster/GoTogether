@@ -2,17 +2,22 @@ package com.kandyba.gotogether.domain.events
 
 import android.graphics.Bitmap
 import androidx.annotation.DrawableRes
-import com.kandyba.gotogether.R
 import com.kandyba.gotogether.data.repository.EventsRepository
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.general.Cache
 import com.kandyba.gotogether.models.general.requests.EventComplaintRequestBody
 import com.kandyba.gotogether.models.presentation.EventModel
-import com.squareup.picasso.Picasso
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 
+/**
+ * Реализация интерактора для событий
+ *
+ * @constructor
+ * @property eventsRepository репозиторий событий
+ * @property eventsDomainConverter конвертер событий
+ */
 class EventsInteractorImpl(
     private val eventsRepository: EventsRepository,
     private val eventsDomainConverter: EventsDomainConverter
@@ -66,15 +71,5 @@ class EventsInteractorImpl(
         return Observable.fromIterable(urls)
             .flatMap { eventsRepository.loadImage(it, placeholder, error) }
             .toList()
-    }
-
-    private fun loadImage(url: String): Observable<Bitmap> {
-        return Observable.just(
-            Picasso.get()
-                .load(url)
-                .placeholder(R.drawable.ill_placeholder_300dp)
-                .error(R.drawable.ill_error_placeholder_300dp)
-                .get()
-        )
     }
 }

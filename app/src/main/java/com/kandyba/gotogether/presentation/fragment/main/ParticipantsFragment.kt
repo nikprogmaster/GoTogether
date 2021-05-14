@@ -21,6 +21,9 @@ import com.kandyba.gotogether.presentation.adapter.ParticipantsAdapter
 import com.kandyba.gotogether.presentation.viewmodel.EventDetailsViewModel
 import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 
+/**
+ * Фрагмент, отображающий участников события
+ */
 class ParticipantsFragment : Fragment() {
 
     private lateinit var participantsRecyclerView: RecyclerView

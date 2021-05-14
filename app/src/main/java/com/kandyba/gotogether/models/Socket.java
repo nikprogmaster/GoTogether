@@ -12,7 +12,6 @@ import com.kandyba.gotogether.models.general.SocketMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.ProtocolException;
 import java.util.Calendar;
 
 import okhttp3.OkHttpClient;
@@ -25,7 +24,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import okio.ByteString;
 
 /**
- * Websocket class based on OkHttp3 with {event->data} message format to make your life easier.
+ * Веб-сокет, основанный на OkHttp3
  */
 
 public class Socket {
@@ -42,7 +41,7 @@ public class Socket {
     private final static String TIME_KEY = "time";
 
     /**
-     * Main socket states
+     * Состояния сокета
      */
     public enum State {
         CLOSED, CLOSING, CONNECT_ERROR, RECONNECT_ATTEMPT, RECONNECTING, OPENING, OPEN
@@ -87,26 +86,13 @@ public class Socket {
         }
     }
 
-    /**
-     * Websocket state
-     */
-    private static State state;
-    /**
-     * Websocket main request
-     */
-    private static Request request;
-    /**
-     * Websocket connection
-     */
-    private static RealWebSocket realWebSocket;
-    /**
-     * Reconnection post delayed handler
-     */
-    //private static Handler delayedReconnection;
 
-    /**
-     * Websocket state change listener
-     */
+    private static State state;
+
+    private static Request request;
+
+    private static RealWebSocket realWebSocket;
+
     private static OnStateChangeListener onChangeStateListener;
 
     private static UniversalListener universalListener;
@@ -120,7 +106,7 @@ public class Socket {
     }
 
     /**
-     * Start socket connection if i's not already started
+     * Открыть соединение сокета
      */
     public Socket connect() {
         if (httpClient == null) {
@@ -137,9 +123,9 @@ public class Socket {
     }
 
     /**
-     * Set listener which fired every time message received with contained data.
+     * Установить универсальный слушатель
      *
-     * @param listener message on arrive listener
+     * @param listener слушатель
      */
     public Socket setUniversalListener(@NonNull UniversalListener listener) {
         universalListener = listener;
@@ -148,10 +134,10 @@ public class Socket {
 
 
     /**
-     * Send message in {event->data} format
+     * Отправить сообщение через сокет
      *
      * @param socketMessage сообщение
-     * @return true if the message send/on socket send quest; false otherwise
+     * @return true если сообщение отправлено, иначе false
      */
     public boolean send(@NonNull SocketMessage socketMessage) {
         try {
@@ -174,9 +160,9 @@ public class Socket {
     }
 
     /**
-     * Set state listener which fired every time {@link Socket#state} changed.
+     * Установить слушатель состояния сокета
      *
-     * @param listener state change listener
+     * @param listener слушатель
      */
     public Socket setOnChangeStateListener(@NonNull OnStateChangeListener listener) {
         onChangeStateListener = listener;
@@ -184,7 +170,7 @@ public class Socket {
     }
 
     /**
-     * Clear all socket listeners in one line
+     * Очистить все лисененры
      */
     public void clearListeners() {
         universalListener = null;
@@ -192,28 +178,19 @@ public class Socket {
     }
 
     /**
-     * Send normal close request to the host
+     * Закрыть сокет
      */
     public void close() {
         if (realWebSocket != null) {
             Log.i("close socket", "закрыт вроде");
-            Boolean isClosed = realWebSocket.close(1000, CLOSE_REASON);
-            Log.i("isClosed", isClosed.toString());
-            //terminate();
+            boolean isClosed = realWebSocket.close(1000, CLOSE_REASON);
+            Log.i("isClosed", Boolean.toString(isClosed));
         }
     }
 
-    /**
-     * Send close request to the host
-     */
-    public void close(int code, @NonNull String reason) {
-        if (realWebSocket != null) {
-            realWebSocket.close(code, reason);
-        }
-    }
 
     /**
-     * Terminate the socket connection permanently
+     * Завершить сокет соединение
      */
     public void terminate() {
         skipOnFailure = true; // skip onFailure callback
@@ -225,7 +202,9 @@ public class Socket {
 
 
     /**
-     * Retrieve current socket connection state {@link State}
+     * Получить статус сокета
+     *
+     * @return {@link State}
      */
     public State getState() {
         return state;
@@ -241,15 +220,10 @@ public class Socket {
         return hashCode + Calendar.getInstance().getTimeInMillis();
     }
 
-    private Long getTime() {
-        return Calendar.getInstance().getTimeInMillis();
-    }
-
     /**
-     * Change current state and call listener method with new state
-     * {@link OnStateChangeListener#onChange(Socket, State)}
+     * Изменить состояние сокета
      *
-     * @param newState new state
+     * @param newState новое состояние
      */
     private void changeState(State newState) {
         state = newState;
@@ -259,26 +233,22 @@ public class Socket {
     }
 
     /**
-     * Try to reconnect to the websocket after delay time using <i>Exponential backoff</i> method.
-     *
-     * @see <a href="https://en.wikipedia.org/wiki/Exponential_backoff"></a>
+     * Попытка переподключиться
      */
     private void reconnect() {
         Log.i("Connect to Socket", "from reconnect");
-        if (state != State.CONNECT_ERROR) // connection not closed !!
+        if (state != State.CONNECT_ERROR)
             return;
 
         changeState(State.RECONNECT_ATTEMPT);
 
         if (realWebSocket != null) {
-            // Cancel websocket connection
             close();
-            // Clear websocket object
             realWebSocket = null;
         }
 
         changeState(State.RECONNECTING);
-        connect(); // Establish new connection
+        connect();
 
     }
 
@@ -290,10 +260,6 @@ public class Socket {
             changeState(State.OPEN);
         }
 
-        /**
-         * Accept only Json data with format:
-         * <b> {"event":"event name","data":{some data ...}} </b>
-         */
         @Override
         public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
             Log.v(TAG, "Получено новое сообщение" + text);
@@ -333,15 +299,6 @@ public class Socket {
             universalListener.onClosed();
         }
 
-        /**
-         * This method call if:
-         * - Fail to verify websocket GET request  => Throwable {@link ProtocolException}
-         * - Can't establish websocket connection after upgrade GET request => response null, Throwable {@link Exception}
-         * - First GET request had been failed => response null, Throwable {@link java.io.IOException}
-         * - Fail to send Ping => response null, Throwable {@link java.io.IOException}
-         * - Fail to send data frame => response null, Throwable {@link java.io.IOException}
-         * - Fail to read data frame => response null, Throwable {@link java.io.IOException}
-         */
         @Override
         public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, Response response) {
             if (!skipOnFailure) {
@@ -363,18 +320,9 @@ public class Socket {
         public abstract void onFailure();
     }
     public abstract static class OnStateChangeListener {
-        /**
-         * Method need to override in listener usage
-         */
+
         public abstract void onChange(State status);
 
-        /**
-         * Method called from socket to execute listener implemented in
-         * {@link #onChange(State)} on main thread
-         *
-         * @param socket Socket that receive the message
-         * @param status new status
-         */
         private void onChange(Socket socket, final State status) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override

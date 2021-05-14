@@ -11,6 +11,14 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.MultipartBody
 
+/**
+ * Реализация репозитория пользователей
+ *
+ * @constructor
+ * @property apiMapper маппер пользователей
+ * @property converter конвертер информации о пользователе из data слоя в domain
+ * @property participantsConverter конвертер участников из data слоя в domain
+ */
 class UserRepositoryImpl(
     private val apiMapper: UserApiMapper,
     private val converter: UserDataConverter,

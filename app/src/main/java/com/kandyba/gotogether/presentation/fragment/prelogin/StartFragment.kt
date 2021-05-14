@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 
-
+/**
+ * Разводной экран старта приложения
+ */
 class StartFragment : Fragment() {
 
     private lateinit var enterButton: Button

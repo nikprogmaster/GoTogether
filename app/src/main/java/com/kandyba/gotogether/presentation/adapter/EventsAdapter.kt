@@ -17,18 +17,23 @@ import com.kandyba.gotogether.models.presentation.getCalendarDay
 import com.kandyba.gotogether.models.presentation.getMonth
 import com.squareup.picasso.Picasso
 
-
+/**
+ * Адаптер событий
+ *
+ * @constructor
+ * @property events список событий
+ * @property listener слушатель нажатия на событие
+ */
 class EventsAdapter(
     private var events: MutableList<EventModel>,
     private val listener: OnEventClickListener
 ) : RecyclerView.Adapter<EventsAdapter.EventHolder>() {
 
-
-    fun setEvents(events: MutableList<EventModel>) {
-        this.events = events
-        notifyDataSetChanged()
-    }
-
+    /**
+     * Изменить активацию кнопки "лайк"
+     *
+     * @param eventId id мероприятия
+     */
     fun changeButtonState(eventId: String) {
         for (i in events.indices) {
             if (events[i].id == eventId) {
@@ -37,6 +42,11 @@ class EventsAdapter(
         }
     }
 
+    /**
+     * Изменить состояние кнопки "лайк"
+     *
+     * @param eventId id мероприятия
+     */
     fun changeUserLikedProperty(eventId: String) {
         var idInList = -1
         for (i in events.indices) {

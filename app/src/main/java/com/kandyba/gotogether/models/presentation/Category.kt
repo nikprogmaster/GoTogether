@@ -1,10 +1,16 @@
 package com.kandyba.gotogether.models.presentation
 
+/**
+ * Категория (интерес) события
+ *
+ * @constructor
+ * @property categoryName название категории
+ * @property serverName название категории для бэка
+ */
 enum class Category(
     val categoryName: String,
     val serverName: String
 ) {
-
     BUSINES_OBRAZOVANIE("Бизнес и образование", "businesObrazovanie"),
     TANCI("Танцы", "tanciBalli"),
     TEATR_KINO("Театр и кино", "teatrKino"),
@@ -16,10 +22,13 @@ enum class Category(
     IGRI_KVESTI("Игры, квесты", "igriKvesti"),
     ROMANTIKA("Романтика", "romantika"),
     ACTIVNIY_OTDIH("Активный отдых", "activniyOtdih")
-
-
 }
 
+/**
+ * Получить список всех категорий
+ *
+ * @return [List] список категорий
+ */
 fun getListOfCategories(): List<Category> =
     listOf(
         Category.BUSINES_OBRAZOVANIE,

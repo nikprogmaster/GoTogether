@@ -16,6 +16,14 @@ import com.kandyba.gotogether.models.presentation.getMonth
 import com.squareup.picasso.Picasso
 import java.util.*
 
+/**
+ * Адаптер событий в краткой форме
+ *
+ * @constructor
+ * @property events список событий
+ * @property listener слушатель нажатия на событие
+ * @property showLikes опция - показывать кнопку "лайк" или нет
+ */
 class ShortEventAdapter(
     private var events: MutableList<EventModel>,
     private val listener: OnEventClickListener,

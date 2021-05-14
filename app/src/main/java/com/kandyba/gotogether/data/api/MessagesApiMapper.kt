@@ -9,18 +9,40 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-
+/**
+ * Контракт маппера сообщений и диалогов
+ */
 interface MessagesApiMapper {
 
+    /**
+     * Получить диалоги пользователя
+     *
+     * @param token токен сессии пользователя
+     * @return [Single] список диалогов
+     */
     @GET(USER_DIALOGS_ENDPOINT)
     fun getUserDialogs(@Header(AUTHORIZATION_VALUE) token: String): Single<List<DialogDataModel>>
 
+    /**
+     * Получить сообщения диалога
+     *
+     * @param token токен сессии пользователя
+     * @param dialogId id диалога
+     * @return [Single] список сообщений
+     */
     @GET("$USER_DIALOGS_ENDPOINT/{$DIALOG_VALUE}")
     fun getDialogMessages(
         @Header(AUTHORIZATION_VALUE) token: String,
         @Path(DIALOG_VALUE) dialogId: String
     ): Single<List<MessageDataModel>>
 
+    /**
+     * Создать диалог
+     *
+     * @param token токен сессии пользователя
+     * @param companionId id компаньона
+     * @return [Single] c id диалога
+     */
     @POST("$USER_DIALOGS_ENDPOINT/{$COMPANION_VALUE}")
     fun createDialog(
         @Header(AUTHORIZATION_VALUE) token: String,

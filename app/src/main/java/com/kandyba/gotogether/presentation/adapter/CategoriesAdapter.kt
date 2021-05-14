@@ -7,6 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
 
+/**
+ * Адаптер категорий
+ */
 class CategoriesAdapter : RecyclerView.Adapter<CategoriesAdapter.CategoryHolder>() {
 
     private lateinit var categories: List<String>

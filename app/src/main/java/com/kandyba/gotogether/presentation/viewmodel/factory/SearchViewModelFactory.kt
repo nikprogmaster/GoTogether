@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 /**
- * @author Кандыба Никита
- * @since 07.04.2021
+ * Фабрика для создания SearchViewModel
+ *
+ * @constructor
+ * @property viewModelCreator криэйтор для создания вьюмодели
  */
 class SearchViewModelFactory(
     private val viewModelCreator: () -> ViewModel

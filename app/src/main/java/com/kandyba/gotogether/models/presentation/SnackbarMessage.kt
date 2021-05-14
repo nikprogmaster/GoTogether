@@ -1,5 +1,11 @@
 package com.kandyba.gotogether.models.presentation
 
+/**
+ * Сообщение для снэкбара
+ *
+ * @constructor
+ * @property message текст сообщения
+ */
 enum class SnackbarMessage(
     val message: String
 ) {

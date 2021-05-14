@@ -26,7 +26,9 @@ import com.kandyba.gotogether.models.general.USER_ID
 import com.kandyba.gotogether.presentation.fragment.main.*
 import com.kandyba.gotogether.presentation.viewmodel.*
 
-
+/**
+ * Activity главного экрана
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var toolbar: Toolbar

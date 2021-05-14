@@ -17,6 +17,9 @@ import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 import com.kandyba.gotogether.presentation.viewmodel.factory.StartViewModelFactory
 
+/**
+ * Фрагмент для авторизации пользователя
+ */
 class AuthFragment : Fragment() {
 
     private lateinit var createAccountButton: Button

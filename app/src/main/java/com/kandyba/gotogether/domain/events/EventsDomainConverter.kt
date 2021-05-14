@@ -5,6 +5,9 @@ import com.kandyba.gotogether.models.general.BaseConverter
 import com.kandyba.gotogether.models.presentation.Date
 import com.kandyba.gotogether.models.presentation.EventModel
 
+/**
+ * Конвертер для списка событий из domain слоя в presentation
+ */
 class EventsDomainConverter :
     BaseConverter<List<EventDetailsDomainModel>, List<EventModel>>() {
 

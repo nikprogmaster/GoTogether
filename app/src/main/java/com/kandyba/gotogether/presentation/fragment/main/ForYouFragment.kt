@@ -19,6 +19,9 @@ import com.kandyba.gotogether.presentation.viewmodel.ForYouViewModel
 import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import com.kandyba.gotogether.presentation.viewmodel.factory.ForYouViewModelFactory
 
+/**
+ * Фрагмент, отображающий список рекомендованных событий
+ */
 class ForYouFragment : Fragment() {
 
     private lateinit var eventsRecyclerView: RecyclerView

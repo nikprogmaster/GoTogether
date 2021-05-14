@@ -16,6 +16,9 @@ import com.kandyba.gotogether.models.general.requests.SignupRequestBody
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
+/**
+ * Экран регистрации нового пользователя
+ */
 class RegistrationFragment : Fragment() {
 
     private lateinit var exitButton: ImageView

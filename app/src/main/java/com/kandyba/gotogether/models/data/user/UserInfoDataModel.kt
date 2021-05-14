@@ -4,7 +4,9 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.kandyba.gotogether.models.data.events.EventDetailsDataModel
 
-
+/**
+ * Модель информации о пользователе (data-слой)
+ */
 data class UserInfoDataModel(
     @SerializedName("id")
     @Expose

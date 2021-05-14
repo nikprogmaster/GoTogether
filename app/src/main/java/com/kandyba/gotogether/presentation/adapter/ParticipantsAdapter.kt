@@ -12,7 +12,13 @@ import com.kandyba.gotogether.models.domain.events.Participant
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.squareup.picasso.Picasso
 
-
+/**
+ * Адаптер участников мероприятия
+ *
+ * @constructor
+ * @property participants участники
+ * @property listener слушатель нажатия на кнопку "профиль"
+ */
 class ParticipantsAdapter(
     private val participants: List<Participant>,
     private val listener: OnProfileButtonClickListener

@@ -11,6 +11,13 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.MultipartBody
 
+/**
+ * Реализация интерактора для пользователей [UserInteractor]
+ *
+ * @constructor
+ * @property repository репозиторий пользователей
+ * @property converter конвертер двнных пользователей
+ */
 class UserInteractorImpl(
     val repository: UserRepository,
     val converter: UserDomainConverter

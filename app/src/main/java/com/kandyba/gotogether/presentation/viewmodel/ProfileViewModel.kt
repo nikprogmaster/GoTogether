@@ -17,8 +17,12 @@ import okhttp3.MultipartBody
 import java.net.ConnectException
 
 /**
- * @author Кандыба Никита
- * @since 16.04.2021
+ * Вьюмодель для работы с экраном профиля
+ *
+ * @constructor
+ * @property eventsInteractor интерактор для загрузки событий
+ * @property userInteractor интерактор для загрузки информации о пользователях
+ * @property authInteractor интерактор для выхода из сессии
  */
 class ProfileViewModel(
     private val userInteractor: UserInteractor,
@@ -58,6 +62,14 @@ class ProfileViewModel(
     val eventNotLiked: LiveData<String>
         get() = eventNotLikedMLD
 
+    /**
+     * Получить информацию о пользователе
+     *
+     * @param token токен сессии пользователя
+     * @param uid id пользователя
+     * @param updateCache обновлять ли кэш
+     * @param anotherUser загружаем ли информацию о другом пользователе
+     */
     fun loadUserInfo(token: String, userId: String, updateCache: Boolean, anotherUser: Boolean) {
         userInteractor.getUserInfo(token, userId, updateCache, anotherUser)
             .subscribeOn(Schedulers.io())
@@ -75,6 +87,11 @@ class ProfileViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Выйти из приложения (завершить сессию)
+     *
+     * @param token токен сессии пользователя
+     */
     fun logout(token: String) {
         showProgressMLD.postValue(true)
         authInteractor.logout(token)
@@ -94,6 +111,12 @@ class ProfileViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Обновить главную информацию пользователя (имя, дата рождения, пол)
+     *
+     * @param token токен сессии пользователя
+     * @param mainRequest новые значения полей
+     */
     fun updateMainUserInfo(token: String, mainRequest: UserMainRequestBody) {
         showProgressMLD.postValue(true)
         userInteractor.updateMainUserInfo(token, mainRequest)
@@ -117,6 +140,12 @@ class ProfileViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Обновить информацию блока "обо мне"
+     *
+     * @param token токен сессии пользователя
+     * @param request новая информация
+     */
     fun updateAdditionalUserInfo(token: String, request: UserInfoRequestBody) {
         showProgressMLD.postValue(true)
         userInteractor.updateUserInfo(token, request)
@@ -140,6 +169,12 @@ class ProfileViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Загрузить аватар пользователя
+     *
+     * @param token токен сессии пользователя
+     * @param filePart изображение, распределенное по частям
+     */
     fun uploadUserAvatar(token: String, filePart: MultipartBody.Part) {
         userInteractor.uploadUserAvatar(token, filePart)
             .subscribeOn(Schedulers.io())
@@ -161,6 +196,12 @@ class ProfileViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Получить информацию о событии
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id события
+     */
     fun loadEventInfo(token: String, eventId: String) {
         showProgressMLD.postValue(true)
         eventsInteractor.getEventInfo(token, eventId)
@@ -181,6 +222,12 @@ class ProfileViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Поучаствовать/ отменить участие в событии
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id мероприятия
+     */
     fun likeEvent(token: String, eventId: String) {
         enableLikeButtonMLD.postValue(eventId)
         eventsInteractor.participateInEvent(token, eventId)

@@ -21,7 +21,9 @@ import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 import java.util.*
 
-
+/**
+ * Фрагмент с вводом информации о вновь зарегистрированном пользователе
+ */
 class AboutMeFragment : Fragment() {
 
     private lateinit var continueButton: Button

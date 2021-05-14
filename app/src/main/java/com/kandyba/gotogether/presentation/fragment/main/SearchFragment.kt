@@ -27,7 +27,9 @@ import com.kandyba.gotogether.presentation.adapter.ShortEventAdapter
 import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import com.kandyba.gotogether.presentation.viewmodel.SearchViewModel
 
-
+/**
+ * Фрагмент для поиска событий
+ */
 class SearchFragment : Fragment() {
 
     private lateinit var search: EditText

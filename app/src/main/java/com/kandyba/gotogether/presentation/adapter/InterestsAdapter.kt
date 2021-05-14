@@ -9,6 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.presentation.LevelInterest
 
+/**
+ * Адаптер интересов
+ *
+ * @constructor
+ * @property interestsList список интересов
+ */
 class InterestsAdapter(
     private val interestsList: MutableList<LevelInterest>
 ) : RecyclerView.Adapter<InterestsAdapter.InterestHolder>() {
@@ -44,6 +50,7 @@ class InterestsAdapter(
                     levelInterest.level = progress
                     level.text = seekBar?.progress.toString()
                 }
+
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 

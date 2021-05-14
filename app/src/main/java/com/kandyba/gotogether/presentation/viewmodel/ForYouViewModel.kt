@@ -10,6 +10,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.net.ConnectException
 
+/**
+ * Вьюмодель для работы с экраном персональный рекоммендаций событий
+ *
+ * @constructor
+ * @property eventsInteractor интерактор для загрузки информации о событиях
+ */
 class ForYouViewModel(
     private val eventsInteractor: EventsInteractor
 ) : BaseViewModel() {
@@ -38,6 +44,11 @@ class ForYouViewModel(
         getEventsRecommendation(token)
     }
 
+    /**
+     * Получить рекомендованные события
+     *
+     * @param token токен сессии пользователя
+     */
     fun getEventsRecommendation(token: String) {
         showProgressMLD.postValue(true)
         eventsInteractor.getEventsRecommendations(token, DEFAULT_EVENTS_AMOUNT)
@@ -57,6 +68,12 @@ class ForYouViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Получить информацию о событии
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id события
+     */
     fun loadEventInfo(token: String, eventId: String) {
         showProgressMLD.postValue(true)
         eventsInteractor.getEventInfo(token, eventId)
@@ -77,6 +94,12 @@ class ForYouViewModel(
             ).addTo(rxCompositeDisposable)
     }
 
+    /**
+     * Поучаствовать/ отменить участие в событии
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id мероприятия
+     */
     fun likeEvent(token: String, eventId: String) {
         enableLikeButtonMLD.postValue(eventId)
         eventsInteractor.participateInEvent(token, eventId)

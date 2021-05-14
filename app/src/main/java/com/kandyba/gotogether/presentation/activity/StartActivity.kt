@@ -23,7 +23,9 @@ import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.fragment.prelogin.StartFragment
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
-
+/**
+ * Activity регистрации и входа
+ */
 class StartActivity : AppCompatActivity(), FragmentManager {
 
     private lateinit var progress: LinearLayout

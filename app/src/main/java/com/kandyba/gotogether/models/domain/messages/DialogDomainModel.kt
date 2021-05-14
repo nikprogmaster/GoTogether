@@ -3,8 +3,7 @@ package com.kandyba.gotogether.models.domain.messages
 import com.kandyba.gotogether.models.domain.user.UserInfoDomainModel
 
 /**
- * @author Кандыба Никита
- * @since 25.04.2021
+ * Модель диалога (domain-слой)
  */
 data class DialogDomainModel(
     val id: String,

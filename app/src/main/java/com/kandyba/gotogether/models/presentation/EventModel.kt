@@ -2,6 +2,9 @@ package com.kandyba.gotogether.models.presentation
 
 import java.io.Serializable
 
+/**
+ * Модель информации о мероприятии (presentation-слой)
+ */
 data class EventModel(
     val id: String,
     val title: String,
@@ -14,9 +17,10 @@ data class EventModel(
     var activated: Boolean
 ): Serializable
 
+/**
+ * Модель даты (presentation-слой)
+ */
 data class Date(
     val startUnix: Long,
     val endUnix: Long
 ) : Serializable
-
-class Events(val events: List<EventModel>): Serializable

@@ -22,6 +22,9 @@ import com.kandyba.gotogether.presentation.adapter.InterestsAdapter
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 
+/**
+ * Фрагмент для указания интересов
+ */
 class InterestsFragment : Fragment() {
 
     private lateinit var interestAdapter: InterestsAdapter

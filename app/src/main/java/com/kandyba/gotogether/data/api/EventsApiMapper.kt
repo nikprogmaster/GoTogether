@@ -6,20 +6,45 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.*
 
+/**
+ * Контракт маппера событий
+ */
 interface EventsApiMapper {
 
+    /**
+     * Получить рекомендованные события
+     *
+     * @param token токен сессии пользователя
+     * @param amount количество событий
+     * @return [Single] c детальной информацией о событии
+     */
     @GET("${EVENT_RECOMMENDATIONS_ENDPOINT}{${EVENT_AMOUNT_VALUE}}")
     fun getEventsRecommendations(
         @Header(AUTHORIZATION_VALUE) token: String,
         @Path(EVENT_AMOUNT_VALUE) amount: Int
     ): Single<List<EventDetailsDataModel>>
 
+    /**
+     * Получить информацию о мероприятиии
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id мероприятия
+     * @return [Single] c детальной информацией о событии
+     */
     @GET("${EVENT_INFO_ENDPOINT}{${EVENT_VALUE}}")
     fun getEventInfo(
         @Header(AUTHORIZATION_VALUE) token: String,
         @Path(EVENT_VALUE) eventId: String
     ): Single<EventDetailsDataModel>
 
+    /**
+     * Пожаловаться на событие
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id мероприятия
+     * @param body текст жалобы
+     * @return [Completable]
+     */
     @POST("$EVENT_COMPLAIN_ENDPOINT{${EVENT_VALUE}}")
     fun complainEvent(
         @Header(AUTHORIZATION_VALUE) token: String,
@@ -27,18 +52,39 @@ interface EventsApiMapper {
         @Body body: EventComplaintRequestBody
     ): Completable
 
+    /**
+     * Поучаствовать/ отменить участие в событии
+     *
+     * @param token токен сессии пользователя
+     * @param eventId id мероприятия
+     * @return [Completable]
+     */
     @POST("${PARTICIPATION_TO_EVENT_ENDPOINT}{${EVENT_VALUE}}")
     fun participateInEvent(
         @Header(AUTHORIZATION_VALUE) token: String,
         @Path(EVENT_VALUE) eventId: String
     ): Completable
 
+    /**
+     * Поиск мероприятий по категорям
+     *
+     * @param token токен сессии пользователя
+     * @param interests категории
+     * @return [Single] список мероприятий
+     */
     @GET(EVENT_SEARCH_INTERESTS_ENDPOINT)
     fun searchEventsByInterests(
         @Header(AUTHORIZATION_VALUE) token: String,
         @Query(EVENT_INTERESTS_QUERY) interests: List<String>
     ): Single<List<EventDetailsDataModel>>
 
+    /**
+     * Поиск мероприятий по тексту
+     *
+     * @param token токен сессии пользователя
+     * @param text текст запроса
+     * @return [Single] список мероприятий
+     */
     @GET(EVENT_SEARCH_FULLTEXT_ENDPOINT)
     fun searchEventsByTextQuery(
         @Header(AUTHORIZATION_VALUE) token: String,
