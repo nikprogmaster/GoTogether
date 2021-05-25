@@ -31,6 +31,7 @@ import com.kandyba.gotogether.models.general.requests.UserInfoRequestBody
 import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
 import com.kandyba.gotogether.models.presentation.UserInfoModel
 import com.kandyba.gotogether.models.presentation.getAge
+import com.kandyba.gotogether.models.presentation.parseDate
 import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
 import com.kandyba.gotogether.presentation.viewmodel.ProfileViewModel
 import com.squareup.picasso.Picasso
@@ -73,14 +74,18 @@ class ChangeProfileInfoFragment : Fragment() {
     private var viewModel: ProfileViewModel? = null
 
     private var expanded = false
-    private var dateAndTime: Calendar = Calendar.getInstance()
+    private var dateAndTime: Calendar? = Calendar.getInstance()
 
     private var dateSetListener =
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            dateAndTime.set(Calendar.YEAR, year)
-            dateAndTime.set(Calendar.MONTH, monthOfYear)
-            dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            val result = "${dayOfMonth}.${monthOfYear + 1}.${year}"
+            dateAndTime?.set(Calendar.YEAR, year)
+            dateAndTime?.set(Calendar.MONTH, monthOfYear)
+            dateAndTime?.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            var month = "${monthOfYear + 1}"
+            if (monthOfYear + 1 < 10) {
+                month = "0$month"
+            }
+            val result = "${dayOfMonth}.${month}.${year}"
             newValue.setText(result)
         }
 
@@ -131,14 +136,9 @@ class ChangeProfileInfoFragment : Fragment() {
         val quality = calculateCompressQuality((original.width * original.height).toLong())
         original?.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
         val fileBody: RequestBody =
-            RequestBody.create(
-                MEDIA_TYPE.toMediaTypeOrNull(),
-                outputStream.toByteArray()
-            )
+            RequestBody.create(MEDIA_TYPE.toMediaTypeOrNull(), outputStream.toByteArray())
         return MultipartBody.Part.createFormData(
-            MULTIPART_NAME,
-            file.name,
-            fileBody
+            MULTIPART_NAME, file.name, fileBody
         )
     }
 
@@ -246,6 +246,8 @@ class ChangeProfileInfoFragment : Fragment() {
         changeAge.setOnClickListener {
             newValue.setText(EMPTY_STRING)
             changedField.setText(R.string.birthday)
+            newValue.hint = getString(R.string.date_format)
+            newValue.setOnClickListener { setDate() }
             newValue.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) setDate() }
             changeFieldAlertDialog.show()
         }
@@ -263,7 +265,6 @@ class ChangeProfileInfoFragment : Fragment() {
         saveButton.setOnClickListener {
             if (newValue.text.toString() != EMPTY_STRING) {
                 changeUserInfo(changedField.text.toString())
-                changeFieldAlertDialog.dismiss()
             }
         }
         logoutButton.setOnClickListener {
@@ -283,18 +284,22 @@ class ChangeProfileInfoFragment : Fragment() {
             resources.getString(R.string.name) -> {
                 val request = UserMainRequestBody(newValue.text.toString(), null, null)
                 viewModel?.updateMainUserInfo(token, request)
+                changeFieldAlertDialog.dismiss()
             }
             resources.getString(R.string.birthday) -> {
-                val request = UserMainRequestBody(
-                    null,
-                    dateAndTime.timeInMillis,
-                    null
-                )
-                viewModel?.updateMainUserInfo(token, request)
+                dateAndTime = parseDate(newValue.text.toString())
+                if (dateAndTime != null) {
+                    val request = UserMainRequestBody(null, dateAndTime?.timeInMillis, null)
+                    viewModel?.updateMainUserInfo(token, request)
+                    changeFieldAlertDialog.dismiss()
+                } else {
+                    newValue.error = getString(R.string.wrong_format)
+                }
             }
             resources.getString(R.string.about_me) -> {
                 val request = UserInfoRequestBody(newValue.text.toString())
                 viewModel?.updateAdditionalUserInfo(token, request)
+                changeFieldAlertDialog.dismiss()
             }
         }
     }
@@ -351,13 +356,15 @@ class ChangeProfileInfoFragment : Fragment() {
     }
 
     private fun setDate() {
-        DatePickerDialog(
-            requireContext(),
-            dateSetListener,
-            dateAndTime.get(Calendar.YEAR),
-            dateAndTime.get(Calendar.MONTH),
-            dateAndTime.get(Calendar.DAY_OF_MONTH)
-        ).show()
+        dateAndTime?.let {
+            DatePickerDialog(
+                requireContext(),
+                dateSetListener,
+                it.get(Calendar.YEAR),
+                it.get(Calendar.MONTH),
+                it.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
     }
 
     companion object {

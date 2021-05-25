@@ -49,15 +49,13 @@ class DialogsAdapter(
             name.text = dialog.companion.firstName
             lastMessage.text = dialog.lastMessage?.text
             lastMessageTime.text = dialog.lastMessage?.createdAt?.let { getTodayTimeOrDate(it) }
-            if (dialog.companion.avatar != null) {
-                val placeholder =
-                    if (dialog.companion.sex == MAN_SEX) R.drawable.man_stub else R.drawable.woman_stub
-                Picasso.get()
-                    .load(dialog.companion.avatar)
-                    .placeholder(placeholder)
-                    .error(placeholder)
-                    .into(avatar)
-            }
+            val placeholder =
+                if (dialog.companion.sex == MAN_SEX) R.drawable.man_stub else R.drawable.woman_stub
+            Picasso.get()
+                .load(dialog.companion.avatar)
+                .placeholder(placeholder)
+                .error(placeholder)
+                .into(avatar)
             dialogLayout.setOnClickListener {
                 onDialogClickListener.onDialogClick(dialog.id, dialog.companion.firstName)
             }

@@ -32,6 +32,12 @@ class ParticipantsFragment : Fragment() {
     private var eventDetailsViewModel: EventDetailsViewModel? = null
     private lateinit var settings: SharedPreferences
 
+    private val onProfileClickListener = object : OnProfileButtonClickListener {
+        override fun onProfileClick(userId: String) {
+            mainViewModel.openFragment(ProfileFragment.newInstance(userId))
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,7 +63,12 @@ class ParticipantsFragment : Fragment() {
         mainViewModel.makeParticipantsToolbar()
 
         val list = (requireArguments().get(PARTICIPANTS_KEY) as ParticipantsList).participants
-        initParticipantsAdapter(list)
+        if (list.isNotEmpty()) {
+            participantsRecyclerView.adapter =
+                ParticipantsAdapter(list, onProfileClickListener)
+            participantsRecyclerView.layoutManager =
+                GridLayoutManager(requireContext(), SPAN_COUNT)
+        }
 
         initObservers()
         eventDetailsViewModel?.getParticipantsRecommendations(
@@ -72,14 +83,10 @@ class ParticipantsFragment : Fragment() {
     }
 
     private fun initParticipantsAdapter(participants: List<Participant>) {
-        val adapter = ParticipantsAdapter(participants, object : OnProfileButtonClickListener {
-            override fun onProfileClick(userId: String) {
-                mainViewModel.openFragment(ProfileFragment.newInstance(userId))
-            }
-        })
-        val manager = GridLayoutManager(requireContext(), SPAN_COUNT)
-        recommendedParticipantsRecyclerView.adapter = adapter
-        recommendedParticipantsRecyclerView.layoutManager = manager
+        recommendedParticipantsRecyclerView.adapter =
+            ParticipantsAdapter(participants, onProfileClickListener)
+        recommendedParticipantsRecyclerView.layoutManager =
+            GridLayoutManager(requireContext(), SPAN_COUNT)
     }
 
     override fun onDestroyView() {

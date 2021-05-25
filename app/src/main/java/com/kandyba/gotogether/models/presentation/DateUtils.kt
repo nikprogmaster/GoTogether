@@ -1,5 +1,6 @@
 package com.kandyba.gotogether.models.presentation
 
+import android.util.Log
 import java.util.*
 
 /**
@@ -21,8 +22,8 @@ fun getCalendarDate(unixTime: Long): Calendar {
  * @return [String] дата
  */
 fun getFormattedDate(unixTime: Long): String {
-    val date = getCalendarDate(unixTime)
-    return "${date.get(Calendar.DAY_OF_MONTH)}.${date.get(Calendar.MONTH)}.${date.get(Calendar.YEAR)}"
+    val date = getCalendarDate(unixTime * 1000)
+    return "${date.get(Calendar.DAY_OF_MONTH)}.${date.get(Calendar.MONTH) + 1}.${date.get(Calendar.YEAR)}"
 }
 
 /**
@@ -32,7 +33,7 @@ fun getFormattedDate(unixTime: Long): String {
  * @return [String] время
  */
 fun getFormattedTime(unixTime: Long): String {
-    val date = getCalendarDate(unixTime)
+    val date = getCalendarDate(unixTime * 1000)
     val result = "${date.get(Calendar.HOUR_OF_DAY)}:${getMinutes(date)}"
     return result
 }
@@ -53,11 +54,12 @@ fun getTodayTimeOrDate(unixTime: Long): String {
     }
 }
 
-private fun isToday(date: Calendar): Boolean {
+private fun isToday(date: Calendar?): Boolean {
     val today = Calendar.getInstance()
-    return today[Calendar.YEAR] == date[Calendar.YEAR]
+    return if (date == null) false
+    else (today[Calendar.YEAR] == date[Calendar.YEAR]
             && today[Calendar.MONTH] == date[Calendar.MONTH]
-            && today[Calendar.DAY_OF_MONTH] == date[Calendar.DAY_OF_MONTH]
+            && today[Calendar.DAY_OF_MONTH] == date[Calendar.DAY_OF_MONTH])
 }
 
 private fun getMinutes(date: Calendar): String {
@@ -133,7 +135,8 @@ private fun isLeapYear(year: Int): Boolean {
  * @return [String] день
  */
 fun getCalendarDay(unixTime: Long): String {
-    return getCalendarDate(unixTime).get(Calendar.DAY_OF_MONTH).toString()
+    val realTimeInMillis = unixTime * 1000
+    return getCalendarDate(realTimeInMillis).get(Calendar.DAY_OF_MONTH).toString()
 }
 
 /**
@@ -143,7 +146,7 @@ fun getCalendarDay(unixTime: Long): String {
  * @return [String] день недели
  */
 fun getDayOfWeek(unixTime: Long): String? {
-    return getCalendarDate(unixTime).getDisplayName(
+    return getCalendarDate(unixTime * 1000).getDisplayName(
         Calendar.DAY_OF_WEEK,
         Calendar.SHORT,
         Locale.getDefault()
@@ -152,13 +155,7 @@ fun getDayOfWeek(unixTime: Long): String? {
 
 private fun getShortDate(unixTime: Long): String {
     val date = getCalendarDate(unixTime)
-    return "${date[Calendar.DAY_OF_MONTH]} ${
-        date.getDisplayName(
-            Calendar.MONTH,
-            Calendar.SHORT_STANDALONE,
-            Locale.getDefault()
-        )
-    }"
+    return "${date[Calendar.DAY_OF_MONTH]} ${getMonth(unixTime / 1000)}"
 }
 
 /**
@@ -167,8 +164,9 @@ private fun getShortDate(unixTime: Long): String {
  * @param unixTime время в миллисекундах
  * @return [String] месяц
  */
-fun getMonth(unixTime: Long): String =
-    when (getCalendarDate(unixTime).get(Calendar.MONTH)) {
+fun getMonth(unixTime: Long): String {
+    val realTimeInMillis = unixTime * 1000
+    return when (getCalendarDate(realTimeInMillis).get(Calendar.MONTH)) {
         0 -> "Января"
         1 -> "Февраля"
         2 -> "Марта"
@@ -182,4 +180,44 @@ fun getMonth(unixTime: Long): String =
         10 -> "Ноября"
         else -> "Декабря"
     }
+}
+
+/**
+ * Распарсить дату из строки
+ *
+ * @param date строка в формате dd.mm.yyyy
+ * @return [Calendar] дата
+ */
+fun parseDate(date: String): Calendar? {
+    if (date.length != 10) {
+        return null
+    }
+    return try {
+        val day = date.substring(0, 2).toInt()
+        val year = date.substring(6, 10).toInt()
+        val monthStart = if (date[3].toString() == "0") 4 else 3
+        val month = date.substring(monthStart, 5).toInt()
+        val result = Calendar.getInstance().setStartDayValues()
+        result.set(Calendar.YEAR, year)
+        result.set(Calendar.MONTH, month)
+        result.set(Calendar.DAY_OF_MONTH, day)
+        if (isThisYearOrFuture(result)) null else result
+    } catch (e: NumberFormatException) {
+        Log.e("NumberFormatException:", "parseDate() called with: date = $date")
+        null
+    }
+}
+
+/**
+ * Проверка на этот год или будущую дату
+ *
+ * @param date проверяемая дата
+ * @return true если это сегодняшняя или будущая дата, иначе false
+ */
+private fun isThisYearOrFuture(date: Calendar): Boolean {
+    val today = Calendar.getInstance().setStartDayValues()
+    today.set(Calendar.YEAR, today.get(Calendar.YEAR) - 1)
+    return date.timeInMillis >= today.timeInMillis
+}
+
 

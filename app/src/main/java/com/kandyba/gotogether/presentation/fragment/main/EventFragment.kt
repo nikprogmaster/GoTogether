@@ -20,10 +20,7 @@ import com.kandyba.gotogether.App
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.domain.events.EventDetailsDomainModel
 import com.kandyba.gotogether.models.domain.events.ParticipantsList
-import com.kandyba.gotogether.models.general.Cache
-import com.kandyba.gotogether.models.general.EMPTY_STRING
-import com.kandyba.gotogether.models.general.EVENT_KEY
-import com.kandyba.gotogether.models.general.TOKEN
+import com.kandyba.gotogether.models.general.*
 import com.kandyba.gotogether.presentation.adapter.CategoriesAdapter
 import com.kandyba.gotogether.presentation.adapter.ScheduleAdapter
 import com.kandyba.gotogether.presentation.viewmodel.EventDetailsViewModel
@@ -120,8 +117,8 @@ class EventFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val event = arguments?.get(EVENT_KEY) as EventDetailsDomainModel
-        setValues(event)
         resolveDependencies()
+        setValues(event)
         setClickListeners(event)
         initObservers()
     }
@@ -195,13 +192,12 @@ class EventFragment : Fragment() {
         participantsList = participantsList.minus(hideViewsList)
         if (event.amountOfParticipants != null && event.amountOfParticipants > 0) {
             for (i in 0 until event.amountOfParticipants) {
-                event.participants?.get(i)?.avatar?.let {
-                    setImageWithPicasso(it, participantsList[i])
+                event.participants?.get(i)?.let {
+                    if (it.id != settings.getString(USER_ID, EMPTY_STRING)) {
+                        setImageWithPicasso(it.avatar, participantsList[i])
+                    }
                 }
             }
-        } else {
-            whoWillGoTitle.visibility = View.GONE
-            peopleGroup.visibility = View.GONE
         }
     }
 
@@ -243,14 +239,19 @@ class EventFragment : Fragment() {
 
         peopleGroup.setOnClickListener {
             val participants =
-                (requireArguments().getSerializable(EVENT_KEY) as EventDetailsDomainModel).participants
-            if (participants != null) {
-                mainViewModel.openFragment(
-                    ParticipantsFragment.newInstance(ParticipantsList(participants))
-                )
-                mainViewModel.showToolbar(true)
-                mainViewModel.makeParticipantsToolbar()
+                (requireArguments().getSerializable(EVENT_KEY) as EventDetailsDomainModel).participants?.toMutableList()
+                    ?: mutableListOf()
+            if (participants.isNotEmpty()) {
+                val iAm = participants.find { it.id == settings.getString(USER_ID, EMPTY_STRING) }
+                if (iAm != null) {
+                    participants.remove(iAm)
+                }
             }
+            mainViewModel.openFragment(
+                ParticipantsFragment.newInstance(ParticipantsList(participants))
+            )
+            mainViewModel.showToolbar(true)
+            mainViewModel.makeParticipantsToolbar()
         }
 
         showAllText.setOnClickListener {
@@ -328,8 +329,16 @@ class EventFragment : Fragment() {
     }
 
     private fun defineHideViewList(event: EventDetailsDomainModel): List<CircleImageView> {
-        return when (event.amountOfParticipants) {
-            0 -> listOf(person1, person2, person3, person4, morePeople)
+        var realParticipantsCount = event.amountOfParticipants ?: 0
+        if (event.participants != null && event.participants.isNotEmpty()) {
+            for (participant in event.participants) {
+                if (participant.id == settings.getString(USER_ID, EMPTY_STRING)) {
+                    realParticipantsCount--
+                }
+            }
+        }
+        return when (realParticipantsCount) {
+            0 -> listOf(person1, person2, person3, person4)
             1 -> listOf(person2, person3, person4)
             2 -> listOf(person3, person4)
             3 -> listOf(person4)
@@ -337,12 +346,14 @@ class EventFragment : Fragment() {
         }
     }
 
-    private fun setImageWithPicasso(from: String, where: ImageView) {
-        Picasso.get()
-            .load(from)
-            .placeholder(R.drawable.ill_placeholder_300dp)
-            .error(R.drawable.ill_placeholder_300dp)
-            .into(where)
+    private fun setImageWithPicasso(from: String?, where: ImageView) {
+        from?.let {
+            Picasso.get()
+                .load(it)
+                .placeholder(R.drawable.ill_placeholder_300dp)
+                .error(R.drawable.ill_placeholder_300dp)
+                .into(where)
+        }
     }
 
     private fun hideViews(views: List<CircleImageView>) {

@@ -9,7 +9,7 @@ data class Message(
     val userId: String,
     val dialogId: String,
     val text: String,
-    val createdAt: Long,
+    var createdAt: Long?,
     val isMyMessage: Boolean,
     var delivered: Boolean
 ) {

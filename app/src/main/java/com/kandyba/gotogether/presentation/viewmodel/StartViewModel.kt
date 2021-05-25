@@ -92,17 +92,18 @@ class StartViewModel(
                         loadUserInfo(token, userId)
                     },
                     {
-                        if (it is HttpException) {
+                        /*if (it is HttpException) {
                             val error = handleError(it)
                             if (error?.detail != null) {
-                                showHeadpieceMLD.postValue(false)
-                                showStartFragmentMLD.postValue(Unit)
+
                             }
-                            showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
-                        }
+                        }*/
+                        showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
                         if (it is ConnectException) {
                             showSnackbarMLD.postValue(SnackbarMessage.NO_INTERNET_CONNECTION)
                         }
+                        showHeadpieceMLD.postValue(false)
+                        showStartFragmentMLD.postValue(Unit)
                     }
                 ).addTo(rxCompositeDisposable)
         } else {
@@ -180,7 +181,7 @@ class StartViewModel(
                 },
                 {
                     if (it is HttpException) {
-                        val error = handleError(it)
+                        //val error = handleError(it)
                         showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
                     }
                     if (it is ConnectException) {
@@ -210,7 +211,7 @@ class StartViewModel(
                 },
                 {
                     if (it is HttpException) {
-                        val error = handleError(it)
+                        //val error = handleError(it)
                         showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
                     }
                     if (it is ConnectException) {
@@ -239,7 +240,7 @@ class StartViewModel(
                 },
                 {
                     if (it is HttpException) {
-                        val error = handleError(it)
+                        //val error = handleError(it)
                         showSnackbarMLD.postValue(SnackbarMessage.COMMON_MESSAGE)
                     }
                     if (it is ConnectException) {
@@ -268,7 +269,7 @@ class StartViewModel(
                 },
                 {
                     if (it is HttpException) {
-                        val error = handleError(it)
+                        //val error = handleError(it)
                         showSnackbarMLD.postValue(SnackbarMessage.USER_ALREADY_EXISTS)
                     }
                     if (it is ConnectException) {

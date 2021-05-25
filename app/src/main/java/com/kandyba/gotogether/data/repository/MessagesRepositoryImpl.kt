@@ -54,6 +54,11 @@ class MessagesRepositoryImpl(
     ): Single<List<MessageDomainModel>> {
         return apiMapper.getDialogMessages(token, dialogId)
             .map { messageConverter.convert(it) }
+            .map {
+                val sortedList = it.toMutableList()
+                sortedList.sortBy { mes -> mes.createdAt }
+                sortedList
+            }
     }
 
     override fun createDialog(token: String, companionId: String): Single<DialogResponse> {

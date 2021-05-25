@@ -17,6 +17,7 @@ import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.general.EMPTY_STRING
 import com.kandyba.gotogether.models.general.TOKEN
 import com.kandyba.gotogether.models.general.requests.UserMainRequestBody
+import com.kandyba.gotogether.models.presentation.parseDate
 import com.kandyba.gotogether.presentation.fragment.FragmentManager
 import com.kandyba.gotogether.presentation.viewmodel.StartViewModel
 import java.util.*
@@ -36,13 +37,17 @@ class AboutMeFragment : Fragment() {
     private lateinit var viewModel: StartViewModel
     private lateinit var settings: SharedPreferences
 
-    private var dateAndTime: Calendar = Calendar.getInstance()
+    private var dateAndTime: Calendar? = Calendar.getInstance()
     private var dateSetListener =
         OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            dateAndTime.set(Calendar.YEAR, year)
-            dateAndTime.set(Calendar.MONTH, monthOfYear)
-            dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            val result = "${dayOfMonth}.${monthOfYear + 1}.${year}"
+            dateAndTime?.set(Calendar.YEAR, year)
+            dateAndTime?.set(Calendar.MONTH, monthOfYear)
+            dateAndTime?.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            var month = "${monthOfYear + 1}"
+            if (monthOfYear + 1 < 10) {
+                month = "0$month"
+            }
+            val result = "${dayOfMonth}.${month}.${year}"
             birthday.setText(result)
         }
 
@@ -85,13 +90,24 @@ class AboutMeFragment : Fragment() {
 
     private fun initListeners() {
         continueButton.setOnClickListener {
-            val request = createUserUpdateRequest()
-            val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
-            viewModel.updateMainUserInfo(token, request)
+            if (checkNameField()) {
+                val request = createUserUpdateRequest()
+                val token = settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING
+                viewModel.updateMainUserInfo(token, request)
+            }
         }
         backButton.setOnClickListener { (activity as FragmentManager).closeFragment() }
         birthday.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) setDate() }
+        birthday.setOnClickListener { setDate() }
         policy.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    private fun checkNameField(): Boolean {
+        if (name.text.toString() == EMPTY_STRING) {
+            name.error = resources.getString(R.string.error_message)
+            return false
+        }
+        return true
     }
 
     private fun createUserUpdateRequest(): UserMainRequestBody {
@@ -99,7 +115,8 @@ class AboutMeFragment : Fragment() {
             name.text.toString()
         } else null
         val birthDate = if (birthday.text.toString() != EMPTY_STRING) {
-            dateAndTime.timeInMillis
+            dateAndTime = parseDate(birthday.text.toString())
+            dateAndTime?.timeInMillis
         } else null
         val sex =
             if (sex.selectedItem.toString() == resources.getStringArray(R.array.sex)[0].toString()) MAN_SEX else WOMAN_SEX
@@ -108,13 +125,15 @@ class AboutMeFragment : Fragment() {
 
     // отображаем диалоговое окно для выбора даты
     private fun setDate() {
-        DatePickerDialog(
-            requireContext(),
-            dateSetListener,
-            dateAndTime.get(Calendar.YEAR),
-            dateAndTime.get(Calendar.MONTH),
-            dateAndTime.get(Calendar.DAY_OF_MONTH)
-        ).show()
+        dateAndTime?.let {
+            DatePickerDialog(
+                requireContext(),
+                dateSetListener,
+                it.get(Calendar.YEAR),
+                it.get(Calendar.MONTH),
+                it.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
     }
 
     override fun onDestroyView() {

@@ -73,6 +73,9 @@
     <string name="search_stub_title">Ничего не найдено</string>
     <string name="search_stub_subtitle">Попробуйте искать по-другому</string>
     <string name="about_me_placeholder">Вы пока ничего не рассказали другим о себе</string>
+    <string name="wrong_format">Неправильный формат даты!</string>
+    <string name="type_in_date_format">Введите дату в формате "ДД.ММ.ГГГГ"</string>
+    <string name="date_format">ДД.ММ.ГГГГ</string>
 
     <string-array name="interests">
         <item>Бизнес и образование</item>

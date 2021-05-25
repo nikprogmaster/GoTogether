@@ -99,7 +99,7 @@ class ShortEventAdapter(
                 Picasso.get()
                     .load(event.photoLinks[0])
                     .placeholder(R.drawable.ill_placeholder_300dp)
-                    .error(R.drawable.ill_error_placeholder_300dp)
+                    .error(R.drawable.ill_placeholder_300dp)
                     .into(picture)
             }
             likeButton.isChecked = event.likedByUser

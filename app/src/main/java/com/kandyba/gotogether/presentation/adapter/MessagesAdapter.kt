@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.kandyba.gotogether.R
 import com.kandyba.gotogether.models.presentation.Message
+import com.kandyba.gotogether.models.presentation.getTodayTimeOrDate
 
 /**
  * Адаптер сообщений
@@ -42,8 +43,9 @@ class MessagesAdapter(
      * @param mesTime время сообщения
      */
     fun changeMessageStatus(mesTime: Long) {
-        val changedMessage = messages.find { it.createdAt == mesTime }
+        val changedMessage = messages.find { it.createdAt == null }
         changedMessage?.delivered = true
+        changedMessage?.createdAt = mesTime
         notifyDataSetChanged()
     }
 
@@ -69,8 +71,10 @@ class MessagesAdapter(
 
         private val myMessageText: TextView = itemView.findViewById(R.id.my_message_text)
         private val mySendStatus: ImageView = itemView.findViewById(R.id.my_send_status)
+        private val myMessageTime: TextView = itemView.findViewById(R.id.my_message_time)
         private val messageText: TextView = itemView.findViewById(R.id.message_text)
         private val sendStatus: ImageView = itemView.findViewById(R.id.send_status)
+        private val messageTime: TextView = itemView.findViewById(R.id.message_time)
         private val myMessage: LinearLayout = itemView.findViewById(R.id.my_message)
         private val companionMessage: LinearLayout = itemView.findViewById(R.id.companion_message)
 
@@ -78,6 +82,7 @@ class MessagesAdapter(
             myMessage.visibility = View.VISIBLE
             companionMessage.visibility = View.GONE
             myMessageText.text = message.text
+            myMessageTime.text = message.createdAt?.let { getTodayTimeOrDate(it) }
             setSendStatus(mySendStatus, message.delivered)
         }
 
@@ -85,6 +90,7 @@ class MessagesAdapter(
             myMessage.visibility = View.GONE
             companionMessage.visibility = View.VISIBLE
             messageText.text = message.text
+            messageTime.text = message.createdAt?.let { getTodayTimeOrDate(it) }
             setSendStatus(sendStatus, message.delivered)
         }
 

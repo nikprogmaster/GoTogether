@@ -36,6 +36,19 @@
                 android:textSize="14sp"
                 tools:text="Привет, пора работать" />
 
+            <TextView
+                android:id="@+id/message_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/arimo"
+                android:paddingStart="6dp"
+                android:layout_marginBottom="4dp"
+                android:layout_gravity="bottom"
+                android:textColor="@color/black"
+                android:textSize="10sp"
+                tools:text="12:20" />
+
             <ImageView
                 android:id="@+id/send_status"
                 android:layout_width="16dp"
@@ -80,6 +93,19 @@
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 tools:text="Привет, пора работать Привет, пора работать Привет, пора работать" />
+
+            <TextView
+                android:id="@+id/my_message_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/arimo"
+                android:paddingStart="6dp"
+                android:layout_marginBottom="4dp"
+                android:layout_gravity="bottom"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                tools:text="12:20" />
 
             <ImageView
                 android:id="@+id/my_send_status"

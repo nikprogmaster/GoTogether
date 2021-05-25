@@ -150,7 +150,6 @@ public class Socket {
             body.put(USER_ID_KEY, socketMessage.getUserId());
             body.put(DIALOG_ID_KEY, socketMessage.getDialogId());
             body.put(MESSAGE_KEY, socketMessage.getMessage());
-            body.put(TIME_KEY, socketMessage.getTime());
             Log.v(TAG, "Try to send data " + body.toString());
             return realWebSocket.send(body.toString());
         } catch (JSONException e) {

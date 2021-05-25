@@ -26,7 +26,6 @@ import com.kandyba.gotogether.models.presentation.Message
 import com.kandyba.gotogether.presentation.adapter.MessagesAdapter
 import com.kandyba.gotogether.presentation.viewmodel.DialogsViewModel
 import com.kandyba.gotogether.presentation.viewmodel.MainViewModel
-import java.util.*
 
 /**
  * Фрагмент, отображающий переписку с собеседником
@@ -59,7 +58,6 @@ class MessagesFragment : Fragment() {
                 }
             }
         }
-
         override fun onClosed() {}
         override fun onFailure() {}
     }
@@ -135,7 +133,7 @@ class MessagesFragment : Fragment() {
                     messagesRecycler.smoothScrollToPosition(adapter.itemCount.minus(1))
                     viewModel?.sendMessage(
                         settings.getString(TOKEN, EMPTY_STRING) ?: EMPTY_STRING,
-                        createSocketMessage(message.createdAt)
+                        createSocketMessage()
                     )
                 } else {
                     viewModel?.startMessaging(
@@ -156,12 +154,11 @@ class MessagesFragment : Fragment() {
         })
     }
 
-    private fun createSocketMessage(time: Long) =
+    private fun createSocketMessage() =
         SocketMessage(
             userId = settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING,
             dialogId = requireArguments().getString(DIALOG_ID) ?: EMPTY_STRING,
-            message = typeMessage.text.toString(),
-            time = time
+            message = typeMessage.text.toString()
         )
 
     private fun createMessage(text: String): Message {
@@ -169,7 +166,7 @@ class MessagesFragment : Fragment() {
             settings.getString(USER_ID, EMPTY_STRING) ?: EMPTY_STRING,
             requireArguments().getString(DIALOG_ID) ?: EMPTY_STRING,
             text,
-            Calendar.getInstance(TimeZone.getTimeZone(MOSCOW_ZONE_ID)).timeInMillis, true, false
+            null, true, false
         )
     }
 

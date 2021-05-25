@@ -42,8 +42,8 @@ class ScheduleAdapter(
         private val timeField: TextView = itemView.findViewById(R.id.event_time)
 
         fun bindViews(day: DateDomainModel) {
-            val startUnixTime = day.startUnix.toLong()
-            val endUnixTime = day.endUnix.toLong()
+            val startUnixTime = day.startUnix
+            val endUnixTime = day.endUnix
             val dayOfWeek = getDayOfWeek(startUnixTime)
             val date = getFormattedDate(startUnixTime)
             val dateResult = "${date}\n${dayOfWeek}"
